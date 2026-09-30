@@ -2,8 +2,8 @@
  * Headless screenshots for the self-critique loop.
  *
  *   node scripts/shoot.mjs [--url http://localhost:3000] [--out docs/screenshots] [--tag act1]
- *                          [--p 0,0.24] [--w 1440 --h 900] [--nogl] [--reduce] [--dark]
- *                          [--tier high|low] [--wait 4000] [--settle 3000] [--path /en]
+ *                          [--p 0,0.24] [--w 1440 --h 900] [--nogl] [--reduce] [--light]
+ *                          [--tier ultra|high|mid|low] [--wait 4000] [--settle 3000] [--path /en] [--q chaos=1]
  *
  * Runs on the Playwright Chromium with SwiftShader; `?gl=1` forces the canvas
  * on (the probe would otherwise refuse the software renderer).
@@ -38,7 +38,8 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 await page.setViewport({ width: w, height: h, deviceScaleFactor: 1, isMobile: mobile, hasTouch: mobile });
 if (has("reduce")) await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
-if (has("dark")) await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "dark" }]);
+// Gece (dark) is the default stage; --light selects Galeri through the stored preference
+await page.evaluateOnNewDocument((t) => localStorage.setItem("eg-theme", t), has("light") ? "light" : "dark");
 const errors = [];
 page.on("console", (m) => {
   if (m.type() === "error" || m.type() === "warning") errors.push(`${m.type()}: ${m.text()}`);
@@ -50,6 +51,7 @@ if (has("nogl")) q.push("nogl");
 else q.push("gl=1");
 if (has("tier")) q.push(`tier=${get("tier", "high")}`);
 if (has("debug")) q.push("debug");
+if (has("q")) q.push(get("q", ""));
 await page.goto(`${url}?${q.join("&")}`, { waitUntil: "domcontentloaded", timeout: 120000 });
 await new Promise((r) => setTimeout(r, wait));
 
@@ -74,7 +76,7 @@ for (const p of ps) {
     }
     await new Promise((r) => setTimeout(r, settle));
   }
-  const theme = has("dark") ? "dark" : "light";
+  const theme = has("light") ? "light" : "dark";
   const file = path.join(out, `${tag}-${mobile ? "mobile" : "desktop"}-${theme}-p${p.toFixed(2)}.png`);
   await page.screenshot({ path: file, fullPage: has("nogl") && has("full") });
   console.log("saved", file);

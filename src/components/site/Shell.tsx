@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { Instrument_Serif, Schibsted_Grotesk } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "@/app/globals.css";
 import { site, siteUrl, works, L } from "@/lib/content";
 import { t } from "@/i18n/dict";
@@ -9,17 +9,18 @@ import Nav from "./Nav";
 import Footer from "./Footer";
 import Chrome from "@/components/ui/Chrome";
 
-const display = Instrument_Serif({
+// Display: Bricolage Grotesque, variable on wght 200–800, wdth 75–100 and opsz 12–96 (see docs/RENK.md §3).
+const display = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin", "latin-ext"],
-  weight: "400",
-  style: ["normal", "italic"],
+  axes: ["opsz", "wdth"],
   display: "swap",
 });
-const text = Schibsted_Grotesk({
+// Text: Instrument Sans, variable on wght 400–700 and wdth 75–100.
+const text = Instrument_Sans({
   variable: "--font-text",
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600"],
+  axes: ["wdth"],
   display: "swap",
 });
 
@@ -80,7 +81,6 @@ export default function Shell({ lang, children }: { lang: Lang; children: ReactN
         <a className="skip" href="#main">
           {d.skip}
         </a>
-        <div className="grain" aria-hidden="true" />
         <Nav lang={lang} />
         {children}
         <Footer lang={lang} />

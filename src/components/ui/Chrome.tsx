@@ -5,7 +5,7 @@ import type { Lang } from "@/lib/content";
 import { useStore } from "@/lib/store";
 import ScrollDriver from "./ScrollDriver";
 import ExperienceLoader from "./ExperienceLoader";
-import Preloader from "./Preloader";
+import Drop from "./Drop";
 import Cursor from "./Cursor";
 
 // only fetched when first needed: the HUD on `?debug`/`D`, the confetti on the first "elif"
@@ -20,7 +20,7 @@ export default function Chrome({ lang }: { lang: Lang }) {
     <>
       <ScrollDriver />
       <ExperienceLoader />
-      <Preloader lang={lang} />
+      <Drop lang={lang} />
       <Cursor />
       {confetti > 0 ? <Confetti /> : null}
       {debug ? <DebugHud /> : null}

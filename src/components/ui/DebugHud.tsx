@@ -16,7 +16,7 @@ export default function DebugHud() {
   return (
     <aside className="hud" aria-label="Debug">
       <div className="mb-2 flex items-center justify-between">
-        <strong>atölye · debug</strong>
+        <strong>renk · debug</strong>
         <button type="button" onClick={() => store.set({ debug: false })} aria-label="Close">
           ✕
         </button>

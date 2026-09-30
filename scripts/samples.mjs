@@ -269,13 +269,61 @@ async function render(svg, out, w, h) {
   await sharp(Buffer.from(svg), { density: 96 }).resize(w, h).jpeg({ quality: 90, mozjpeg: true }).toFile(out);
 }
 
+/**
+ * The same design as three layers for the portals' depth pop: background
+ * (paper, grain and full-bleed rects), shapes (everything else that is not
+ * text) and type. Elements are split at the top level of the body; a group
+ * that contains text counts as type.
+ */
+function splitLayers(body, w, h) {
+  // top-level elements, nesting-aware (a <g> may contain groups)
+  const els = [];
+  const tagRe = /<(\/?)([a-zA-Z]+)\b[^>]*?(\/?)>/g;
+  let depth = 0;
+  let start = -1;
+  for (const m of body.matchAll(tagRe)) {
+    const closing = m[1] === "/";
+    const selfClosing = m[3] === "/";
+    if (!closing && depth === 0) start = m.index;
+    if (!closing && !selfClosing) depth++;
+    if (closing) depth--;
+    if (depth === 0 && start >= 0) {
+      els.push(body.slice(start, m.index + m[0].length));
+      start = -1;
+    }
+  }
+  const bg = [];
+  const shapes = [];
+  const type = [];
+  for (const el of els) {
+    const full = el.startsWith("<rect") && new RegExp(`width="${w}"`).test(el) && new RegExp(`height="${h}"`).test(el);
+    if (el.includes("<text")) type.push(el);
+    else if (full) bg.push(el);
+    else shapes.push(el);
+  }
+  return { bg: bg.join("\n"), shapes: shapes.join("\n"), type: type.join("\n") };
+}
+function transparentFrame(w, h, body) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs>${defs(w, h)}</defs>${body}</svg>`;
+}
+async function renderPng(svg, out, w, h) {
+  await sharp(Buffer.from(svg), { density: 96 }).resize(w, h).png({ compressionLevel: 9 }).toFile(out);
+}
+
 async function writeWork(work, index) {
   const dir = join(worksDir, work.slug);
   mkdirSync(dir, { recursive: true });
   const w = work.w ?? W;
   const h = work.h ?? H;
-  const svg = frame(w, h, work.svg());
+  const body = work.svg();
+  const svg = frame(w, h, body);
   await render(svg, join(dir, "cover.jpg"), w, h);
+  // layers for the portal (content/works/<slug>/layers/*.png, optional for real works too)
+  const layers = splitLayers(body, w, h);
+  mkdirSync(join(dir, "layers"), { recursive: true });
+  await render(frame(w, h, layers.bg), join(dir, "layers", "1-bg.jpg"), w, h);
+  await renderPng(transparentFrame(w, h, layers.shapes), join(dir, "layers", "2-shapes.png"), w, h);
+  await renderPng(transparentFrame(w, h, layers.type), join(dir, "layers", "3-type.png"), w, h);
   // two gallery images: a detail crop and the negative proof
   const cover = sharp(join(dir, "cover.jpg"));
   await cover

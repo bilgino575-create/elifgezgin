@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import { store } from "@/lib/store";
 
 /**
- * Custom cursor: a crosshair registration mark everywhere, a loupe ring over
- * a work (the magnified halftone itself is rendered in the 3D layer under
- * the ring). Only on fine pointers with the 3D layer on; hidden otherwise.
+ * The hand: a small ring in difference blend, larger over anything
+ * interactive in the scene (a portal, a word, the card). Only on fine
+ * pointers with the 3D layer on; hidden otherwise.
  */
 export default function Cursor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -22,7 +22,7 @@ export default function Cursor() {
       el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       const s = store.get();
       const on = s.gl && !s.touch && s.pointerIn;
-      const next = !on ? "hidden" : s.hoverWork && s.act === "wall" ? "loupe" : "mark";
+      const next = !on ? "hidden" : s.hoverWork || s.hoverSkill || s.hoverCard ? "hover" : "ring";
       if (next !== mode) {
         mode = next;
         el.dataset.mode = next;
@@ -43,13 +43,5 @@ export default function Cursor() {
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
-  return (
-    <div ref={ref} className="cursor" data-mode="hidden" aria-hidden="true">
-      <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="1.2" vectorEffect="non-scaling-stroke">
-        <circle cx="60" cy="60" r="58" />
-        <circle cx="60" cy="60" r="20" />
-        <path d="M60 0V40M60 80V120M0 60H40M80 60H120" />
-      </svg>
-    </div>
-  );
+  return <div ref={ref} className="cursor" data-mode="hidden" aria-hidden="true" />;
 }

@@ -88,7 +88,7 @@ if (mode === "overflow") {
       clientWidth: document.documentElement.clientWidth,
       bodyScrollWidth: document.body.scrollWidth,
     }));
-    for (const pp of [0, 0.24, 0.52, 0.68, 0.82, 0.92, 1]) {
+    for (const pp of [0, 0.28, 0.51, 0.65, 0.78, 0.9, 1]) {
       await p.evaluate((pp) => window.__snap?.(pp), pp);
       await sleep(400);
       const w = await p.evaluate(() => document.documentElement.scrollWidth);
@@ -108,7 +108,7 @@ if (mode === "memory") {
   await p.setViewport({ width: 1000, height: 600 });
   await p.goto(`${url}/?gl=1&tier=high`, { waitUntil: "domcontentloaded" });
   await sleep(12000);
-  const stops = [0, 0.08, 0.16, 0.24, 0.34, 0.44, 0.52, 0.6, 0.68, 0.76, 0.82, 0.88, 0.92, 0.97, 1.0];
+  const stops = [0, 0.08, 0.16, 0.28, 0.36, 0.44, 0.51, 0.58, 0.65, 0.72, 0.78, 0.84, 0.9, 0.97, 1.0];
   const snapshot = async () => p.evaluate(() => window.__stats?.());
   const before = await snapshot();
   const cycles = [];
@@ -173,7 +173,7 @@ if (mode === "perf") {
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: throttle });
     await p.goto(`${url}/?gl=1&tier=high&debug`, { waitUntil: "domcontentloaded" });
     await sleep(12000);
-    for (const [act, pp] of [["I sheet", 0.0], ["II wall", 0.24], ["III swatch", 0.52], ["IV fold", 0.68], ["V portrait", 0.82], ["VI card", 0.92], ["ending", 0.995]]) {
+    for (const [act, pp] of [["I name", 0.0], ["I glass", 0.16], ["II portals", 0.28], ["III ribbon", 0.51], ["IV machine", 0.65], ["V portrait", 0.78], ["VI card", 0.9], ["ending", 0.995]]) {
       await p.evaluate((pp) => window.__snap?.(pp), pp);
       await sleep(6000);
       const s = await p.evaluate(() => window.__stats?.());

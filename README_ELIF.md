@@ -49,6 +49,13 @@ siteyi yayınlamak için en alttaki "Yayınlama" bölümüne bak.
 
 Sonra kaydet, yayınla. Başka hiçbir şey gerekmez: site klasörleri kendisi okur.
 
+**İsteğe bağlı, derinlik katmanları:** İşin klasörüne `layers` adında bir
+klasör açıp tasarımı katmanlar hâlinde koyarsan (ör. `1-arka.jpg`,
+`2-sekiller.png`, `3-yazi.png`; PNG'ler saydam olabilir, sıralama dosya
+adına göre arkadan öne) 3B sahnedeki portalın içinde katmanlar üzerine
+gelince derinlikte ayrılır. Koymazsan kapak tek katman olarak durur; hiçbir
+şey bozulmaz.
+
 ## 2. Örnek işleri kaldırmak
 
 Adı `ornek-` ile başlayan altı klasör örnek işlerdir; hepsinin sağ üstünde
@@ -110,7 +117,16 @@ programının renk panelinde "Hex" olarak görünür.
 en az 1200 piksel). Hakkımda bölümünde basılı bir fotoğraf gibi, noktalı
 baskıyla görünür. Fotoğraf yoksa yerinde tipografik monogram durur.
 
-## 7. Yayınlama
+## 7. Atmosfer görselleri
+
+`content/atmosphere/` klasöründeki görseller sitenin havasını kuran soyut
+görsellerdir: 3B sahnede binlerce parçacık bu görsellere dönüşür, 3B
+kapalıyken bölümlerde yavaşça hareket eden görseller olarak durur. Bunlar
+**iş değildir**; İşler listesinde asla görünmez. Değiştirmek istersen aynı
+adla yeni dosya koy (`elif-00-hero.jpg` portre, `elif-10-paylasim-og-1200x630.jpg`
+paylaşım kartı).
+
+## 8. Yayınlama
 
 Site GitHub'daki `elifgezgin` deposundan Vercel'e otomatik yayınlanır.
 

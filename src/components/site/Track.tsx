@@ -16,11 +16,11 @@ interface SectionProps {
   className?: string;
   align?: "left" | "right" | "center";
   wide?: boolean;
-  /** render the panel as an index card (paper) over the 3D scene */
-  card?: boolean;
+  /** put the legend on a blurred scrim over the 3D scene */
+  scrim?: boolean;
 }
 
-export function Section({ id, children, className = "", align = "left", wide = false, card = false }: SectionProps) {
+export function Section({ id, children, className = "", align = "left", wide = false, scrim = false }: SectionProps) {
   const s = sectionById(id);
   const style = s ? ({ "--from": s.from, "--to": s.to } as CSSProperties) : undefined;
   return (
@@ -32,7 +32,7 @@ export function Section({ id, children, className = "", align = "left", wide = f
       aria-labelledby={`${id}-title`}
     >
       <div className="panel">
-        <div className={`panel-body align-${align}${wide ? " wide" : ""}${card ? " card-index" : ""}`}>{children}</div>
+        <div className={`panel-body align-${align}${wide ? " wide" : ""}${scrim ? " scrim" : ""}`}>{children}</div>
       </div>
     </section>
   );

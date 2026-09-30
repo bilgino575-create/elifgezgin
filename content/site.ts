@@ -35,8 +35,12 @@ export const site = {
   firstName: "Elif",
   lastName: "Gezgin",
   initials: "EG",
-  /** yayınlandığı adres (sitemap, OG etiketleri) */
-  url: "https://elifgezgin.com",
+  /**
+   * Yayınlandığı adres (sitemap, OG etiketleri, kanonik bağlantı).
+   * Alan adı alındığında Vercel'de NEXT_PUBLIC_SITE_URL değişkenini
+   * "https://elifgezgin.com" yapman yeterli; burada bir şey değiştirme.
+   */
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://elifgezgin.vercel.app",
   title: { tr: "Grafik Tasarımcı", en: "Graphic Designer" } as Localized,
   /** kısa açıklama: arama motorları ve sosyal paylaşım kartları */
   description: {
@@ -52,8 +56,14 @@ export const site = {
   email: "",
   /** Sadece gerçekten var olan hesaplar; olmayanı listeden sil. */
   social: [] as SocialLink[],
-  /** Fotoğraf: content/portrait.jpg dosyası varsa Hakkımda bölümünde basılı fotoğraf olarak görünür. */
-  spotColor: "#1F4BFF",
+  /**
+   * Fotoğraf: content/ klasöründeki dosyanın adı. Hakkımda bölümünde binlerce
+   * parçacıktan toplanan portre olur; ismin arkasında da belirir. Dosya yoksa
+   * yerinde EG monogramı durur.
+   */
+  portrait: "portrait.jpg",
+  /** Sitenin tek vurgu rengi: ilk damla, camın tonu, portal çerçeveleri, folyonun ana rengi. */
+  spotColor: "#2B3CFF",
   availability: { tr: "Yeni projelere açığım.", en: "Open to new projects." } as Localized,
   skills: [
     {

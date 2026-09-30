@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/samples.mjs && node scripts/prepare-content.mjs",
+    "predev": "node scripts/samples.mjs && node scripts/prepare-content.mjs && node scripts/prepare-atmosphere.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/samples.mjs && node scripts/prepare-content.mjs",
+    "prebuild": "node scripts/samples.mjs && node scripts/prepare-content.mjs && node scripts/prepare-atmosphere.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

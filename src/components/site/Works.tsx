@@ -4,13 +4,15 @@ import type { Lang } from "@/lib/content";
 import { t, workHref } from "@/i18n/dict";
 import { Section } from "./Track";
 import { WorkFilter, WorkIndex } from "@/components/ui/WorksClient";
+import Loop from "./Loop";
+import Atmo from "./Atmo";
 
 export default function Works({ lang }: { lang: Lang }) {
   const d = t(lang);
   const cats = Array.from(new Set(works.map((w) => w.category)));
   const hasSamples = works.some((w) => w.sample);
   return (
-    <Section id="isler" wide card>
+    <Section id="isler" wide scrim>
       <p className="eyebrow mb-4">{d.works.eyebrow}</p>
       <h2 id="isler-title" className="display h2">
         {d.works.title}
@@ -41,6 +43,8 @@ export default function Works({ lang }: { lang: Lang }) {
         />
       </div>
 
+      <Atmo id="elif-03-portal-cerceveler" lang={lang} className="mt-10" />
+      <Loop name="portals" label={d.works.loop} className="mt-10" />
       {/* HTML layout: the wall as an editorial grid */}
       <ul className="works-grid html-only mt-10" data-filter-list>
         {works.map((w) => (
@@ -80,7 +84,7 @@ export default function Works({ lang }: { lang: Lang }) {
           </li>
         ))}
       </ul>
-      {hasSamples ? <p className="sample-note mt-6 html-only">{d.works.sampleHint}</p> : null}
+      {hasSamples ? <p className="meta mt-6 html-only">{d.works.sampleHint}</p> : null}
     </Section>
   );
 }
