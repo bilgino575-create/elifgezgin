@@ -22,7 +22,7 @@ export default function Contact({ lang }: { lang: Lang }) {
           <RegMark className="h-6 w-6 opacity-70" />
           <div>
             <p className="name">{site.name}</p>
-            <p className="mt-2 text-sm opacity-80">{L(site.title, lang)}</p>
+            <p className="mt-2 text-sm opacity-90">{L(site.title, lang)}</p>
           </div>
         </div>
         <div className="card back" aria-label={d.contact.back}>

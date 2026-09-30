@@ -10,7 +10,7 @@
   --paper-3: #e4e2db;
   --ink: #111214;
   --ink-2: #55565b;
-  --ink-3: #8a8a88;
+  --ink-3: #6b6b69;
   --line: rgba(17, 18, 20, 0.1);
   --line-2: rgba(17, 18, 20, 0.2);
   --spot: #1f4bff;
@@ -31,7 +31,7 @@
   --paper-3: #2c2c30;
   --ink: #f1efe9;
   --ink-2: #a9a8a3;
-  --ink-3: #7c7c78;
+  --ink-3: #95948f;
   --line: rgba(241, 239, 233, 0.1);
   --line-2: rgba(241, 239, 233, 0.2);
   --lamp: #ffb26b;
@@ -121,7 +121,7 @@ img {
     color: var(--paper);
     padding: 0.6rem 1rem;
     border-radius: 999px;
-    transition: top 0.2s var(--ease);
+    /* no transition: it must be on screen the moment it has focus, even on a slow main thread */
   }
   .skip:focus {
     top: 1rem;
@@ -269,12 +269,7 @@ img {
   html.gl .section[data-hidden="true"] .panel > .panel-body {
     pointer-events: none;
   }
-  html.gl .section[data-hidden="true"] {
-    visibility: hidden;
-  }
-  html.gl .section[data-hidden="true"]:focus-within {
-    visibility: visible;
-  }
+  /* hidden panels stay in the tab order: focusing inside one brings the camera to it (ScrollDriver) */
   html.gl .panel-body {
     width: min(100% - var(--gutter) * 2, 26rem);
     margin-left: var(--gutter);
@@ -330,6 +325,10 @@ img {
     html.gl #giris .panel {
       align-items: flex-start;
       padding-top: calc(var(--nav-h) + 1.5rem);
+    }
+    /* the fixed footer fades in under the ending: keep the last line clear of it */
+    html.gl #son .panel {
+      padding-bottom: 6.5rem;
     }
   }
   /* the 3D deboss takes over the name: keep the box, drop the pixels */

@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# elifgezgin — Atölye
 
-## Getting Started
+The portfolio of Elif Gezgin, graphic designer, as one continuous real-time
+3D print studio made of paper, ink and light. Next.js 16 (App Router),
+React Three Fiber, drei and three.js. Turkish at `/`, English at `/en`.
 
-First, run the development server:
+- **Act 0** crop and registration marks draw themselves into the EG monogram
+  while fonts, the 3D chunk and textures actually load.
+- **Act I** her name is debossed into a sheet of paper; the cursor is a studio
+  lamp that rakes across it. Scroll lifts and turns the sheet: its back is
+  the first work.
+- **Act II** the print wall: posters on a clip rail, a book that opens, a box
+  that turns, a blind-embossed card whose CMYK plates separate, a screen.
+  Hover lifts, the loupe magnifies the halftone, click opens the case study.
+- **Act III** a Pantone-style fan of the spot colour's tints, one chip per
+  skill; the tools blind-embossed on a card.
+- **Act IV** a six-panel sheet unfolds one step at a time.
+- **Act V** a halftone print that resolves where the light falls.
+- **Act VI** a letterpress business card; every sheet settles into a stack.
+
+Everything is procedural: no downloaded models or textures. Fonts are
+Instrument Serif and Schibsted Grotesk, self-hosted through `next/font`.
+The complete site is server-rendered HTML that stands on its own without
+WebGL.
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
+npm run build && npm start
+npm run lint
+npm run typecheck
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`prebuild`/`predev` run `scripts/samples.mjs` (renders the six sample works
+only while `content/works` is empty) and `scripts/prepare-content.mjs`
+(WebP derivatives ≤ 2048 px, blur placeholders, a typed manifest in
+`src/content/works.generated.ts`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Content
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All content lives in `content/`: `site.ts` (name, bio, email, socials,
+spot colour, skills, tools, process) and `works/<slug>/meta.json` with the
+images next to it. `README_ELIF.md` explains it in plain Turkish for Elif.
 
-## Learn More
+## URL switches
 
-To learn more about Next.js, take a look at the following resources:
+`?nogl` HTML only · `?gl=1` force WebGL on a software renderer (the probe
+refuses those) · `?tier=high|low` pin a quality tier · `?debug` the HUD
+(also the `D` key). Typing `elif` anywhere releases paper confetti.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Screenshots and checks
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+node scripts/shoot.mjs --p 0,0.24,0.52 --tier high [--dark] [--w 390 --h 844] [--nogl --full]
+node scripts/hover.mjs                     # loupe + confetti interaction check
+node scripts/verify.mjs keyboard|overflow|reduced|lang|bundle|memory|perf
+scripts/lighthouse.sh                      # mobile + desktop, needs `next start`
+```
 
-## Deploy on Vercel
+## Documentation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`docs/ATOLYE.md`: art direction, storyboard, scene graph, the lamp, quality
+tiers, fallbacks, dependencies, techniques, measurements and honest
+limitations. Screenshots in `docs/screenshots/`.
