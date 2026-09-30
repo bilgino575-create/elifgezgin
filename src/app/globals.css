@@ -223,6 +223,54 @@ body {
     display: none;
   }
 
+  /* ---------- atmosphere visuals (no-WebGL page): slow Ken Burns, never still ---------- */
+  .atmo {
+    margin: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--stage-2);
+    box-shadow: 0 40px 100px -40px var(--shadow);
+  }
+  .atmo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: kenburns 24s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes kenburns {
+    from {
+      transform: scale(1) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.12) translate3d(-2%, -1.5%, 0);
+    }
+  }
+  .hero-atmo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    opacity: 0.55;
+    -webkit-mask-image: linear-gradient(90deg, transparent 20%, #000 60%);
+    mask-image: linear-gradient(90deg, transparent 20%, #000 60%);
+    aspect-ratio: auto !important;
+  }
+  @media (max-width: 1023px) {
+    .hero-atmo {
+      -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 75%);
+      mask-image: linear-gradient(180deg, #000 30%, transparent 75%);
+      opacity: 0.45;
+    }
+  }
+  html:not(.gl) #giris .panel-body > :not(.field, .hero-loop, .hero-atmo) {
+    position: relative;
+    z-index: 1;
+  }
+
   /* ---------- video loops from the 3D stage (no-WebGL page) ---------- */
   .loop {
     margin: 0;
@@ -1075,6 +1123,39 @@ body {
   }
   :root[data-theme="light"] .print .halftone {
     mix-blend-mode: multiply;
+  }
+  /* the photo arrives through its own halftone: dots first, then the picture */
+  .print.reveal img {
+    animation: reveal-img 1.8s var(--ease) both;
+  }
+  .print.reveal .halftone {
+    animation: reveal-dots 2.2s var(--ease) both;
+  }
+  @keyframes reveal-img {
+    from {
+      clip-path: circle(0% at 50% 45%);
+      filter: saturate(0.2) contrast(1.4);
+    }
+    to {
+      clip-path: circle(80% at 50% 45%);
+      filter: saturate(1.1) contrast(1);
+    }
+  }
+  @keyframes reveal-dots {
+    0% {
+      opacity: 0.95;
+      background-size:
+        14px 14px,
+        18px 18px,
+        22px 22px;
+    }
+    100% {
+      opacity: 0.35;
+      background-size:
+        7px 7px,
+        9px 9px,
+        11px 11px;
+    }
   }
 
   /* ---------- the card (no-WebGL layout): CSS holographic foil ---------- */

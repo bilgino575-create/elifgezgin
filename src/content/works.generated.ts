@@ -448,4 +448,4 @@ export const works: Work[] = [
     ]
   }
 ];
-export const portrait: WorkImage | null = null;
+export const portrait: WorkImage | null = {"src":"/portrait/portrait-1600.webp","w":1600,"h":2000,"blur":"data:image/webp;base64,UklGRn4BAABXRUJQVlA4IHIBAACwBwCdASoYAB4APu1gqE2ppSOiMAgBMB2JbAC1GzQ2ess/gDSPPgWI6BY3VlV+C935ElHYnej8snVeJKgrj+B/MV4saOEAAP7xeKUeby0nq9XgoyrlWWoMVowgnhfJLx0SjAKCF36qgKBfc/OXWVh5qqLpKTzGMMs9NC87TCESBpc+rl4Sigg++wSm3BIsGdTJmYC2d1oeRenKQeKpWZdb9B4vs6+5Xfpy0WIZIUy6naAbn8C+kWcz08RC6wkEn5HgqiUleghKRMg/T6t+ykMuVGKJ2Z38GtSr9pTYHMkvB+KQTczfLOp9k9LiA38kHmbiM1Hr2c9Lp4Z1I37FiP+doyt9j1Jkr1Wa7JmrpUN1QZqAt8RZc4HbiihQJHhKNvsBRbeVmmFj1SUgziLP/TPc2RwqunlGuTZ4QuNvfPId12Z8v1bmS4JJcahXDOoiJZr4iitykDc2JgqL9epp01BPrsv53pAYFHcFkfQ/fqmgiAAA"};

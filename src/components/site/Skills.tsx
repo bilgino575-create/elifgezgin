@@ -4,6 +4,7 @@ import { t } from "@/i18n/dict";
 import { Section } from "./Track";
 import { SkillIndex } from "@/components/ui/SkillsClient";
 import { inkVars, toolMark } from "@/lib/inks";
+import Atmo from "./Atmo";
 
 export default function Skills({ lang }: { lang: Lang }) {
   const d = t(lang);
@@ -24,6 +25,10 @@ export default function Skills({ lang }: { lang: Lang }) {
         <SkillIndex skills={skills} />
       </div>
 
+      <div className="html-only mt-10 grid gap-6 md:grid-cols-2">
+        <Atmo id="elif-05-kinetik-kurdele" lang={lang} />
+        <Atmo id="elif-04-renk-kartelasi" lang={lang} />
+      </div>
       <ul className="skill-list html-only mt-10">
         {skills.map((s, i) => (
           <li key={s.id} className="skill" style={inkVars(i) as React.CSSProperties}>

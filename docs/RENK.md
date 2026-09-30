@@ -304,6 +304,21 @@ normal and WebM writer are written here.
   there is no simulation pass; the portrait's 50 k dots are stateful (a
   4-channel float ping-pong of position and velocity) because they need
   springs and memory of where the hand pushed them.
+- **One particle system for the whole site.** A single 346² (HIGH) / 245²
+  (MID) / 158² (LOW, phones) grid of GPU particles lives from the hero to
+  the card. Twelve art-direction images (never works) are reduced at build
+  time to 256² colour targets; along the scroll clock a schedule names
+  which image forms where (`particles/schedule.ts`). Each particle samples
+  its colour and relief (luminance → z) from the two current targets and
+  springs toward mix(A, B) with its own stagger; mid-transition a curl-noise
+  cloud term swells (sin πt), so leaving a section is an explosion into a
+  swirling volume that streams along the path and re-forms as the next
+  image, reversible because it is a pure function of p plus dynamics. The
+  hand's repulsion is velocity-sensitive, a click blows the formation apart,
+  and while clouded the images' colours are splatted into the living ink.
+  Position and velocity are two float MRT targets in a ping-pong; the step
+  is fixed 1/60 substeps; nothing allocates per frame. Reduced motion shows
+  the images themselves crossfading on planes.
 - **Video loops without ffmpeg.** `scripts/capture.mjs` drives the real scene
   frame by frame (`?capture=1`, `window.__advance`), encodes each frame with
   WebCodecs' VP9 encoder inside headless Chromium and muxes the chunks with

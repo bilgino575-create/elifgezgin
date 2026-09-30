@@ -5,6 +5,7 @@ import { t, noWidow } from "@/i18n/dict";
 import { Section } from "./Track";
 import { INKS } from "@/lib/inks";
 import ProcessIndex from "@/components/ui/ProcessIndex";
+import Atmo from "./Atmo";
 
 export default function Process({ lang }: { lang: Lang }) {
   const d = t(lang);
@@ -15,6 +16,7 @@ export default function Process({ lang }: { lang: Lang }) {
         {d.process.title}
       </h2>
       <ProcessIndex steps={site.process.map((s) => ({ id: s.id, title: L(s.title, lang) }))} />
+      <Atmo id="elif-06-renk-makinesi" lang={lang} className="mt-10" />
       <ol className="steps html-only mt-10">
         {site.process.map((s, i) => (
           <li key={s.id} style={{ "--c": INKS[i % INKS.length] } as CSSProperties}>

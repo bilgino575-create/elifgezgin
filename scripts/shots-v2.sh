@@ -20,4 +20,11 @@ node scripts/shoot.mjs --out "$OUT" --tag html --nogl --full --w 390 --h 844
 node scripts/shoot.mjs --out "$OUT" --tag type --path /_type --nogl --full --w 1440 --h 900
 node scripts/shoot.mjs --out "$OUT" --tag type --path /_type --nogl --full --w 390 --h 844
 node scripts/shoot.mjs --out "$OUT" --tag type --path /_type --nogl --full --light --w 1440 --h 900
+# frame sequences of three transitions (hero → portals, machine → sphere → desk, desk → portrait → card), desktop and phone
+node scripts/shoot.mjs --out "$OUT" --tag seq-a --tier high --p 0.16,0.18,0.2,0.22,0.24 --w 1440 --h 900 --wait 16000 --settle 5000
+node scripts/shoot.mjs --out "$OUT" --tag seq-b --tier high --p 0.72,0.735,0.745,0.765,0.78 --w 1440 --h 900 --wait 16000 --settle 5000
+node scripts/shoot.mjs --out "$OUT" --tag seq-c --tier high --p 0.81,0.825,0.85,0.875,0.9 --w 1440 --h 900 --wait 16000 --settle 5000
+node scripts/shoot.mjs --out "$OUT" --tag seq-a --tier high --p 0.16,0.2,0.24 --w 390 --h 844 --wait 16000 --settle 5000
+node scripts/shoot.mjs --out "$OUT" --tag seq-b --tier high --p 0.72,0.745,0.78 --w 390 --h 844 --wait 16000 --settle 5000
+node scripts/shoot.mjs --out "$OUT" --tag seq-c --tier high --p 0.81,0.85,0.9 --w 390 --h 844 --wait 16000 --settle 5000
 echo "shots done: $(ls "$OUT" | wc -l) files"

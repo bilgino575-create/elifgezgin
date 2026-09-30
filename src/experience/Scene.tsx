@@ -12,7 +12,7 @@ import Portals from "./acts/portals/Portals";
 import Card from "./acts/card/Card";
 import Ribbon from "./acts/ribbon/Ribbon";
 import Machine from "./acts/machine/Machine";
-import Portrait from "./acts/portrait/Portrait";
+import Morph from "./particles/Morph";
 import Post from "./Post";
 import { useStore } from "@/lib/store";
 import { site } from "@/lib/content";
@@ -41,8 +41,8 @@ export default function Scene() {
         <Portals />
         <Ribbon />
         <Machine />
-        <Portrait />
         <Card />
+        <Morph />
       </Suspense>
       <Post />
     </>

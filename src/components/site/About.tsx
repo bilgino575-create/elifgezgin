@@ -4,6 +4,7 @@ import type { Lang } from "@/lib/content";
 import { t, noWidow } from "@/i18n/dict";
 import { Section } from "./Track";
 import { Mark } from "./Mark";
+import Atmo from "./Atmo";
 
 export default function About({ lang }: { lang: Lang }) {
   const d = t(lang);
@@ -15,7 +16,7 @@ export default function About({ lang }: { lang: Lang }) {
         {d.about.title}
       </h2>
       <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,18rem)_1fr] md:items-start">
-        <div className="print html-only">
+        <div className="print reveal html-only">
           {portrait ? (
             <Image src={portrait.src} alt={site.name} width={portrait.w} height={portrait.h} sizes="(max-width: 767px) 90vw, 18rem" placeholder="blur" blurDataURL={portrait.blur} />
           ) : (
@@ -29,6 +30,7 @@ export default function About({ lang }: { lang: Lang }) {
           ))}
         </div>
       </div>
+      <Atmo id="elif-09-atolye-masasi" lang={lang} className="mt-10" />
     </Section>
   );
 }

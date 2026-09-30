@@ -13,6 +13,7 @@ import Shards, { makeShardMaterial } from "./Shards";
 import Glass from "./Glass";
 import { useDispose } from "../../utils/useDispose";
 import { fluid, inkAbsorbance } from "../../fluid/Fluid";
+
 import { INKS } from "@/lib/inks";
 
 const BEHIND = [INKS[3], INKS[0], INKS[1]];
@@ -36,6 +37,9 @@ function displayFamily() {
 interface Fit {
   lines: { x: number; y: number; s: number }[];
   uv: { x0: number; x1: number; y0: number; y1: number };
+  center: [number, number];
+  height: number;
+  width: number;
 }
 
 export default function Name() {
@@ -103,7 +107,19 @@ export default function Name() {
     const top = blocks[0].getBoundingClientRect().top;
     const bot = blocks[1].getBoundingClientRect().bottom;
     const right = Math.max(...blocks.map((b) => b.getBoundingClientRect().left + (b.textContent?.length ?? 6) * fs * 0.62));
-    return { lines, uv: { x0: blocks[0].getBoundingClientRect().left / W, x1: Math.min(1, right / W), y0: 1 - bot / H, y1: 1 - top / H } };
+    const w0 = lines[0].s * glyphs.lines[0].width;
+    const w1 = lines[1].s * glyphs.lines[1].width;
+    const left = Math.min(lines[0].x, lines[1].x);
+    const rightW = Math.max(lines[0].x + w0, lines[1].x + w1);
+    const topW = lines[0].y + lines[0].s * glyphs.lines[0].height;
+    const bottomW = lines[1].y - lines[1].s * 0.05;
+    return {
+      lines,
+      uv: { x0: blocks[0].getBoundingClientRect().left / W, x1: Math.min(1, right / W), y0: 1 - bot / H, y1: 1 - top / H },
+      center: [(left + rightW) / 2, (topW + bottomW) / 2],
+      height: topW - bottomW,
+      width: rightW - left,
+    };
   }, [glyphs, size.width, size.height, view]);
 
   useEffect(() => {
@@ -114,15 +130,9 @@ export default function Name() {
     u.uView.value.set(0, 0, view.d);
     u.uCell.value = glyphs.cell;
     // the camera's close-up target
-    const w0 = fit.lines[0].s * glyphs.lines[0].width;
-    const w1 = fit.lines[1].s * glyphs.lines[1].width;
-    const left = Math.min(fit.lines[0].x, fit.lines[1].x);
-    const right = Math.max(fit.lines[0].x + w0, fit.lines[1].x + w1);
-    const top = fit.lines[0].y + fit.lines[0].s * glyphs.lines[0].height;
-    const bottom = fit.lines[1].y - fit.lines[1].s * 0.05;
-    rig.nameCenter.set((left + right) / 2, (top + bottom) / 2);
-    rig.nameHeight = top - bottom;
-    rig.nameWidth = right - left;
+    rig.nameCenter.set(fit.center[0], fit.center[1]);
+    rig.nameHeight = fit.height;
+    rig.nameWidth = fit.width;
     store.set({ deboss: true });
   }, [fit, glyphs, view, material]);
 

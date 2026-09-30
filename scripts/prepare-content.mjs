@@ -158,7 +158,10 @@ for (const d of dirs) {
 works.sort((a, b) => a.order - b.order || (b.year ?? 0) - (a.year ?? 0) || a.slug.localeCompare(b.slug));
 
 let portrait = null;
-const portraitSrc = join(root, "content", "portrait.jpg");
+// the file name comes from content/site.ts (`portrait: "..."`), default portrait.jpg
+const siteTs = readFileSync(join(root, "content", "site.ts"), "utf8");
+const portraitFile = (siteTs.match(/portrait:\s*"([^"]+)"/) || [, "portrait.jpg"])[1];
+const portraitSrc = join(root, "content", portraitFile);
 if (existsSync(portraitSrc)) {
   mkdirSync(join(root, "public", "portrait"), { recursive: true });
   const m = await derivative(portraitSrc, join(root, "public", "portrait", "portrait-1600.webp"), 1600, 86);

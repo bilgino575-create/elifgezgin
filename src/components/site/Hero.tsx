@@ -4,6 +4,7 @@ import { t, noWidow, upper } from "@/i18n/dict";
 import { Section } from "./Track";
 import HandType from "@/components/ui/HandType";
 import Loop from "./Loop";
+import Atmo from "./Atmo";
 
 /** One span per letter so the variable axes can follow the hand. */
 function Letters({ text, lang }: { text: string; lang: Lang }) {
@@ -43,6 +44,7 @@ export default function Hero({ lang }: { lang: Lang }) {
       <p className="meta mt-8 gl-only">
         {d.hero.scroll} · {d.hero.lampHint}
       </p>
+      <Atmo id="elif-01-murekkep-damlasi" lang={lang} className="hero-atmo" />
       <Loop name="hero" label={d.hero.loop} className="hero-loop" />
       <HandType />
     </Section>

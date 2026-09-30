@@ -68,6 +68,13 @@ function sample(keys: Key[], p: number, outPos: Vector3, outTgt: Vector3): { fov
   return { fov: a.fov + (b.fov - a.fov) * t, act: t < 0.5 ? a.act : b.act };
 }
 
+/** camera look-at at a given p, for anything that anchors to the path (allocation-free, into `out`) */
+const tPos = new Vector3();
+export function targetOf(p: number, out: Vector3) {
+  sample(rig.keys, p, tPos, out);
+  return out;
+}
+
 function snapKey(keys: Key[], p: number): number {
   let best = keys[0].p;
   for (const k of keys) if (k.stop && k.p <= p + 0.02) best = k.p;
@@ -214,7 +221,8 @@ export default function CameraRig() {
           strokeT.current += dtp;
           rig.ink = Math.floor(strokeT.current / 2.2) % HAND_INKS.length;
           const amount = Math.min(1, 0.25 + sp / 1400);
-          inkAbsorbance(HAND_INKS[rig.ink], abs, 0.16 * amount);
+          // sunflower is the brightest ink on the black stage: lay it thinner so it never blinds
+          inkAbsorbance(HAND_INKS[rig.ink], abs, 0.16 * amount * (rig.ink === 2 ? 0.6 : 1));
           fluid.splat(u, v, du * 5000, dv * 5000, abs[0], abs[1], abs[2], s.touch ? 1.6 : 1.0);
         }
         lp.x = s.pointerX;

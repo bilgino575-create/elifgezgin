@@ -56,6 +56,12 @@ export const site = {
   email: "",
   /** Sadece gerçekten var olan hesaplar; olmayanı listeden sil. */
   social: [] as SocialLink[],
+  /**
+   * Fotoğraf: content/ klasöründeki dosyanın adı. Hakkımda bölümünde binlerce
+   * parçacıktan toplanan portre olur; ismin arkasında da belirir. Dosya yoksa
+   * yerinde EG monogramı durur.
+   */
+  portrait: "portrait.jpg",
   /** Sitenin tek vurgu rengi: ilk damla, camın tonu, portal çerçeveleri, folyonun ana rengi. */
   spotColor: "#2B3CFF",
   availability: { tr: "Yeni projelere açığım.", en: "Open to new projects." } as Localized,
