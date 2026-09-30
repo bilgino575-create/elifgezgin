@@ -21,6 +21,7 @@ const tr = {
   hero: {
     scroll: "Kaydırarak keşfet",
     lampHint: "İmleç senin elin: mürekkebi karıştır, harfleri kır.",
+    loop: "3B sahneden kayıt: ismin parçalardan toplanışı ve canlı mürekkep",
   },
   works: {
     eyebrow: "Seçilmiş işler",
@@ -38,6 +39,7 @@ const tr = {
     back: "Portallara dön",
     gallery: "Galeri",
     filterLabel: "Kategoriye göre süz",
+    loop: "3B sahneden kayıt: işlerin portalları",
     categories: {
       poster: "Afiş",
       editorial: "Editoryal",
@@ -82,6 +84,7 @@ const tr = {
     formHint: "Form, e-posta uygulamanı açar; sunucuya hiçbir şey gönderilmez.",
     front: "Ön yüz",
     back: "Arka yüz",
+    loop: "3B sahneden kayıt: holografik kartvizit",
   },
   ending: {
     stack: "Yolculuktaki bütün mürekkep folyoya dolar.",
@@ -126,6 +129,7 @@ const en: Dict = {
   hero: {
     scroll: "Scroll to explore",
     lampHint: "The cursor is your hand: stir the ink, break the letters.",
+    loop: "Recorded from the 3D stage: the name assembling from shards, and the living ink",
   },
   works: {
     eyebrow: "Selected work",
@@ -143,6 +147,7 @@ const en: Dict = {
     back: "Back to the portals",
     gallery: "Gallery",
     filterLabel: "Filter by category",
+    loop: "Recorded from the 3D stage: the portals of the works",
     categories: {
       poster: "Poster",
       editorial: "Editorial",
@@ -187,6 +192,7 @@ const en: Dict = {
     formHint: "The form opens your mail app; nothing is sent to a server.",
     front: "Front",
     back: "Back",
+    loop: "Recorded from the 3D stage: the holographic card",
   },
   ending: {
     stack: "All the ink of the journey pours into the foil.",

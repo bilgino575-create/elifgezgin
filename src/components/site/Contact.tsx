@@ -4,6 +4,7 @@ import { t } from "@/i18n/dict";
 import { Section } from "./Track";
 import { CopyEmail, ContactForm } from "@/components/ui/ContactClient";
 import { Mark } from "./Mark";
+import Loop from "./Loop";
 
 const SOCIAL_LABEL: Record<string, string> = { behance: "Behance", instagram: "Instagram", linkedin: "LinkedIn", dribbble: "Dribbble" };
 
@@ -17,6 +18,7 @@ export default function Contact({ lang }: { lang: Lang }) {
         {d.contact.title}
       </h2>
 
+      <Loop name="card" label={d.contact.loop} className="mt-10" />
       <div className="html-only mt-10 grid gap-6 sm:grid-cols-2">
         <div className="card foil" aria-label={d.contact.front}>
           <Mark className="h-9 w-9" />

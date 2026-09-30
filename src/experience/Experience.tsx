@@ -6,6 +6,28 @@ import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import Scene from "./Scene";
 
+/**
+ * `?capture=1`: the loop is driven from outside (scripts/capture.mjs) one
+ * frame at a time with a fixed clock, so the video loops are captured from
+ * the real scene at a steady 30 fps whatever the machine renders at.
+ */
+declare global {
+  interface Window {
+    __advance?: (t: number) => void;
+  }
+}
+function CaptureHooks() {
+  const advance = useThree((s) => s.advance);
+  useEffect(() => {
+    window.__advance = (t: number) => advance(t, true);
+    return () => {
+      delete window.__advance;
+    };
+  }, [advance]);
+  return null;
+}
+const captureMode = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("capture") === "1";
+
 /** Frame cap on touch: the canvas runs in demand mode and this loop invalidates it. */
 function FrameCap({ fps, paused }: { fps: number; paused: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
@@ -42,7 +64,7 @@ export default function Experience() {
 
   return (
     <Canvas
-      frameloop={!visible ? "never" : touch ? "demand" : "always"}
+      frameloop={captureMode || !visible ? "never" : touch ? "demand" : "always"}
       dpr={dpr}
       gl={{
         antialias: true,
@@ -50,6 +72,7 @@ export default function Experience() {
         stencil: true,
         depth: true,
         powerPreference: "high-performance",
+        preserveDrawingBuffer: captureMode,
         toneMapping: ACESFilmicToneMapping,
         toneMappingExposure: 1.05,
         outputColorSpace: SRGBColorSpace,
@@ -59,7 +82,7 @@ export default function Experience() {
       eventSource={typeof document !== "undefined" ? document.body : undefined}
       eventPrefix="client"
     >
-      {touch ? <FrameCap fps={45} paused={!visible} /> : null}
+      {captureMode ? <CaptureHooks /> : touch ? <FrameCap fps={45} paused={!visible} /> : null}
       <Scene />
     </Canvas>
   );

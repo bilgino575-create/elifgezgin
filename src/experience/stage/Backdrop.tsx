@@ -51,13 +51,13 @@ void main() {
   } else {
     // LOW: two drifting inks (spot and magenta) as absorbance
     vec2 p = (vUv - 0.5) * uAspect;
-    float n1 = fbm(p * 1.6 + vec2(uTime * 0.05, -uTime * 0.03));
-    float n2 = fbm(p * 1.3 - vec2(uTime * 0.04, uTime * 0.025) + 5.0);
-    float k1 = smoothstep(0.55, 0.8, n1);
-    float k2 = smoothstep(0.58, 0.82, n2);
-    vec3 a1 = vec3(0.0, 0.2, 1.0);    // ≈ ultramarine absorbance (absorbs red, some green)
-    vec3 a2 = vec3(0.0, 1.0, 0.25);   // ≈ magenta
-    A = a1 * k1 * 0.5 + a2 * k2 * 0.45;
+    float n1 = fbm(p * 2.2 + vec2(uTime * 0.05, -uTime * 0.03));
+    float n2 = fbm(p * 1.9 - vec2(uTime * 0.04, uTime * 0.025) + 5.0);
+    float k1 = smoothstep(0.5, 0.9, n1);
+    float k2 = smoothstep(0.52, 0.92, n2);
+    vec3 a1 = vec3(1.0, 0.81, 0.0);   // ultramarine: absorbs red and most green
+    vec3 a2 = vec3(0.0, 1.0, 0.37);   // magenta: absorbs green
+    A = a1 * k1 * 0.4 + a2 * k2 * 0.3;
   }
   // saturating pigment: the mixed absorbance DIRECTION gives the hue (cyan + yellow = green),
   // its length only the coverage, so thin ink is still vivid and thick ink never turns to mud

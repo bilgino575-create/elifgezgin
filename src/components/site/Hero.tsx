@@ -3,6 +3,7 @@ import type { Lang } from "@/lib/content";
 import { t, noWidow, upper } from "@/i18n/dict";
 import { Section } from "./Track";
 import HandType from "@/components/ui/HandType";
+import Loop from "./Loop";
 
 /** One span per letter so the variable axes can follow the hand. */
 function Letters({ text, lang }: { text: string; lang: Lang }) {
@@ -10,7 +11,7 @@ function Letters({ text, lang }: { text: string; lang: Lang }) {
   return (
     <>
       {Array.from(word).map((ch, i) => (
-        <span key={i} className="l" aria-hidden="true">
+        <span key={i} className="l" aria-hidden="true" style={{ "--i": i } as React.CSSProperties}>
           {ch}
         </span>
       ))}
@@ -42,6 +43,7 @@ export default function Hero({ lang }: { lang: Lang }) {
       <p className="meta mt-8 gl-only">
         {d.hero.scroll} · {d.hero.lampHint}
       </p>
+      <Loop name="hero" label={d.hero.loop} className="hero-loop" />
       <HandType />
     </Section>
   );

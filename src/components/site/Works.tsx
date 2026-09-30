@@ -4,6 +4,7 @@ import type { Lang } from "@/lib/content";
 import { t, workHref } from "@/i18n/dict";
 import { Section } from "./Track";
 import { WorkFilter, WorkIndex } from "@/components/ui/WorksClient";
+import Loop from "./Loop";
 
 export default function Works({ lang }: { lang: Lang }) {
   const d = t(lang);
@@ -41,6 +42,7 @@ export default function Works({ lang }: { lang: Lang }) {
         />
       </div>
 
+      <Loop name="portals" label={d.works.loop} className="mt-10" />
       {/* HTML layout: the wall as an editorial grid */}
       <ul className="works-grid html-only mt-10" data-filter-list>
         {works.map((w) => (

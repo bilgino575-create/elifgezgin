@@ -50,6 +50,8 @@ class Fluid {
   live = false;
   /** 0..1 amount of ink on the stage (EMA of injected amounts), read by the ending */
   amount = 0;
+  /** reduced motion: the simulation runs until this clock time (the drop's blot settles), then freezes */
+  freezeAt = 0;
   private queue: Splat[] = [];
   private pool: Splat[] = [];
   splat(x: number, y: number, dx: number, dy: number, r: number, g: number, b: number, radius = 1) {
@@ -224,7 +226,7 @@ export default function FluidSim({ config }: { config: FluidConfig }) {
   useFrame((state, delta) => {
     const t = targets.current;
     if (!t) return;
-    if (store.get().reducedMotion) return; // frozen: the first frame stays
+    if (store.get().reducedMotion && performance.now() / 1000 > fluid.freezeAt) return; // frozen after the drop settles
     const renderer = state.gl;
     const dt = Math.min(delta, 1 / 30);
     const prevAutoClear = renderer.autoClear;

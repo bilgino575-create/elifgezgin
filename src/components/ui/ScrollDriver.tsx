@@ -42,6 +42,7 @@ export default function ScrollDriver() {
       ...(glOk ? {} : { loaded: true, loadProgress: 1 }),
     });
 
+    if (params.get("capture") === "1") html.classList.add("capture");
     if (glOk) {
       html.classList.add("gl");
       if (mqFine.matches && !touch) html.classList.add("fine-pointer");

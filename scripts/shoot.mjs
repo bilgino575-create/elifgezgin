@@ -3,7 +3,7 @@
  *
  *   node scripts/shoot.mjs [--url http://localhost:3000] [--out docs/screenshots] [--tag act1]
  *                          [--p 0,0.24] [--w 1440 --h 900] [--nogl] [--reduce] [--light]
- *                          [--tier high|low] [--wait 4000] [--settle 3000] [--path /en]
+ *                          [--tier ultra|high|mid|low] [--wait 4000] [--settle 3000] [--path /en] [--q chaos=1]
  *
  * Runs on the Playwright Chromium with SwiftShader; `?gl=1` forces the canvas
  * on (the probe would otherwise refuse the software renderer).
@@ -51,6 +51,7 @@ if (has("nogl")) q.push("nogl");
 else q.push("gl=1");
 if (has("tier")) q.push(`tier=${get("tier", "high")}`);
 if (has("debug")) q.push("debug");
+if (has("q")) q.push(get("q", ""));
 await page.goto(`${url}?${q.join("&")}`, { waitUntil: "domcontentloaded", timeout: 120000 });
 await new Promise((r) => setTimeout(r, wait));
 

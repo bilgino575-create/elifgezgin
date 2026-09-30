@@ -28,6 +28,7 @@ export default function Drop({ lang }: { lang: Lang }) {
       const abs: [number, number, number] = [0, 0, 0];
       inkAbsorbance(site.spotColor, abs, 0.9);
       const portrait = window.innerWidth < window.innerHeight;
+      fluid.freezeAt = performance.now() / 1000 + 2.5; // reduced motion: let the blot spread, then freeze
       fluid.splat(0.5, 0.5, 0, 0, abs[0], abs[1], abs[2], portrait ? 4 : 9);
       for (let i = 0; i < 10; i++) {
         const a = (i / 10) * Math.PI * 2;

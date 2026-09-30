@@ -142,7 +142,7 @@ body {
   .field {
     position: absolute;
     inset: 0;
-    z-index: 0;
+    z-index: -1;
     pointer-events: none;
     overflow: hidden;
     background: radial-gradient(120% 80% at 50% -10%, var(--stage-2), var(--stage) 60%);
@@ -223,6 +223,42 @@ body {
     display: none;
   }
 
+  /* ---------- video loops from the 3D stage (no-WebGL page) ---------- */
+  .loop {
+    margin: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--stage-2);
+    box-shadow: 0 40px 100px -40px var(--shadow);
+    aspect-ratio: 16 / 9;
+  }
+  .loop video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero-loop {
+    position: absolute;
+    right: var(--gutter);
+    top: 54%;
+    width: min(38vw, 44rem);
+    transform: translateY(-50%) rotate(-2deg);
+    z-index: 0;
+  }
+  html:not(.gl) #giris .panel-body > :not(.field, .hero-loop) {
+    position: relative;
+    z-index: 1;
+  }
+  @media (max-width: 1023px) {
+    .hero-loop {
+      position: static;
+      width: 100%;
+      transform: none;
+      margin-top: 2rem;
+    }
+  }
+
   /* ---------- canvas layer ---------- */
   .gl-layer {
     position: fixed;
@@ -259,6 +295,45 @@ body {
   @media (max-width: 767px) {
     .h1 {
       font-size: clamp(4.5rem, 22vw, 18rem);
+    }
+  }
+  .h1 .block {
+    display: block;
+    width: fit-content;
+  }
+  /* captures (scripts/capture.mjs): the name centred so the loop is a self-contained composition */
+  html.capture #giris .panel-body {
+    margin: 0 auto;
+    text-align: center;
+  }
+  html.capture .h1 .block {
+    margin: 0 auto;
+  }
+  html.capture .nav,
+  html.capture .cursor,
+  html.capture #giris .eyebrow,
+  html.capture #giris .lead,
+  html.capture #giris .meta {
+    display: none !important;
+  }
+  /* without a pointer (phones, no WebGL) the name breathes on its own */
+  html:not(.gl) .h1 .l {
+    animation: breathe 6s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -0.35s);
+  }
+  @keyframes breathe {
+    0%,
+    100% {
+      font-variation-settings:
+        "wdth" 90,
+        "opsz" 96;
+      font-weight: 700;
+    }
+    50% {
+      font-variation-settings:
+        "wdth" 100,
+        "opsz" 96;
+      font-weight: 800;
     }
   }
   .h1 .l {
@@ -470,11 +545,10 @@ body {
     align-items: center;
     padding-top: var(--nav-h);
     overflow: hidden;
+    isolation: isolate; /* the colour field sits at z -1 inside this section only */
   }
   html:not(.gl) .panel {
     width: 100%;
-    position: relative;
-    z-index: 1;
   }
   html:not(.gl) .panel-body {
     width: min(100% - var(--gutter) * 2, 88rem);
