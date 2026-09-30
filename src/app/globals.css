@@ -256,6 +256,11 @@ body {
     line-height: 0.86;
     text-wrap: none;
   }
+  @media (max-width: 767px) {
+    .h1 {
+      font-size: clamp(4.5rem, 22vw, 18rem);
+    }
+  }
   .h1 .l {
     display: inline-block;
     font-variation-settings:
@@ -438,8 +443,15 @@ body {
       border-radius: 12px;
     }
     html.gl #giris .panel {
-      align-items: flex-start;
-      padding-top: calc(var(--nav-h) + 1rem);
+      align-items: center;
+      padding-top: var(--nav-h);
+      padding-bottom: 0;
+    }
+    .brand span {
+      display: none;
+    }
+    .brand {
+      padding: 0 0.5rem;
     }
     html.gl #son .panel {
       padding-bottom: 6.5rem;

@@ -9,7 +9,8 @@ import { useSyncExternalStore } from "react";
 import type { ActId } from "./acts";
 import type { Category } from "@/i18n/dict";
 
-export type Tier = "high" | "low";
+export type Tier = "ultra" | "high" | "mid" | "low";
+export const TIERS: Tier[] = ["low", "mid", "high", "ultra"];
 export type Theme = "light" | "dark";
 
 export interface AppState {
@@ -38,6 +39,8 @@ export interface AppState {
   pointerY: number;
   /** pointer is inside the viewport */
   pointerIn: boolean;
+  /** clock time (s) of the last touch move; the hand paints while a finger moves */
+  touchAt: number;
   /** work slug under the cursor (3D or HTML index) */
   hoverWork: string | null;
   /** skill id under the cursor / focus */
@@ -52,8 +55,10 @@ export interface AppState {
   opening: string | null;
   /** counter: the easter egg was triggered */
   confetti: number;
-  /** the 3D deboss of the name is ready (HTML name goes transparent) */
+  /** the 3D name is ready and fitted (the HTML name goes transparent) */
   deboss: boolean;
+  /** the detected ceiling: the monitor never raises the tier above it */
+  tierMax: Tier;
   stats: { fps: number; ms: number; calls: number; triangles: number; geometries: number; textures: number; programs: number };
 }
 
@@ -61,7 +66,7 @@ type Listener = () => void;
 
 const initial: AppState = {
   progress: 0,
-  act: "sheet",
+  act: "name",
   section: "giris",
   gl: false,
   glFailed: false,
@@ -80,6 +85,7 @@ const initial: AppState = {
   pointerX: 0,
   pointerY: 0,
   pointerIn: false,
+  touchAt: -1,
   hoverWork: null,
   hoverSkill: null,
   hoverCard: false,
@@ -88,6 +94,7 @@ const initial: AppState = {
   opening: null,
   confetti: 0,
   deboss: false,
+  tierMax: "ultra",
   stats: { fps: 0, ms: 0, calls: 0, triangles: 0, geometries: 0, textures: 0, programs: 0 },
 };
 

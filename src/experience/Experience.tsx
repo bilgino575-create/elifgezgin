@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import Scene from "./Scene";
 
-/** 30 fps on touch: the canvas runs in demand mode and this loop invalidates it. */
+/** Frame cap on touch: the canvas runs in demand mode and this loop invalidates it. */
 function FrameCap({ fps, paused }: { fps: number; paused: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
   useEffect(() => {
@@ -38,26 +38,28 @@ export default function Experience() {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
+  const dpr: number | [number, number] = tier === "ultra" ? [1, dprMax] : tier === "high" ? [1, Math.min(1.5, dprMax)] : 1;
+
   return (
     <Canvas
       frameloop={!visible ? "never" : touch ? "demand" : "always"}
-      dpr={tier === "high" ? [1, dprMax] : 1}
+      dpr={dpr}
       gl={{
         antialias: true,
         alpha: false,
-        stencil: false,
+        stencil: true,
         depth: true,
         powerPreference: "high-performance",
         toneMapping: ACESFilmicToneMapping,
-        toneMappingExposure: 1.0,
+        toneMappingExposure: 1.05,
         outputColorSpace: SRGBColorSpace,
       }}
-      shadows={tier === "high" ? "soft" : false}
-      camera={{ fov: 32, near: 0.05, far: 80, position: [0, 2.4, 3.2] }}
+      shadows={false}
+      camera={{ fov: 40, near: 0.05, far: 120, position: [0, 0, 9] }}
       eventSource={typeof document !== "undefined" ? document.body : undefined}
       eventPrefix="client"
     >
-      {touch ? <FrameCap fps={30} paused={!visible} /> : null}
+      {touch ? <FrameCap fps={45} paused={!visible} /> : null}
       <Scene />
     </Canvas>
   );

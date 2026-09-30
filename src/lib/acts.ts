@@ -2,25 +2,25 @@
  * Scroll → progress mapping shared by the DOM layer and the 3D layer.
  * `p` is the master clock in [0, 1]. Every act owns a range of `p`; every
  * HTML section owns an anchor inside an act where its panel is fully
- * visible and the camera has settled.
+ * visible and the camera has settled. See docs/RENK.md §4.
  */
-export type ActId = "sheet" | "wall" | "swatch" | "fold" | "portrait" | "card";
+export type ActId = "name" | "portals" | "ribbon" | "machine" | "portrait" | "card";
 
 export interface Act {
   id: ActId;
   start: number;
   end: number;
-  /** world x of the act's centre on the studio table */
+  /** world x of the act's centre */
   x: number;
 }
 
 export const ACTS: Act[] = [
-  { id: "sheet", start: 0.0, end: 0.14, x: 0 },
-  { id: "wall", start: 0.14, end: 0.44, x: 6 },
-  { id: "swatch", start: 0.44, end: 0.6, x: 12 },
-  { id: "fold", start: 0.6, end: 0.76, x: 18 },
-  { id: "portrait", start: 0.76, end: 0.88, x: 24 },
-  { id: "card", start: 0.88, end: 1.0, x: 30 },
+  { id: "name", start: 0.0, end: 0.16, x: 0 },
+  { id: "portals", start: 0.16, end: 0.44, x: 10 },
+  { id: "ribbon", start: 0.44, end: 0.58, x: 22 },
+  { id: "machine", start: 0.58, end: 0.72, x: 32 },
+  { id: "portrait", start: 0.72, end: 0.84, x: 42 },
+  { id: "card", start: 0.84, end: 1.0, x: 52 },
 ];
 
 export interface Section {
@@ -32,20 +32,23 @@ export interface Section {
 }
 
 export const SECTIONS: Section[] = [
-  { id: "giris", act: "sheet", anchor: 0.0, from: 0, to: 0.1 },
-  { id: "isler", act: "wall", anchor: 0.24, from: 0.17, to: 0.42 },
-  { id: "beceriler", act: "swatch", anchor: 0.52, from: 0.46, to: 0.585 },
-  { id: "surec", act: "fold", anchor: 0.68, from: 0.62, to: 0.745 },
-  { id: "hakkimda", act: "portrait", anchor: 0.82, from: 0.775, to: 0.865 },
-  { id: "iletisim", act: "card", anchor: 0.92, from: 0.895, to: 0.965 },
-  { id: "son", act: "card", anchor: 1.0, from: 0.975, to: 1.0 },
+  { id: "giris", act: "name", anchor: 0.0, from: 0, to: 0.1 },
+  { id: "isler", act: "portals", anchor: 0.28, from: 0.2, to: 0.42 },
+  { id: "beceriler", act: "ribbon", anchor: 0.51, from: 0.46, to: 0.565 },
+  { id: "surec", act: "machine", anchor: 0.65, from: 0.6, to: 0.705 },
+  { id: "hakkimda", act: "portrait", anchor: 0.78, from: 0.735, to: 0.825 },
+  { id: "iletisim", act: "card", anchor: 0.9, from: 0.865, to: 0.955 },
+  { id: "son", act: "card", anchor: 1.0, from: 0.97, to: 1.0 },
 ];
 
-export const TRACK_VH = { desktop: 700, mobile: 520 };
+export const TRACK_VH = { desktop: 760, mobile: 560 };
+
+/** The anamorphic viewpoint of Act I: the camera distance and lens the name is fitted for. */
+export const NAME_VIEW = { desktop: { d: 9, fov: 40 }, mobile: { d: 11, fov: 44 } };
 
 export function actAt(p: number): ActId {
   for (let i = ACTS.length - 1; i >= 0; i--) if (p >= ACTS[i].start) return ACTS[i].id;
-  return "sheet";
+  return "name";
 }
 
 export function actById(id: ActId): Act {

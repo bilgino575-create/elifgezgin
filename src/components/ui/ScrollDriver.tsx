@@ -30,7 +30,7 @@ export default function ScrollDriver() {
     const probe = onHome ? probeWebGL() : { ok: false, reason: "not the home page", renderer: "" };
     const glOk = probe.ok;
     const tierParam = params.get("tier");
-    const tierLocked = tierParam === "high" || tierParam === "low";
+    const tierLocked = tierParam === "ultra" || tierParam === "high" || tierParam === "mid" || tierParam === "low";
     store.set({
       touch,
       reducedMotion,
@@ -38,7 +38,7 @@ export default function ScrollDriver() {
       theme: readTheme(),
       gl: glOk,
       glFailed: onHome && !glOk,
-      ...(tierLocked ? { tier: tierParam as "high" | "low", tierLocked: true } : {}),
+      ...(tierLocked ? { tier: tierParam as "ultra" | "high" | "mid" | "low", tierMax: tierParam as "ultra" | "high" | "mid" | "low", tierLocked: true } : {}),
       ...(glOk ? {} : { loaded: true, loadProgress: 1 }),
     });
 
@@ -160,11 +160,33 @@ export default function ScrollDriver() {
       });
     };
     const onLeave = () => store.set({ pointerIn: false });
+    // a moving finger paints ink while the page scrolls natively (pointermove stops at pointercancel; touchmove does not)
+    const onTouch = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      store.set({
+        pointerX: (t.clientX / window.innerWidth) * 2 - 1,
+        pointerY: -(t.clientY / window.innerHeight) * 2 + 1,
+        pointerIn: true,
+        touchAt: performance.now() / 1000,
+      });
+    };
+    window.addEventListener("touchmove", onTouch, { passive: true });
     window.addEventListener("pointermove", onPointer, { passive: true });
     document.addEventListener("pointerleave", onLeave);
 
     const onReduce = () => store.set({ reducedMotion: mqReduce.matches });
     mqReduce.addEventListener("change", onReduce);
+
+    // the 3D name takes over the HTML name (html.deboss makes the <h1> transparent, box kept)
+    let debossed = false;
+    const unsubDeboss = store.subscribe(() => {
+      const d = store.get().deboss && store.get().gl;
+      if (d !== debossed) {
+        debossed = d;
+        html.classList.toggle("deboss", d);
+      }
+    });
 
     return () => {
       lenisCleanup();
@@ -173,8 +195,10 @@ export default function ScrollDriver() {
       document.removeEventListener("focusin", onFocus);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("touchmove", onTouch);
       document.removeEventListener("pointerleave", onLeave);
       mqReduce.removeEventListener("change", onReduce);
+      unsubDeboss();
     };
   }, []);
 

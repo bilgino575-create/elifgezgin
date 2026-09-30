@@ -3,19 +3,18 @@
 import { PerformanceMonitor } from "@react-three/drei";
 import { useEffect, useRef } from "react";
 import { getGPUTier } from "detect-gpu";
-import { store } from "@/lib/store";
+import { store, TIERS, type Tier } from "@/lib/store";
 import { disableGl } from "@/lib/gl";
 
 /**
- * Quality tiers with hysteresis.
+ * Four quality tiers with hysteresis (docs/RENK.md §6).
  *
- * 1. `detect-gpu` gives the starting tier (benchmarks are self-hosted under
- *    /benchmarks so no third-party request is made at runtime).
- * 2. drei's PerformanceMonitor watches the real frame rate. A decline needs
- *    two consecutive reports under the lower bound, an incline three above the
- *    upper bound, and after any change the tier is locked for six seconds.
- *    `flipflops` caps the number of changes in a session so it can never
- *    oscillate.
+ * 1. `detect-gpu` (benchmarks self-hosted under /benchmarks) sets the
+ *    ceiling: desktop tier 3 → ULTRA, 2 → HIGH, 1 → MID; phones one step
+ *    lower; tier 0 → the HTML site.
+ * 2. drei's PerformanceMonitor moves one step down after two consecutive
+ *    declines and one step up after three inclines, never above the ceiling,
+ *    with a six-second lock after each change and at most three flip-flops.
  */
 export default function Tiering() {
   const declines = useRef(0);
@@ -29,24 +28,33 @@ export default function Tiering() {
         if (cancelled) return;
         const forced = new URLSearchParams(location.search).get("gl") === "1";
         if (r.tier === 0 && !store.get().tierLocked && !forced) {
-          // blocklisted or benchmarked far below the floor: the HTML site is the better experience
           disableGl(`gpu tier 0 (${r.gpu ?? "unknown"})`);
           return;
         }
         const mobileLike = r.isMobile || store.get().touch;
-        const tier: "high" | "low" = r.tier >= 2 && !mobileLike ? "high" : r.tier >= 3 ? "high" : "low";
-        store.set(store.get().tierLocked ? { gpuTier: r.tier } : { gpuTier: r.tier, tier });
-        void 0;
+        let tier: Tier = r.tier >= 3 ? "ultra" : r.tier === 2 ? "high" : "mid";
+        if (mobileLike) tier = TIERS[Math.max(0, TIERS.indexOf(tier) - 1)];
+        if (forced && r.tier === 0) tier = "low";
+        store.set(store.get().tierLocked ? { gpuTier: r.tier } : { gpuTier: r.tier, tier, tierMax: tier });
       })
       .catch(() => {
         if (cancelled) return;
         store.set({ gpuTier: 0 });
-        void 0;
       });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const move = (dir: -1 | 1) => {
+    const s = store.get();
+    if (s.tierLocked || performance.now() < lockedUntil.current) return;
+    const i = TIERS.indexOf(s.tier);
+    const j = Math.min(TIERS.indexOf(s.tierMax), Math.max(0, i + dir));
+    if (j === i) return;
+    store.set({ tier: TIERS[j] });
+    lockedUntil.current = performance.now() + 6000;
+  };
 
   return (
     <PerformanceMonitor
@@ -56,23 +64,17 @@ export default function Tiering() {
       ms={250}
       onDecline={() => {
         inclines.current = 0;
-        if (store.get().tierLocked || performance.now() < lockedUntil.current) return;
         declines.current++;
-        if (declines.current >= 2 && store.get().tier === "high") {
-          store.set({ tier: "low" });
-          void 0;
-          lockedUntil.current = performance.now() + 6000;
+        if (declines.current >= 2) {
+          move(-1);
           declines.current = 0;
         }
       }}
       onIncline={() => {
         declines.current = 0;
-        if (store.get().tierLocked || performance.now() < lockedUntil.current) return;
         inclines.current++;
-        if (inclines.current >= 3 && store.get().tier === "low" && store.get().gpuTier >= 2) {
-          store.set({ tier: "high" });
-          void 0;
-          lockedUntil.current = performance.now() + 6000;
+        if (inclines.current >= 3) {
+          move(1);
           inclines.current = 0;
         }
       }}
