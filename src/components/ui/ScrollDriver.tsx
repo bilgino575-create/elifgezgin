@@ -44,6 +44,7 @@ export default function ScrollDriver() {
 
     if (params.get("capture") === "1") html.classList.add("capture");
     if (params.get("nopanels") === "1") html.classList.add("nopanels"); // captures of the scene alone
+    if (!glOk) html.classList.remove("gl"); // the inline probe (Home.tsx) may have said yes; the store's answer wins
     if (glOk) {
       html.classList.add("gl");
       if (mqFine.matches && !touch) html.classList.add("fine-pointer");

@@ -22,7 +22,7 @@
   --ink-y: #ffd400;
   --ink-c: #00c8ff;
   --ink-g: #19e68c;
-  --scrim: rgba(10, 10, 18, 0.72);
+  --scrim: rgba(10, 10, 18, 0.82);
   --shadow: rgba(0, 0, 0, 0.6);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --nav-h: 72px;
@@ -43,7 +43,7 @@
   --fg-3: #5c5c70;
   --line: rgba(10, 10, 18, 0.14);
   --line-2: rgba(10, 10, 18, 0.26);
-  --scrim: rgba(250, 250, 247, 0.82);
+  --scrim: rgba(250, 250, 247, 0.9);
   --shadow: rgba(10, 10, 30, 0.22);
   color-scheme: light;
 }
@@ -504,6 +504,10 @@ body {
     opacity: var(--vis, 0);
     pointer-events: none;
   }
+  /* the hero is visible before the scroll driver hydrates (it is the LCP) */
+  html.gl #giris {
+    --vis: 1;
+  }
   html.gl .panel > .panel-body {
     pointer-events: auto;
     max-height: calc(100vh - 6rem);
@@ -558,6 +562,35 @@ body {
     width: min(100% - var(--gutter) * 2, 88rem);
     margin-left: max(var(--gutter), (100vw - 88rem) / 2);
   }
+  /* the hero copy sits on a scrim (the ink can pass behind it); the name above it stays bare */
+  html.gl #giris .lead,
+  html.gl #giris .meta {
+    background: var(--scrim);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    width: fit-content;
+    max-width: min(34ch, 100%);
+  }
+  /* small type on a scrim over vivid particles: the secondary colour, never the tertiary */
+  html.gl .scrim .meta,
+  html.gl .scrim .index .n,
+  html.gl .scrim .index .c,
+  html.gl .scrim .tag,
+  html.gl .scrim .eyebrow {
+    color: var(--fg-2);
+  }
+  html.gl .footer {
+    color: var(--fg-2);
+  }
+  html.gl .footer .wrap {
+    background: var(--scrim);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+  }
   @media (max-width: 767px) {
     html.gl .panel {
       align-items: flex-end;
@@ -580,8 +613,15 @@ body {
       padding-top: var(--nav-h);
       padding-bottom: 0;
     }
+
+    /* the brand keeps its accessible name; only the pixels go */
     .brand span {
-      display: none;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
     }
     .brand {
       padding: 0 0.5rem;
@@ -684,9 +724,7 @@ body {
     text-decoration: none;
     padding: 0.5rem 0.9rem;
     border-radius: 999px;
-    transition:
-      color 0.2s var(--ease),
-      background 0.2s var(--ease);
+    /* no transition: text and pill must never be mid-way between states (AA at every instant) */
   }
   .nav-links a:hover {
     background: color-mix(in srgb, var(--fg) 10%, transparent);

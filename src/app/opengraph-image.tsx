@@ -15,7 +15,6 @@ export default async function Image() {
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", background: "#0a0a12", color: "#f6f6fa", fontFamily: "Bricolage" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} width={1200} height={630} style={{ position: "absolute", left: 0, top: 0 }} alt="" />
         <div style={{ position: "absolute", left: 72, top: 84, display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 24, letterSpacing: 4, color: "#c9c9da" }}>

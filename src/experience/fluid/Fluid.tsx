@@ -15,13 +15,15 @@ import {
   RGBAFormat,
   Scene,
   ShaderMaterial,
-  Texture,
   Vector2,
   WebGLRenderTarget,
   type WebGLRenderer,
 } from "three";
 import { store } from "@/lib/store";
 import { ADVECTION, CLEAR, CURL, DIVERGENCE, GRADIENT_SUBTRACT, PRESSURE, SPLAT, VERT, VORTICITY } from "./shaders";
+import { fluid, inkAbsorbance } from "@/lib/ink";
+
+export { fluid, inkAbsorbance };
 
 /**
  * The living ink: a stable-fluids simulation in screen space. Velocity and
@@ -32,63 +34,6 @@ import { ADVECTION, CLEAR, CURL, DIVERGENCE, GRADIENT_SUBTRACT, PRESSURE, SPLAT,
  *
  * LOW tier never mounts this; the backdrop falls back to an animated noise field.
  */
-
-interface Splat {
-  x: number;
-  y: number;
-  dx: number;
-  dy: number;
-  r: number;
-  g: number;
-  b: number;
-  radius: number;
-}
-
-class Fluid {
-  dye: Texture | null = null;
-  /** true while a simulation is mounted and stepping */
-  live = false;
-  /** 0..1 amount of ink on the stage (EMA of injected amounts), read by the ending */
-  amount = 0;
-  /** reduced motion: the simulation runs until this clock time (the drop's blot settles), then freezes */
-  freezeAt = 0;
-  private queue: Splat[] = [];
-  private pool: Splat[] = [];
-  splat(x: number, y: number, dx: number, dy: number, r: number, g: number, b: number, radius = 1) {
-    if (!this.live) return;
-    const s = this.pool.pop() ?? { x: 0, y: 0, dx: 0, dy: 0, r: 0, g: 0, b: 0, radius: 1 };
-    s.x = x;
-    s.y = y;
-    s.dx = dx;
-    s.dy = dy;
-    s.r = r;
-    s.g = g;
-    s.b = b;
-    s.radius = radius;
-    this.queue.push(s);
-    this.amount = Math.min(1, this.amount + 0.02 * (r + g + b));
-  }
-  drain(fn: (s: Splat) => void) {
-    for (const s of this.queue) {
-      fn(s);
-      this.pool.push(s);
-    }
-    this.queue.length = 0;
-  }
-}
-export const fluid = new Fluid();
-
-/** Absorbance of an ink for the splat, normalised so every ink injects a comparable amount. */
-export function inkAbsorbance(hex: string, out: [number, number, number], strength = 1) {
-  const n = parseInt(hex.replace("#", ""), 16);
-  const c = [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
-  const a = c.map((v) => -Math.log(Math.max(v, 0.03)));
-  const m = Math.max(a[0], a[1], a[2], 1e-3);
-  out[0] = (a[0] / m) * strength;
-  out[1] = (a[1] / m) * strength;
-  out[2] = (a[2] / m) * strength;
-  return out;
-}
 
 const tri = new BufferGeometry();
 tri.setAttribute("position", new Float32BufferAttribute([-1, -1, 0, 3, -1, 0, -1, 3, 0], 3));

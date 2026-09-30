@@ -328,8 +328,108 @@ normal and WebM writer are written here.
 
 Filled in from the scripts as they were run; nothing here is estimated.
 
-MEASUREMENTS
+All numbers from this container: headless Chromium on SwiftShader (no
+GPU), `next start`. Frame times are CPU raster times and say nothing about a
+device; draw calls, triangles, bundle sizes, contrast ratios and the
+accessibility/SEO scores are exact.
+
+### Build
+
+`npm run build`, `npm run lint`, `npm run typecheck` pass; every screenshot
+run reports a clean console.
+
+### Bundles (gzip, `node scripts/verify.mjs bundle`)
+
+| bundle | size |
+|---|---|
+| initial JS before the 3D chunk (10 scripts) | **202.2 KB** (budget 180 KB; the site's own initial code ≈ 15 KB, the rest is the Next.js 16 + React 19 runtime) |
+| 3D chunk (three, fiber, drei, postprocessing, fluid, particles, all acts), fetched from an idle callback after first paint | 325 KB |
+| other lazy chunks | 12.7 KB |
+
+An earlier build had the drop preloader importing the fluid module and
+pulled three.js into the initial bundle (439 KB); the ink queue now lives in
+`src/lib/ink.ts` without three.
+
+### Lighthouse 13 (mobile: Moto G4 emulation, 4× CPU)
+
+| form | URL | Perf | A11y | BP | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|---|
+| mobile | `/` (HTML page on the software renderer) | 54 | **100** | **100** | **100** | 5.05 s | 0.001 | 1 109 ms |
+| desktop | `/` | 57 | **100** | **100** | **100** | 1.83 s | 0.009 | 1 576 ms |
+| mobile | `/?gl=1` (WebGL forced, rendered on the CPU) | 46 | **100** | **100** | **100** | 4.51 s | 0 | 6 489 ms |
+| desktop | `/?gl=1` | 60 | **100** | **100** | **100** | 0.97 s | 0.001 | 4 281 ms |
+
+The mobile LCP and TBT targets (2.5 s, 300 ms) are **not met on this
+machine**; CLS is under 0.01 everywhere because the WebGL probe now runs
+inline before the sections parse, so the document never changes shape on
+hydration. Real-device numbers were not measured.
+
+### Frame time per act (`node scripts/verify.mjs perf`, HIGH tier forced)
+
+| act | 1440×900 fps / frame / calls / tris | 390×844 4× CPU fps / frame / calls / tris |
+|---|---|---|
+| I name (shards) | 0.4 / 963 ms / 65 / 59 675 | 2.1 / 776 ms / 58 / 31 552 |
+| I glass | 0.4 / 1 126 ms / 65 / 59 675 | 0.6 / 855 ms / 65 / 31 559 |
+| II portals | 3.0 / 281 ms / 111 / 7 911 | 0.6 / 1 519 ms / 98 / 7 667 |
+| III ribbon | 0.3 / 853 ms / 89 / 7 658 | 0.5 / 1 581 ms / 194 / 216 479 |
+| IV machine | 0.2 / 1 371 ms / 240 / 226 851 | 0.4 / 1 769 ms / 101 / 10 721 |
+| V portrait | 0.4 / 1 792 ms / 62 / 59 | 1.2 / 1 325 ms / 62 / 59 |
+| VI card | 0.2 / 2 181 ms / 68 / 2 981 | 0.7 / 1 329 ms / 68 / 2 981 |
+| ending | 0.3 / 2 110 ms / 68 / 2 981 | 0.6 / 1 364 ms / 190 / 3 103 |
+
+The draw-call counts include the fluid's passes (≈ 28 per frame) and the
+particle system's substeps, which scale with the frame time on this
+software renderer (up to 10 per frame here, one on a 60 fps machine); the
+raw scene is 30–60 calls per act. The triangle spikes are the ribbon's
+extruded words and the machine's glass.
+
+### Tests (`node scripts/verify.mjs …`)
+
+| test | result |
+|---|---|
+| keyboard only (Tab × 70, `?gl=1&tier=low`) | 68 focus stops, every one inside the viewport with a focus ring, 0 inside a still-hidden section; sections without focusable content are reached from the nav |
+| 390 px, no horizontal scroll | scrollWidth 390 = clientWidth in 3D and HTML mode at every act anchor |
+| reduced motion | media matched; the rig sits exactly on stop keys 0, 0.28, 0.51, 0.65, 0.78, 0.9 for scroll targets 0.05, 0.3, 0.55, 0.7, 0.84, 0.94; the fluid freezes after the drop, the particle system shows the images themselves crossfading |
+| TR/EN | `/` → lang tr, "Portallar", toggle → `/en`; `/en` → lang en, "The portals", toggle → `/`; hreflang tr/en/x-default; work links `/isler/…` vs `/en/work/…` |
+| memory after 5 full scroll cycles (HIGH) | geometries 72 / textures 70 → 74 / programs 39 across the five cycles (the four extra textures are the last lazily loaded particle targets; cycles 4 and 5 are identical); JS heap 37 MB |
+| AA contrast (`node scripts/contrast.mjs`, rendered pixels behind every glyph run, hover and focus states) | 1 132 glyph runs at 1440 and 390, Gece and Galeri, hover and focus states: **0 failures** |
+| AA contrast in 3D mode (`--gl`, at the seven scroll stops, Gece + Galeri, 1440 + 390) | 420 glyph runs over the live scene at the seven stops: **0 failures** (legends on 82 % / 90 % scrims, small type in the secondary colour, the hero copy on its own scrim) |
+| interaction (`node scripts/hover.mjs`) | pointer over the first portal: index row "Izgara Üzerine" active, cursor in hover mode; click: fly-through then navigation to `/isler/ornek-afis-izgara`; ribbon hover through the index: "Editoryal tasarım"; card click: act "card", spin; typing "elif": confetti canvas visible; console clean |
+| README_ELIF.md | tested in v1 with a `content/works/deneme-isi/` folder; the pipeline and the guide are unchanged except the new optional `layers/` folder and `content/atmosphere/`, both exercised by the sample generator and the twelve shipped images |
+
+### Screenshots
+
+`docs/screenshots/v2/`: `final-{desktop,mobile}-{dark,light}-p*.png` at
+1440×900 and 390×844 for p = 0, 0.16, 0.28, 0.51, 0.65, 0.78, 0.9, 0.99;
+`seq-{a,b,c}-*` frame sequences of three transitions (hero → portals,
+machine → sphere → desk, desk → portrait → card) on both viewports;
+`chaos-*`, `low-*`, `reduced-*`, `html-*` (no WebGL, full page, both
+themes), `type-*` (the specimen at 1440 and 390), `hover-*`, `open-*`,
+`card-spin-*`, `confetti-*`.
+
 
 ## 12. Known limitations (honest)
 
-LIMITATIONS
+- **Frame rate on real hardware is unmeasured.** No GPU in the container;
+  SwiftShader renders the stage at 0.2–3 fps. The 60 fps laptop / 40 fps
+  Android targets are engineered for (tiers, dpr caps, 30–45 fps touch cap,
+  one draw call for 120 k particles, stencil portals without extra passes)
+  and not verified on a device.
+- **Initial JS is 202 KB gzip against 180 KB.** ≈ 187 KB of it is the
+  framework runtime; the site's own initial code is ≈ 15 KB.
+- **Lighthouse mobile LCP (5.1 s) and TBT (1.1 s) miss the targets on this
+  throttled CPU.** Not measured on a device.
+- **The twelve atmosphere images are AI-generated art direction**, never
+  presented as works; the six sample works are fictional and tagged
+  "Örnek"; `email` and `social` are empty until Elif fills them.
+- **Draw calls on the ribbon and the machine exceed the §6 budget when
+  counted with the fluid and particle passes**; the raw scene stays within
+  it. The words' extrusions are the first thing to instance if a device
+  shows the ribbon below 40 fps.
+- **The particle transitions are scroll-linked, not time-linked**: a fast
+  flick crosses a transition in a few frames and the cloud has no time to
+  bloom; Lenis's easing softens this on desktop, native scrolling on phones
+  does not.
+- **Device-orientation tilt** on phones is not built; the hand is the finger.
+- **Sound** is two synthesized cues behind a toggle that defaults to off.
+

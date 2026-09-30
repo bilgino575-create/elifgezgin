@@ -272,7 +272,7 @@ export function toShapes(contours: number[][], toUnit: (x: number, y: number) =>
  * Everything the name needs, in a unit space where the cap height is 1 and y = 0 is the baseline.
  * `cell` is the shard grid spacing in pixels of the raster.
  */
-export function buildGlyphs(text: string, family: string, weight = 700, px = 240, cell = 11): Glyphs {
+export function buildGlyphs(text: string, family: string, weight = 700, px = 240, cell = 11, tol = 0.65): Glyphs {
   const r = rasterise(text, family, weight, px);
   // normalise by the CAP height (an "H" of the same font), not by the ink box: accents like the dot of İ would shrink the line
   const cap = rasterise("H", family, weight, px);
@@ -283,7 +283,7 @@ export function buildGlyphs(text: string, family: string, weight = 700, px = 240
   const baseline = cap.maxY + 1;
   const toUnit = (x: number, y: number): [number, number] => [(x - r.minX) / capH, (baseline - y) / capH];
   const raw = traceContours(r.mask, r.W, r.H);
-  const contours = raw.map((c) => smooth(simplify(c, 0.65))).filter((c) => Math.abs(area(c)) > 4);
+  const contours = raw.map((c) => smooth(simplify(c, tol))).filter((c) => Math.abs(area(c)) > 4);
   const shapes = toShapes(contours, toUnit);
   const pts: number[] = [];
   const seed = 7;

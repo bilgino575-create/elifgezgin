@@ -95,8 +95,8 @@ export default function Glass({
               clearcoat={1}
               clearcoatRoughness={0.1}
               emissive={spot}
-              emissiveIntensity={light ? 0.04 : 0.14}
-              attenuationDistance={light ? 1.2 : 2.2}
+              emissiveIntensity={light ? 0 : 0.14}
+              attenuationDistance={light ? 4.5 : 2.2}
             />
           )}
         </mesh>

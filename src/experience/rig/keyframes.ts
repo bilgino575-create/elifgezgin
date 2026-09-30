@@ -39,7 +39,6 @@ export function makeKeys(mobile: boolean): Key[] {
   const sM = 2.3 * side; // process index right (the machine spans x −1.1 … 4.5, so aim right of its middle)
   const sPo = 2.1 * side; // about right
   const sC = -1.0 * side; // contact left
-  const dz = mobile ? 1.3 : 0; // phones: legends cover the lower half, aim a little further so objects sit higher
   const dy = mobile ? -1.15 : 0; // phones: aim below the objects so they sit in the upper half of the screen
   const rowEnd = mobile ? 0 : (n - 1) * PORTAL_GAP;
   const rowDrop = mobile ? -Math.floor((n - 1) / 2) * 3.0 : 0;

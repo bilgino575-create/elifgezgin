@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { useStore } from "@/lib/store";
-import { fluid, inkAbsorbance } from "@/experience/fluid/Fluid";
+import { fluid, inkAbsorbance } from "@/lib/ink";
 import { site } from "@/lib/content";
 import type { Lang } from "@/lib/content";
 import { t } from "@/i18n/dict";

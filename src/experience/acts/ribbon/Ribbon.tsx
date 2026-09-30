@@ -98,9 +98,10 @@ export default function Ribbon() {
     if (fonts) {
       const fam = displayFamily();
       const built = site.skills.map((s, i) => {
-        const g = buildGlyphs(L(s.name, lang), fam, 700, 160, 40);
+        // coarser outlines than the hero name: seven words on a knot never fill the screen
+        const g = buildGlyphs(L(s.name, lang), fam, 700, 120, 40, 1.4);
         // two half-depth extrusions back to back, the rear one mirrored, so the word reads from either side of the ribbon
-        const front = new ExtrudeGeometry(g.shapes, { depth: 0.2, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, curveSegments: 3 });
+        const front = new ExtrudeGeometry(g.shapes, { depth: 0.2, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 1, curveSegments: 2 });
         const back = front.clone();
         back.scale(-1, 1, -1);
         back.translate(g.width, 0, 0);

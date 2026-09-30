@@ -20,10 +20,11 @@ export interface MorphKey {
 }
 
 export const MORPH_KEYS: MorphKey[] = [
-  { p: 0.0, img: "elif-02-cam-parcalari", anchor: "name", z: -9, height: 9, dim: 0.35 },
-  { p: 0.05, img: "elif-02-cam-parcalari", anchor: "name", z: -9, height: 9, dim: 0.35 },
-  { p: 0.08, img: "elif-01-murekkep-damlasi", anchor: "name", z: -7, height: 8, dim: 0.5 },
-  { p: 0.09, img: "elif-01-murekkep-damlasi", anchor: "name", z: -7, height: 8, dim: 0.5 },
+  // deep and faint behind the anamorphic moment: the shards must read alone
+  { p: 0.0, img: "elif-02-cam-parcalari", anchor: "name", z: -13, height: 13, dim: 0.16 },
+  { p: 0.05, img: "elif-02-cam-parcalari", anchor: "name", z: -13, height: 13, dim: 0.16 },
+  { p: 0.08, img: "elif-01-murekkep-damlasi", anchor: "name", z: -8, height: 9, dim: 0.4 },
+  { p: 0.09, img: "elif-01-murekkep-damlasi", anchor: "name", z: -8, height: 9, dim: 0.4 },
   { p: 0.115, img: "elif-00-hero", anchor: "name", z: -1.8, height: 1.75, dim: 0.62 },
   { p: 0.16, img: "elif-00-hero", anchor: "name", z: -1.8, height: 1.75, dim: 0.62 },
   { p: 0.24, img: "elif-03-portal-cerceveler", z: -5, height: 6.5, dim: 0.5, dx: 1.5 },

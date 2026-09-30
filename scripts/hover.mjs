@@ -22,6 +22,7 @@ const browser = await puppeteer.launch({
   headless: true,
   executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
   args: ["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
+  protocolTimeout: 900000,
 });
 const page = await browser.newPage();
 await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
@@ -51,10 +52,10 @@ await page.screenshot({ path: path.join(out, "hover-portal-desktop-dark.png") })
 // 2. open it: click where the pointer is, expect the fly-through then the case study
 const before = page.url();
 await page.mouse.click(1140, 450);
-await sleep(600);
-report.opening = await page.evaluate(() => window.__stats?.()?.act ?? null);
-await page.screenshot({ path: path.join(out, "open-flythrough-desktop-dark.png") });
-await sleep(2500);
+await sleep(300);
+// the fly-through runs 950 ms, then the page navigates; a screenshot during navigation hangs the CDP, so only the state is read
+report.opening = await page.evaluate(() => (document.querySelector(".hud") ? "hud" : "") + "|" + (window.__stats?.()?.act ?? null));
+await page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 60000 }).catch(() => null);
 report.navigated = { from: before, to: page.url() };
 
 // 3. back home: ribbon hover, card spin, the gift

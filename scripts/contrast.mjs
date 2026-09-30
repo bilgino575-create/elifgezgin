@@ -42,6 +42,8 @@ let checked = 0;
 const fails = [];
 
 async function audit(page, label, state) {
+  const stateSig = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-current], [aria-pressed], .index li")).map((e) => e.getAttribute("aria-current") + e.getAttribute("aria-pressed") + e.getAttribute("data-active")).join(""));
+  const sigBefore = await stateSig();
   // collect text elements
   const els = await page.evaluate((state) => {
     const parse = (c) => {
@@ -75,11 +77,27 @@ async function audit(page, label, state) {
       // the glyph run itself (a Range), not the element box: pills, padding and underlines are background
       const range = document.createRange();
       range.selectNodeContents(n);
-      const r = range.getBoundingClientRect();
+      let r = range.getBoundingClientRect();
       if (r.width < 2 || r.height < 2 || r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) continue;
       // scrolled under the fixed nav: not readable there anyway
       const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-h")) || 72;
       if (r.top < navH && !el.closest(".nav, .skip")) continue;
+      // visually hidden (sr-only: a 1 px clipped box) or clipped away by a scrolling ancestor: not on screen
+      let clipped = false;
+      let anc = el; // the element itself may be the 1 px clipped box (sr-only)
+      let box = { l: r.left, t: r.top, r: r.right, b: r.bottom };
+      while (anc && anc !== document.body) {
+        const acs = getComputedStyle(anc);
+        const ar = anc.getBoundingClientRect();
+        if (ar.width <= 2 && ar.height <= 2) { clipped = true; break; }
+        if (acs.overflow !== "visible" || acs.overflowY !== "visible" || acs.clipPath !== "none") {
+          box = { l: Math.max(box.l, ar.left), t: Math.max(box.t, ar.top), r: Math.min(box.r, ar.right), b: Math.min(box.b, ar.bottom) };
+          if (box.r - box.l < 2 || box.b - box.t < 2) { clipped = true; break; }
+        }
+        anc = anc.parentElement;
+      }
+      if (clipped) continue;
+      r = new DOMRect(box.l, box.t, box.r - box.l, box.b - box.t);
       const fg = parse(cs.color);
       if (!fg || fg.a < 1 || cs.backgroundClip === "text") continue;
       const size = parseFloat(cs.fontSize);
@@ -104,6 +122,19 @@ async function audit(page, label, state) {
   // screenshot with text transparent (outline/underline kept: they are not glyphs but count as background)
   await page.addStyleTag({ content: "body * { color: transparent !important; caret-color: transparent !important; -webkit-text-fill-color: transparent !important; } .cursor{display:none!important}" });
   const png = await page.screenshot({ type: "png" });
+  // a state that changed between the read and the shot (the active nav pill moving) is not a real pair: drop it
+  const after = await page.evaluate(() => {
+    const out = new Map();
+    for (const el of document.querySelectorAll("a, button, .index li, .chip")) out.set(el, getComputedStyle(el).backgroundColor + "|" + el.getAttribute("aria-current") + "|" + el.getAttribute("aria-pressed") + "|" + el.getAttribute("data-active"));
+    return Array.from(out.values());
+  });
+  void after;
+  if ((await stateSig()) !== sigBefore) {
+    // the page changed state during the read: re-run this audit once
+    await page.evaluate(() => document.querySelectorAll("style").forEach((s) => s.textContent?.includes("caret-color: transparent") && s.remove()));
+    await new Promise((r) => setTimeout(r, 400));
+    return audit(page, label, state);
+  }
   await page.evaluate(() => document.querySelectorAll("style").forEach((s) => s.textContent?.includes("caret-color: transparent") && s.remove()));
   const { data, info } = await sharp(png).raw().toBuffer({ resolveWithObject: true });
   const dbg = process.env.CONTRAST_DEBUG;
