@@ -49,6 +49,13 @@ siteyi yayınlamak için en alttaki "Yayınlama" bölümüne bak.
 
 Sonra kaydet, yayınla. Başka hiçbir şey gerekmez: site klasörleri kendisi okur.
 
+**İsteğe bağlı, derinlik katmanları:** İşin klasörüne `layers` adında bir
+klasör açıp tasarımı katmanlar hâlinde koyarsan (ör. `1-arka.jpg`,
+`2-sekiller.png`, `3-yazi.png`; PNG'ler saydam olabilir, sıralama dosya
+adına göre arkadan öne) 3B sahnedeki portalın içinde katmanlar üzerine
+gelince derinlikte ayrılır. Koymazsan kapak tek katman olarak durur; hiçbir
+şey bozulmaz.
+
 ## 2. Örnek işleri kaldırmak
 
 Adı `ornek-` ile başlayan altı klasör örnek işlerdir; hepsinin sağ üstünde

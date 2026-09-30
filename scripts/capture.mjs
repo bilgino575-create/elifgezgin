@@ -24,7 +24,7 @@ const get = (k, d) => {
 const url = get("url", "http://localhost:3000");
 const LOOPS = {
   hero: { p: 0.0, seconds: 7, hand: true, intro: true },
-  portals: { p: 0.28, seconds: 6, hand: true },
+  portals: { p: 0.34, seconds: 6, hand: true },
   card: { p: 0.9, seconds: 6, hand: true },
 };
 const names = args.includes("--all") ? Object.keys(LOOPS) : [get("name", "hero")];

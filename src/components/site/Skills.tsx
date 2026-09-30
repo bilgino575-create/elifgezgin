@@ -35,7 +35,7 @@ export default function Skills({ lang }: { lang: Lang }) {
       </ul>
 
       <h3 className="eyebrow mt-10 mb-3">{d.skills.tools}</h3>
-      <ul className="tokens" aria-label={d.skills.tools}>
+      <ul className="tokens html-only" aria-label={d.skills.tools}>
         {site.tools.map((tool, i) => (
           <li key={tool} className="token" style={inkVars(i + 2) as React.CSSProperties}>
             <b aria-hidden="true">{toolMark(tool)}</b>
@@ -43,7 +43,9 @@ export default function Skills({ lang }: { lang: Lang }) {
           </li>
         ))}
       </ul>
-      <p className="meta mt-3 gl-only">{d.skills.toolsText}</p>
+      <p className="meta mt-3 gl-only">
+        {site.tools.join(" · ")}. {d.skills.toolsText}
+      </p>
     </Section>
   );
 }

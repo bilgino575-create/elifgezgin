@@ -264,6 +264,57 @@ normal and WebM writer are written here.
    tested in the keyboard run);
 4. the no-WebGL page is designed, not a fallback.
 
-## 10. Measurements
+## 10. Techniques, in one paragraph each
 
-Filled in as they are taken; see the end of this file.
+- **Living ink.** Stam's stable fluids on the GPU: velocity and dye in
+  half-float ping-pong targets (velocity ≈ ¼ of the canvas, dye ≈ ⅔ on
+  HIGH), vorticity confinement, 20 Jacobi pressure iterations, semi-Lagrangian
+  advection. The dye stores absorbance; the backdrop shader turns the mixed
+  absorbance direction into a saturated hue and its length into coverage,
+  so cyan and yellow make green and thin ink stays vivid instead of pale.
+  Everything transmissive (the glass name) refracts that backdrop because
+  `MeshTransmissionMaterial` renders the scene into its own buffer.
+- **Letterforms without a font parser.** The page font is rasterised on a
+  canvas, the ink mask is traced into pixel-edge loops, simplified (RDP),
+  rounded (Chaikin) and classified into outer contours and holes by
+  containment depth. The result is a `three.Shape` per letter, extruded with
+  a bevel. Cap height is the unit, the baseline is y = 0, so the 3D name
+  can be fitted exactly to the `<h1>`'s line boxes and the HTML text goes
+  transparent without a jump (`html.deboss`).
+- **Anamorphosis.** Each glyph sample becomes a shard placed on its own ray
+  from the anamorphic viewpoint at a random depth; the vertex shader scales
+  it by that depth so the apparent size is constant. One instanced draw
+  call; convergence, idle drift, the hand's push and the paint / foil /
+  glass shading all live in the shader.
+- **Stencil portals.** The frame's inner plane writes a stencil id with
+  colour writes off; the room, layers and object behind it test for that
+  id. No render-to-texture per portal, real depth and parallax, and the
+  post-processing composer keeps a stencil buffer so bloom still applies.
+- **Bent type.** Arc-length Frenet frames of the torus knot are packed into
+  a 512 × 4 float texture; `onBeforeCompile` replaces `begin_vertex` and
+  `beginnormal_vertex` so each word's x becomes an arc fraction and its
+  y/z ride the normal and binormal. Words are extruded twice, the rear copy
+  mirrored, so they read from both sides of the ribbon.
+- **Foil.** Thin-film iridescence (`iridescence`, thickness 120–520 nm) over
+  a dark metallic base, a procedural diffraction-grating normal map, and a
+  view-angle rainbow term added to the indirect specular in the shader.
+  At the ending the dye texture is mixed into the print by `uPour`.
+- **Particles.** The machine's 100 k particles are stateless: the vertex
+  shader derives each particle's route position from time and a seed, so
+  there is no simulation pass; the portrait's 50 k dots are stateful (a
+  4-channel float ping-pong of position and velocity) because they need
+  springs and memory of where the hand pushed them.
+- **Video loops without ffmpeg.** `scripts/capture.mjs` drives the real scene
+  frame by frame (`?capture=1`, `window.__advance`), encodes each frame with
+  WebCodecs' VP9 encoder inside headless Chromium and muxes the chunks with
+  a 90-line WebM writer. Posters are WebP.
+
+## 11. Measurements
+
+Filled in from the scripts as they were run; nothing here is estimated.
+
+MEASUREMENTS
+
+## 12. Known limitations (honest)
+
+LIMITATIONS
