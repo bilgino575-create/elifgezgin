@@ -42,6 +42,10 @@ export interface AppState {
   hoverWork: string | null;
   /** skill id under the cursor / focus */
   hoverSkill: string | null;
+  /** the holographic card is under the cursor */
+  hoverCard: boolean;
+  /** the card was clicked: spin counter */
+  spin: number;
   /** active category filter */
   filter: Category | "all";
   /** slug being opened (camera flight before navigation) */
@@ -78,6 +82,8 @@ const initial: AppState = {
   pointerIn: false,
   hoverWork: null,
   hoverSkill: null,
+  hoverCard: false,
+  spin: 0,
   filter: "all",
   opening: null,
   confetti: 0,

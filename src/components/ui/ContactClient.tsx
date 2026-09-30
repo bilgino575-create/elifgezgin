@@ -51,12 +51,12 @@ export function ContactForm({
         window.location.href = href;
       }}
     >
-      <h3 className="h3 display">{labels.title}</h3>
-      <label className="field">
+      <h3 className="display h3">{labels.title}</h3>
+      <label className="field-row">
         {labels.name}
         <input name="name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
       </label>
-      <label className="field">
+      <label className="field-row">
         {labels.message}
         <textarea name="message" rows={4} value={msg} onChange={(e) => setMsg(e.target.value)} required />
       </label>

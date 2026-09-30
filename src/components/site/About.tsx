@@ -9,7 +9,7 @@ export default function About({ lang }: { lang: Lang }) {
   const d = t(lang);
   const paragraphs = L(site.bio, lang).split(/\n\s*\n/).filter(Boolean);
   return (
-    <Section id="hakkimda" wide align="right" card>
+    <Section id="hakkimda" wide align="right" scrim>
       <p className="eyebrow mb-4">{d.about.eyebrow}</p>
       <h2 id="hakkimda-title" className="display h2">
         {d.about.title}
@@ -23,7 +23,7 @@ export default function About({ lang }: { lang: Lang }) {
           )}
           <div className="halftone" />
         </div>
-        <div className="prose lede">
+        <div className="prose lead">
           {paragraphs.map((p, i) => (
             <p key={i}>{noWidow(p)}</p>
           ))}

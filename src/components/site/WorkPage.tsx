@@ -58,7 +58,7 @@ export default function WorkPage({ lang, slug }: { lang: Lang; slug: string }) {
           </dl>
         </header>
 
-        {L(w.text, lang) ? <p className="lede mt-8">{noWidow(L(w.text, lang))}</p> : null}
+        {L(w.text, lang) ? <p className="lead mt-8">{noWidow(L(w.text, lang))}</p> : null}
 
         <div className="gallery mt-12">
           <figure>

@@ -10,7 +10,7 @@ export default function Works({ lang }: { lang: Lang }) {
   const cats = Array.from(new Set(works.map((w) => w.category)));
   const hasSamples = works.some((w) => w.sample);
   return (
-    <Section id="isler" wide card>
+    <Section id="isler" wide scrim>
       <p className="eyebrow mb-4">{d.works.eyebrow}</p>
       <h2 id="isler-title" className="display h2">
         {d.works.title}
@@ -80,7 +80,7 @@ export default function Works({ lang }: { lang: Lang }) {
           </li>
         ))}
       </ul>
-      {hasSamples ? <p className="sample-note mt-6 html-only">{d.works.sampleHint}</p> : null}
+      {hasSamples ? <p className="meta mt-6 html-only">{d.works.sampleHint}</p> : null}
     </Section>
   );
 }
