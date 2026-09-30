@@ -8,6 +8,8 @@ import StatsWriter from "./StatsWriter";
 import Backdrop from "./stage/Backdrop";
 import FluidSim, { FLUID_BY_TIER } from "./fluid/Fluid";
 import Name from "./acts/name/Name";
+import Portals from "./acts/portals/Portals";
+import Card from "./acts/card/Card";
 import Post from "./Post";
 import { useStore } from "@/lib/store";
 import { site } from "@/lib/content";
@@ -33,6 +35,8 @@ export default function Scene() {
       <pointLight position={[4, -3, 4]} intensity={6} color="#ff2e88" distance={14} />
       <Suspense fallback={null}>
         <Name />
+        <Portals />
+        <Card />
       </Suspense>
       <Post />
     </>

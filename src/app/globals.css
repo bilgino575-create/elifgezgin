@@ -309,6 +309,9 @@ body {
   html.capture .h1 .block {
     margin: 0 auto;
   }
+  html.nopanels .panel,
+  html.nopanels .nav,
+  html.nopanels .footer,
   html.capture .nav,
   html.capture .cursor,
   html.capture #giris .eyebrow,
@@ -495,6 +498,11 @@ body {
     border: 1px solid var(--line);
     border-radius: 14px;
     padding: 1.6rem 1.7rem 1.8rem;
+  }
+  /* legends beside a large object keep to the narrow column */
+  html.gl #iletisim .panel-body.wide,
+  html.gl #beceriler .panel-body.wide {
+    width: min(100% - var(--gutter) * 2, 30rem);
   }
   html.gl #giris .panel-body {
     width: min(100% - var(--gutter) * 2, 88rem);

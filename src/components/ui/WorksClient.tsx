@@ -64,7 +64,7 @@ export function WorkIndex({
                 store.set({ opening: w.slug });
                 window.setTimeout(() => {
                   window.location.href = w.href;
-                }, 750);
+                }, 950);
               }
             }}
           >

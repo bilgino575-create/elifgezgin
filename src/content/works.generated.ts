@@ -16,11 +16,40 @@ export interface Work {
   order: number;
   cover: { src2048: string; src1024: string; src640: string; w: number; h: number; blur: string };
   gallery: WorkImage[];
+  /** three dominant colours of the cover, most frequent first */
+  colors: string[];
+  /** optional depth layers, back to front */
+  layers: WorkImage[];
 }
 export const works: Work[] = [
   {
     "slug": "ornek-afis-izgara",
     "category": "poster",
+    "colors": [
+      "#f2f1ec",
+      "#262e7a",
+      "#999cbf"
+    ],
+    "layers": [
+      {
+        "src": "/works/ornek-afis-izgara/layer-1-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-afis-izgara/layer-2-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-afis-izgara/layer-3-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      }
+    ],
     "year": 2026,
     "role": {
       "tr": "Konsept ve tasarım",
@@ -47,26 +76,51 @@ export const works: Work[] = [
       "src640": "/works/ornek-afis-izgara/cover-640.webp",
       "w": 1600,
       "h": 2000,
-      "blur": "data:image/webp;base64,UklGRuQAAABXRUJQVlA4INgAAABwBQCdASoYAB4APu1mq0+ppSOiMBgIATAdiWwAt7g0xTMVOflS9mJ+M8KYpfdAhf/mNMMAAP7zijyO+SuIl6lt6Z3zwogUEc3Xr1tTwojGftjw+yucxnCzS5s4GvV7icOqNgP/H7NvuGhRa2GrD65EqytNg7+MsmwqVpgQMV7sSHE/chcYLgSbKlPIdRI0S/UR+JtMBOsAyIsSETGSERzrxKhgvavNeAIaUM7n7nIJthSL12QA+rR3iy7dhaB86Jonvq5UpyCE+Agyu/u5YRidxbmNvcLQAAA="
+      "blur": "data:image/webp;base64,UklGRuAAAABXRUJQVlA4INQAAABQBQCdASoYAB4APu1iq0+ppSOiMBgIATAdiWwAvkg03NyarlSuDME5gYtKD7dSAiwJgAAA/vOKPK/mjX5DmOzG4nItri727ixoX1jg0tVwkgvPbSuNc9LmzgbVNLP52OE0rdv8xMEe4aMxZGkopulVaJLOLUltHN+LMn3qnCRBp6IIFJdfyBgrhmg7ZFznqp9nBuHvz1Sgm0sXwcvNWYOQvCCklszvAB/PqueeOQpjO2hJHjT8u1zrCyije7Fa0ZfbO0NSgm+zifWVz4CJalQhZ0ngAA=="
     },
     "gallery": [
       {
         "src": "/works/ornek-afis-izgara/gallery-1-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAAAQBQCdASoYAB4APtlco02oJaMiN/qoAQAbCWwAnSiskBbZgDv/Ys+f8p7gOHNRnTWsAP7zb+3eohcjrQM1KOpCQ99gWc6ixb4Ky3/yivoAGWjkCU/MA/IQxCN1C8I524V6AxEBj4K1FoN3njAItbkWLORjui/jP1F/Impt4CVg3XdPb73yl+5/6Aoc1SS9vlXfAQAA"
+        "blur": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABwBACdASoYAB4APtVWok2oJKMiN+gBABqJbACdEfqgWZzuSEz0dFrPapVoQAD+82/t3w75qm5Jkm6GYIp7E98UzrT3z/n92rvMIpZgTMAPa7z7uY6Lg9gO5qQ7kG4avsv47WNldIEovZ9SWv7GipuN/+/PtA15LM4VlFCT3HYFFd1F063NNqVmd7eKjkAA"
       },
       {
         "src": "/works/ornek-afis-izgara/gallery-2-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRt4AAABXRUJQVlA4INIAAABwBQCdASoYAB4APu1oq08ppiOiMBgIATAdiWwAyJg0xTMQj3N32UtZ9499CLaZG5fo+BBAAP70O2lcynaXCinsmMJddpquJZ9h3D0gZJG7evhb7P6rzTBL60sD7S48t2Sf53Ccthqsh1ndsZ5p/Oje8vepZgRqsKaC+eEcQ7htIzP7ZJC8ei7xn6PzTXqtXduu5+rIF5r2ifxG2rQq1lb+T1tySNVjJDL8OUJMTbs+bvcyS5HeGFaizW5NKivwGisNBQm8yIjoolsKxs1b4hWAAAA="
+        "blur": "data:image/webp;base64,UklGRuAAAABXRUJQVlA4INQAAAAQBQCdASoYAB4APu1kq0+ppSOiMBgIATAdiWwAAJBpygHuPy+EAVcaYpeQHwalgRUAAP71g4DLdJy8n88B9zCwdWv4XX5Yr68MyxKRlrQVPJ2CIunH5Xv3yu6KvalcaycUB/tkqH5RIVsArxlYOXqWCZYDSYckKw79H7RCEbzFOOfaOaYbWlZi9yYiaqOyyNBqtVzXY4yF1OGqMWTRM/EQ4pm31QSIq7IhYydhf8wqCw2bxOhPUimH1sS9nr5Edtgi4KJo/VYsJQKgiNswfEoBvyBAAA=="
       }
     ]
   },
   {
     "slug": "ornek-afis-daireler",
     "category": "poster",
+    "colors": [
+      "#dad9d4",
+      "#1b1c1e",
+      "#9ca1e6"
+    ],
+    "layers": [
+      {
+        "src": "/works/ornek-afis-daireler/layer-1-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-afis-daireler/layer-2-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-afis-daireler/layer-3-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      }
+    ],
     "year": 2026,
     "role": {
       "tr": "Konsept ve tasarım",
@@ -93,26 +147,51 @@ export const works: Work[] = [
       "src640": "/works/ornek-afis-daireler/cover-640.webp",
       "w": 1600,
       "h": 2000,
-      "blur": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAACwBQCdASoYAB4APuVgpk2pJaOiMAwBIByJQBlo6/23+A2mW+48yIejVv7V2nTSvsYUBHZEEAAA/u/i6k+XHLCeQym3PZYAEyG6KqbSe5PitUdr+BJIpKHlpphXmBDYYm5E+3fGGbSgjK58krRQOCXVv4XLgzwGF/26XaSXRq0u/SFAM7ruX5AwVEohgEiMcZO7EYkD/fLYeVRdyybFzUk148nNKAd19NEzaYDqub0tmh/xoL9atNi5GtsguJ4ycivz+1T6msy+9AAA"
+      "blur": "data:image/webp;base64,UklGRt4AAABXRUJQVlA4INIAAADwBQCdASoYAB4APu1mp02ppiOiMBgMATAdiUAZQ2v9t/gHom3cqNwK1SSewELmb5PL8ZxX19XAAAD+7UrjMfhlRmaSRjMOeOPUpcWu8MSe3X8MInSRBqUV6GVlf1ILRERPQjMKHn7gQIEBAaju6zVzPpRUBAhQb8zpbGjZHCPurICklp1y1DEdbfOLvdiGbyR1PQIG/fAQuJciuh4LE8PsccqBX1mbThXBaVHsw1webcSGOc9y8C/o2kz7Q1r1vO7M6nbc26qqbtMe6ranf5LREAA="
     },
     "gallery": [
       {
         "src": "/works/ornek-afis-daireler/gallery-1-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRngBAABXRUJQVlA4IGwBAACwBwCdASoYAB4APu1qsFAppaSiqAqpMB2JbAC1CGc9VbYFk5vi91Vbg3wNJ9Mq8fw5fyo6nPpJkNqouAkcq0Rm+XEt+W8AAP7tYWxjCSzSwI7kl0d9RJXGGqzcyagCLyEUIhlX4NLDZUUPDTtaUocBKqyxvEXifAECxQqn+HL+DVvyLTTkXAK1oesao8sf/HqSAugT0m/BhG32FEJuVOX2N4RJeBZV23vdxpR31hN+7v7I0/k38v9eynX/KRnHxZJsbaBsznj4Xk2s3qok+clYuAmHttHQqlKXYjoZlXwif2tjzfKTp376cmre8UvJ7vkNGuO+VRSpY4sEdB5SBtk8jsFY+FzE0V0wWyiHozPa46Sjb2cE9qQS7PdfR/jc3aaDa/zuq6/EsrPt3Vq1H/iRyMhe+KOwrO7XDLNJBvSgqfoT47wCVynfrI11enMYkbaJ/2644w5AK9FsDljRVyhQ9W5unw0W9gXlzoAA"
+        "blur": "data:image/webp;base64,UklGRnIBAABXRUJQVlA4IGYBAADQBwCdASoYAB4APu1qsFAppaSiqAqpMB2JagDE+E3Jx6YBvLk+B8KrcG+BpPvWfP+55phfq2XN+NfYWeAjgN5gFbNGI2iM4AD+7WFsYwbulGqO5Jd7AbmEZWLGpkfJjIM+xz/qJixZQyg5i7ZPBkGZaG+Dd255q750bL1ZqWo6QpBIiB9vsBRwAYkz4G+N6GlzxK1T2rjECfbqITIIOZk6Ry/YtSajQ+NIsiv0/4QSUrQXL5o3Mv9fXPv/yKshm46SEEnwZNlJ2jxIjesekF/oCZnp6M6/6sYe+4JGeNYjAstJOq+mccwbmzpCdmPC4a1VsKbSVxFWQDO4iPTEihe0HVcm//HkBwNDEJZaQMV5B8tmrpFJLLqtZQcP8a7EozLP86/cDCj9E/sGBVR6+KOwrO31mXvmHtVRhH6Hx0xJXvvOVKX+l1Z7MyiPG+tal56ZNx93p5JrteEOifxzT6ecojCYkAAA"
       },
       {
         "src": "/works/ornek-afis-daireler/gallery-2-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRtgAAABXRUJQVlA4IMwAAACwBQCdASoYAB4APuVepU2pJSOiMAwBIByJQBjS6/23+A2mm/waOAK7Bt21Y60tYhic4oTTpkAA/vDssxYu8rUtyUD8SPOfWD7Ja7jZq29gO0Bxv6FBvOhd97/1TJeu1OnrH6PuZM5E3r3MpydkOBE312GF6PTwBdnf1LfE3Q7Ln5s33y5N+rwtJmbkxbFJXfBobpAmAe4z4WBAAZzUdsh8XMk6bcJVSD50X3zdZayYHJAf3EeI+bMzmvFxroFA2LnCTJxOw+4wssx2AAA="
+        "blur": "data:image/webp;base64,UklGRt4AAABXRUJQVlA4INIAAADQBQCdASoYAB4APu1mpk2ppiOiMBgMATAdiUAZnhV//7b/APRLhfEI74UZs7715naX7KVcC+uAAP7wznUjDzkvtPVdwNGnZ5soJJi3pe4buMHcYhFriBs7a3FJOr7lLiM1ZdLYVh3VAHDciq9+JJo65XrpXQc0yEHR0GzvkBx98Yx36o1mZRKLsAVGV/BTscfVbxkUOcl3PAqaJASJyEzmTqCTWOgW+mO3Ddm36yTtG8n3VlCH83JLwI4aLLl7cLAe7kn3R7Cy7+BhlSxriscAAAA="
       }
     ]
   },
   {
     "slug": "ornek-afis-yedi",
     "category": "poster",
+    "colors": [
+      "#efeeea",
+      "#cfcfd1",
+      "#4f5be9"
+    ],
+    "layers": [
+      {
+        "src": "/works/ornek-afis-yedi/layer-1-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-afis-yedi/layer-2-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-afis-yedi/layer-3-1024.webp",
+        "w": 1024,
+        "h": 1280,
+        "blur": ""
+      }
+    ],
     "year": 2026,
     "role": {
       "tr": "Konsept ve tasarım",
@@ -139,26 +218,51 @@ export const works: Work[] = [
       "src640": "/works/ornek-afis-yedi/cover-640.webp",
       "w": 1600,
       "h": 2000,
-      "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABQBACdASoYAB4APtFUoU2oJKMiN+gBABoJQBmLBjRUQjVYuJKV9ENpRyQQAP7zc6V7pS9RHOHqxt0DeRQHNX5NPRWcDN2kvlAWHdk4w/KmKxEeLTX0jL4wfvnYxpUR1pIp0BqgI/q71HwVGD99h+9v89CVds7mMGVkcVUTZYwAAA=="
+      "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAAAwBACdASoYAB4APtVWok2oJKMiN+gBABqJQBj8hjRUQpyCmLwlSUVPk4AA/vNynvzoaUNFGDTox3k9bKqtQv/a81NmsULMrLyxEmU3vKyfgVcdmSFFO4IAvvwqIlV/h9bSPXXdRQsI5cp01xPT9/gVD6SFcOUupmmhcf7GF8pgAA=="
     },
     "gallery": [
       {
         "src": "/works/ornek-afis-yedi/gallery-1-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAAAQBQCdASoYAB4APuFWpU2opKOiN/qoARAcCWYAxxTIB7U1vqYSWLC4bzBWCwtSmfZQAP73CINHjEDDbOG6wqifSg/VKc/90cVrTRIIUQprsOI64ZiW0Q5AMp2IKR/1GIRw4Fd0Q44Ux729kGAai9nfgWbClLGU666wyuv2p/8EYDSCBkdPjczVgrPJQSuIFSk4k7jdtrJyfvSlIHaptB9AcmujALwkdkAAAA=="
+        "blur": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAABQBQCdASoYAB4APuFUpU2opKOiN/qoARAcCWYAxw9WwOTvBOl0I0xC7a2xL10G7DJRCCAA/vfpiNS8ZPa7xYmd3DqGDQ6V/+6OZdMlVEwLmrdmmc9hNfP1ww7GziQUj/rqkTXkjvda9L2QlUYvOXBpUJ2gGD4xa50zESDhvbBYQqjqc5SUZRtQ9rPYtMMBuT7jAiKNWoFIariYd0souoK+ud9jkgAA"
       },
       {
         "src": "/works/ornek-afis-yedi/gallery-2-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABQBACdASoYAB4APtlcok2oJaMiN/qoAQAbCUAZQAQtf7fp6qllpxXfHJCAAP70JMn8W5GDk+skTMGFhYPN2O7cuxH6+BgJlAxJOx6j81TrE6hT7xkSZTHfeP+Pe1+sYYjYLdF9HiVpgqn/ZzNkfTE8K82mPeOXlJ/20/jik1cAAA=="
+        "blur": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAABQBACdASoYAB4APtleo02oJaMiN/qoAQAbCUAZsIQtf7fp6qllpxXfHJCAAP70JMn8W5nyGgA3bUAGZZeLYNDQT/304Hu4e+eLAPCn5MzHAqfcIfmI9da0EAvW2CouLqslmaBoWTx8tBla9NMTwt/785q/07Ask4qch0qQAAA="
       }
     ]
   },
   {
     "slug": "ornek-kitap-kagit",
     "category": "editorial",
+    "colors": [
+      "#f2f1ed",
+      "#3646f9",
+      "#b7b7b4"
+    ],
+    "layers": [
+      {
+        "src": "/works/ornek-kitap-kagit/layer-1-1024.webp",
+        "w": 1024,
+        "h": 1434,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-kitap-kagit/layer-2-1024.webp",
+        "w": 1024,
+        "h": 1434,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-kitap-kagit/layer-3-1024.webp",
+        "w": 1024,
+        "h": 1434,
+        "blur": ""
+      }
+    ],
     "year": 2026,
     "role": {
       "tr": "Konsept ve tasarım",
@@ -185,7 +289,7 @@ export const works: Work[] = [
       "src640": "/works/ornek-kitap-kagit/cover-640.webp",
       "w": 1500,
       "h": 2100,
-      "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoYACIAPu1mqk2ppaQiMAgBMB2JQBl8BDwACZPOwHHkdAD9AuMiRPTXz1FG9twshotjEyhCmIfyX1BUPwdx/3tNKHd5P2sz4tvgKybODxU3naBgAAA="
+      "blur": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAACwAwCdASoYACIAPu1mqk2ppaQiMAgBMB2JQBi5BDwACZPOwHHiQAD9A0Iy1e1HEJd0m96ThnaI9wMFKxEmVyH9oeZf3tNJNwrmulN6gAW3YgLWjyHqcQiw6ZcaIA8RPIAAAA=="
     },
     "gallery": [
       {
@@ -198,13 +302,38 @@ export const works: Work[] = [
         "src": "/works/ornek-kitap-kagit/gallery-2-1600.webp",
         "w": 1500,
         "h": 2100,
-        "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoYACIAPu1mqk2ppaQiMAgBMB2JQAALfXyOzlzUj27CAAD+T4dxqdEaAIDOkMZCjV6idAB9TIVPH/qMEeuJo5L1WelHfIps7EAug5GdmX4hDPvAAAA="
+        "blur": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAADQAwCdASoYACIAPu1mqk2ppaQiMAgBMB2JQBlPBDwBSl9FBuj8kAAA/k+uGMm6m0/SOEOFE3zxQS0ZVCc7FfLRF9Vv4BnfwL+Rh5Ej6CthTOrmGjUIZmkzMAAAAA=="
       }
     ]
   },
   {
     "slug": "ornek-ambalaj-etiket",
     "category": "packaging",
+    "colors": [
+      "#f1f0ee",
+      "#bbbdd9",
+      "#2e3ffb"
+    ],
+    "layers": [
+      {
+        "src": "/works/ornek-ambalaj-etiket/layer-1-1024.webp",
+        "w": 1024,
+        "h": 717,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-ambalaj-etiket/layer-2-1024.webp",
+        "w": 1024,
+        "h": 717,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-ambalaj-etiket/layer-3-1024.webp",
+        "w": 1024,
+        "h": 717,
+        "blur": ""
+      }
+    ],
     "year": 2026,
     "role": {
       "tr": "Konsept ve tasarım",
@@ -231,26 +360,51 @@ export const works: Work[] = [
       "src640": "/works/ornek-ambalaj-etiket/cover-640.webp",
       "w": 2000,
       "h": 1400,
-      "blur": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAwBQCdASoYABEAPu1mrE+ppaQiMBgIATAdiWgAqScl4l+QAAZlNP0/00+LKvA7e4AXyAD+t+/YQ2Aja4IuqLpLBceLj5ef7tYFrC4L/4KvxfldSefLipWYBFQ6jJKbWfjuUR5HxPUbcfCqz2HGXFKcfryOUfXd+rB/G4ru7Ovbuxc1cYQAAA=="
+      "blur": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAACQBQCdASoYABEAPu1qq08ppiOiMBgIATAdiWgAv2tHIl+QAAZlTxxpOog3l9uf+d1ptRXOAAD+t/IYB7ARqA6wjql7Dunry14dAHDl6r95NzhN4rBzhRcsIfX0Df1MnBfHQxCPNsSjA1qS+RpD69RShEXcb0IMTX5MX5rCcCw7nhPAwsAAAA=="
     },
     "gallery": [
       {
         "src": "/works/ornek-ambalaj-etiket/gallery-1-1600.webp",
         "w": 1600,
         "h": 1120,
-        "blur": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAABQBACdASoYABEAPu1mqU2ppaQiMAgBMB2JaQDN/CHfwvJjDtF3lWUpDwAAAP7vs7EH9K0UIun4OHM0yvXmCER4xzgJCmvvKDbZvedtzOOY0LEj48+ABymFsQAAAA=="
+        "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAAAQBACdASoYABEAPu1mqk2ppaQiMAgBMB2JaQAAW+s9v9Oobw1JWBTaAAD+77OxB/StFB9SNsMyvXmCER4ymvVdi6auuwgAF8GUoWuke3yTXRLk53s0/ofAAAA="
       },
       {
         "src": "/works/ornek-ambalaj-etiket/gallery-2-1600.webp",
         "w": 1600,
         "h": 1120,
-        "blur": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBQCdASoYABEAPu1ssFCppiSiqAqpMB2JaAC/a0ciUAYSFELDeNMIjI6k8ehtSrfYAP7SOUUIzo/3udQRWN0ApbaEB+1mkwjgH2wr1HlcZtqcQirWAZer+2wyOnkj/aZLu0XeGmFdv41nkRlbegbf4H/Rh/8MP69fxOvEjkI37knKnAAAAA=="
+        "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABwBQCdASoYABEAPu1qsVAppiUiqAqpMB2JaAC/a1oiv5ABr/wPA+nSsZzoQ9b6YoLSjy4AAP7SO+ZUN0VWJ476UieQyPPYZSup9F6lCaWWqJ+MLkunpH7Ed0FTRhXAjQezZAzi1DzPSnLT9wgeLgebHgZ+658hOHxk1BygtC18AA=="
       }
     ]
   },
   {
     "slug": "ornek-kimlik-eg",
     "category": "identity",
+    "colors": [
+      "#f2f1ee",
+      "#7980cf",
+      "#161b54"
+    ],
+    "layers": [
+      {
+        "src": "/works/ornek-kimlik-eg/layer-1-1024.webp",
+        "w": 1024,
+        "h": 1024,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-kimlik-eg/layer-2-1024.webp",
+        "w": 1024,
+        "h": 1024,
+        "blur": ""
+      },
+      {
+        "src": "/works/ornek-kimlik-eg/layer-3-1024.webp",
+        "w": 1024,
+        "h": 1024,
+        "blur": ""
+      }
+    ],
     "year": 2026,
     "role": {
       "tr": "Konsept ve tasarım",
@@ -276,20 +430,20 @@ export const works: Work[] = [
       "src640": "/works/ornek-kimlik-eg/cover-640.webp",
       "w": 1600,
       "h": 1600,
-      "blur": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAACwBACdASoYABgAPu1kqk+ppSOiMBgIATAdiUAZC7F+jfa65WFhMe2NAfOR3u/AAP7vtex9sXwxGUoNXgNuFlWaCSTO9e6TX2znf8lFsBhoBdkexvXU24J3Z4+/MD2cxvBA/SgpGFaMuy6YrBieXL3w715amLt8hdTN96W5fumP3hZCc2MQRtJqXexHN1z4YjTgwqBzOAA="
+      "blur": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAABQBACdASoYABgAPu1kqk+ppSOiMBgIATAdiUAZC4Id+99s2kf7jF/TnRZ8AP7vtex9vreY2cG2dKJHvYZXnj3Ixsd4Af7Hhv9lynXB9oCYahPNJlNRVsACZfVPs9TvmAfpQUjCtGXZdMVgvtn0BptUvamRNMvyJA9Rm87GX3Tg/n16LK8qChxqp/NssEiraYQeBOAAAAA="
     },
     "gallery": [
       {
         "src": "/works/ornek-kimlik-eg/gallery-1-1600.webp",
         "w": 1600,
         "h": 1600,
-        "blur": "data:image/webp;base64,UklGRuQAAABXRUJQVlA4INgAAABwBQCdASoYABgAPu1uqlCppqOiqAqpMB2JaADIpBOSIqSfrQM6/mHIPBO1namGrfLT2haAAP77ondK+8P2zqcEFqzu/cVzVPjjV9qupBCiE593j/n/j21dCL7j4A/9wFsRzkuY/F3dNFFzkGUiBGpd3ZhbnnB80GL838UNFWq9QgK8iZqffA1yZugrE/8dWOegJrYYjq6Yt7vQaTKg5+uxs3GzTZ1syTo24fdvamb6EMsCh+gQ/f3kAW9YLm5n95i2/BsGh2EPovXL//cHxq6HmCitixQAAAA="
+        "blur": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAABQBQCdASoYABgAPu1sqVCppiOiqA1RMB2JaADLOBPCIsMLrN7KlALSXa983C/StrK8yAAA/visqPvF+iVl/zAfNAucwPeYaBl16Oe9xAEjT9nohWHZfPC8pkKS/WHrL12qjS7xQI1L5WNzrc4Pmhh2mQapQVq1ZqEGNhKmrR+PJ4/Gfcc6+OiMtMUY0U/mkAhjd9tKkDoce5hoz3U1PeLmrl8d94/ofFANhPyV/ug4pIO+uod8MTXGF7PXys27PUSPtZ41zZj9oAAA"
       },
       {
         "src": "/works/ornek-kimlik-eg/gallery-2-1600.webp",
         "w": 1600,
         "h": 1600,
-        "blur": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABwBACdASoYABgAPu1mpU2ppaMiMBgMATAdiUAZiwId/D7O66XMc0oBMXOzIAD+8pjSoC57fzvVlraQULpzdCeB39erFrz9Lk/05DexjEYLqr4ZN7sUNZPhMm+7+9gXQ3utK+Xl/dA7CQ01XC+dgWQyf7cKaXh6kV12kV1b/Uz6Gl2oAynvUbeHBZghtnDNAZAAAA=="
+        "blur": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAACwBACdASoYABgAPu1kpU2ppaMiMBgMATAdiUAZC4Id+99ui3XcovcVRdMpWwAAAP7ymNKgLnqP6itRbX0ULpyLvdIJWkiTMgDLa/6chvYxiMF1Xwcy4GYTrURcE/Gi06avnLfFj+lOTfBwUFNI59WMVcV84+e5EAHiK2Fc2vFWpOQsL4HQ2cqgLJtTfqr7OEH9+wAA"
       }
     ]
   }

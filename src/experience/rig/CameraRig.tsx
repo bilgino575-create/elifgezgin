@@ -10,6 +10,7 @@ import { DESKTOP_KEYS, MOBILE_KEYS, type Key } from "./keyframes";
 import { v3a, v3b, v3c } from "../utils/scratch";
 import { fluid, inkAbsorbance } from "../fluid/Fluid";
 import { INKS } from "@/lib/inks";
+import { portalWorld } from "../acts/portals/Portals";
 
 /**
  * Shared, allocation-free state read by every act: smoothed progress, the
@@ -82,6 +83,7 @@ export default function CameraRig() {
   const lastPointer = useRef({ x: 0, y: 0, t: 0, u: 0.5, v: 0.5 });
   const introStart = useRef(-1);
   const strokeT = useRef(0);
+  const openT = useRef(0);
   const keys = useMemo(() => (store.get().touch || window.innerWidth < 768 ? MOBILE_KEYS : DESKTOP_KEYS), []);
 
   useEffect(() => {
@@ -162,6 +164,18 @@ export default function CameraRig() {
       v3a.z += (rz / len) * s.pointerX * amt;
       v3a.y += s.pointerY * amt * 0.6;
     }
+    // opening a work: fly through its portal, then the page navigates
+    if (s.opening) {
+      const target = portalWorld.get(s.opening);
+      if (target) {
+        openT.current = Math.min(1, openT.current + cdt / 0.9);
+        const k = easeInOut(openT.current);
+        v3a.x += (target.x - v3a.x) * k;
+        v3a.y += (target.y - v3a.y) * k;
+        v3a.z += (target.z - 0.6 - v3a.z) * k;
+        v3b.set(target.x, target.y, target.z - 3);
+      }
+    } else openT.current = 0;
     camera.position.copy(v3a);
     camera.lookAt(v3b);
     rig.target.copy(v3b);
