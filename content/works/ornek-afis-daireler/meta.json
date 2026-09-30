@@ -1,0 +1,27 @@
+{
+  "title": {
+    "tr": "Eş Merkezli",
+    "en": "Concentric"
+  },
+  "category": "poster",
+  "year": 2026,
+  "role": {
+    "tr": "Tasarım",
+    "en": "Design"
+  },
+  "tools": [
+    "Illustrator",
+    "Photoshop"
+  ],
+  "text": {
+    "tr": "Eş merkezli daireler ve bir siyah bant. Bir konser dizisi için tasarlanmış afiş örneği.",
+    "en": "Concentric circles and one black bar. A sample poster for a concert series."
+  },
+  "sample": true,
+  "order": 2,
+  "cover": "cover.jpg",
+  "gallery": [
+    "01.jpg",
+    "02.jpg"
+  ]
+}

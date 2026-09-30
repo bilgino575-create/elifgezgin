@@ -1,0 +1,26 @@
+{
+  "title": {
+    "tr": "EG Monogramı",
+    "en": "EG Monogram"
+  },
+  "category": "identity",
+  "year": 2026,
+  "role": {
+    "tr": "Tasarım",
+    "en": "Design"
+  },
+  "tools": [
+    "Illustrator"
+  ],
+  "text": {
+    "tr": "İki harfin tek bir çizgide buluştuğu monogram; kartvizitte kör kabartma, afişte tek renk.",
+    "en": "A monogram where two letters meet in one stroke; blind-embossed on the card, single colour on the poster."
+  },
+  "sample": true,
+  "order": 6,
+  "cover": "cover.jpg",
+  "gallery": [
+    "01.jpg",
+    "02.jpg"
+  ]
+}

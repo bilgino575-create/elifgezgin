@@ -1,0 +1,27 @@
+{
+  "title": {
+    "tr": "Yedi",
+    "en": "Seven"
+  },
+  "category": "poster",
+  "year": 2026,
+  "role": {
+    "tr": "Tasarım",
+    "en": "Design"
+  },
+  "tools": [
+    "Illustrator",
+    "Photoshop"
+  ],
+  "text": {
+    "tr": "Nokta ızgarasından büyüyen tek bir rakam. Baskıda nokta sıklığı kâğıdın dokusuyla birleşir.",
+    "en": "A single numeral growing out of a dot grid. In print, the dot frequency merges with the paper's grain."
+  },
+  "sample": true,
+  "order": 3,
+  "cover": "cover.jpg",
+  "gallery": [
+    "01.jpg",
+    "02.jpg"
+  ]
+}

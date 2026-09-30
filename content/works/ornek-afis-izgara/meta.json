@@ -1,0 +1,27 @@
+{
+  "title": {
+    "tr": "Izgara Üzerine",
+    "en": "On the Grid"
+  },
+  "category": "poster",
+  "year": 2026,
+  "role": {
+    "tr": "Tasarım",
+    "en": "Design"
+  },
+  "tools": [
+    "Illustrator",
+    "Photoshop"
+  ],
+  "text": {
+    "tr": "Sekiz kolonlu bir ızgaranın kendisini afişe dönüştüren tipografik bir çalışma. Tek renk, tek yazı, tek jest.",
+    "en": "A typographic study that turns an eight-column grid into the poster itself. One colour, one face, one gesture."
+  },
+  "sample": true,
+  "order": 1,
+  "cover": "cover.jpg",
+  "gallery": [
+    "01.jpg",
+    "02.jpg"
+  ]
+}

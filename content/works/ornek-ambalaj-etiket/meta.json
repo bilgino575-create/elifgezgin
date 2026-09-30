@@ -1,0 +1,27 @@
+{
+  "title": {
+    "tr": "Atölye Etiketi",
+    "en": "Studio Label"
+  },
+  "category": "packaging",
+  "year": 2026,
+  "role": {
+    "tr": "Tasarım",
+    "en": "Design"
+  },
+  "tools": [
+    "Illustrator",
+    "Photoshop"
+  ],
+  "text": {
+    "tr": "Bir kâğıt kutusu için sarmalayan etiket. Ön yüzde mühür, yan yüzlerde ürün bilgisi.",
+    "en": "A wrap-around label for a paper box. A seal on the front, product information on the sides."
+  },
+  "sample": true,
+  "order": 5,
+  "cover": "cover.jpg",
+  "gallery": [
+    "01.jpg",
+    "02.jpg"
+  ]
+}
