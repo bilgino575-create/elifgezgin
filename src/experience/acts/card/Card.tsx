@@ -2,7 +2,7 @@
 
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CanvasTexture, Color, DoubleSide, Group, Mesh, MeshPhysicalMaterial, PlaneGeometry, SRGBColorSpace, Vector2, type Texture } from "three";
+import { CanvasTexture, Color, DoubleSide, Group, MeshPhysicalMaterial, PlaneGeometry, SRGBColorSpace, Vector2, type Texture } from "three";
 import { RoundedBoxGeometry } from "three-stdlib";
 import { damp } from "maath/easing";
 import { ACTS, range } from "@/lib/acts";
@@ -251,6 +251,8 @@ export default function Card() {
     const pour = range(p, 0.95, 0.985);
     res.uniforms.uPour.value = pour;
     res.uniforms.uTime.value = t;
+    // the print steps back as the ink takes the foil
+    res.mat.emissiveIntensity = 0.5 - 0.4 * pour;
     res.uniforms.uDye.value = fluid.dye;
     if (fluid.live && !s.reducedMotion && p > 0.965) {
       if (!writing.current) {

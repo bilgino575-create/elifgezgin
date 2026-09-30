@@ -501,7 +501,9 @@ body {
   }
   /* legends beside a large object keep to the narrow column */
   html.gl #iletisim .panel-body.wide,
-  html.gl #beceriler .panel-body.wide {
+  html.gl #beceriler .panel-body.wide,
+  html.gl #surec .panel-body.wide,
+  html.gl #hakkimda .panel-body.wide {
     width: min(100% - var(--gutter) * 2, 30rem);
   }
   html.gl #giris .panel-body {

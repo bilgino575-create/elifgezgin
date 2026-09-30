@@ -4,6 +4,7 @@ import type { Lang } from "@/lib/content";
 import { t, noWidow } from "@/i18n/dict";
 import { Section } from "./Track";
 import { INKS } from "@/lib/inks";
+import ProcessIndex from "@/components/ui/ProcessIndex";
 
 export default function Process({ lang }: { lang: Lang }) {
   const d = t(lang);
@@ -13,17 +14,7 @@ export default function Process({ lang }: { lang: Lang }) {
       <h2 id="surec-title" className="display h2">
         {d.process.title}
       </h2>
-      <ol className="index gl-only mt-6" id="surec-index">
-        {site.process.map((s, i) => (
-          <li key={s.id} data-step={i}>
-            <div className="row">
-              <span className="n">{String(i + 1).padStart(2, "0")}</span>
-              <span className="t">{L(s.title, lang)}</span>
-              <span className="c" />
-            </div>
-          </li>
-        ))}
-      </ol>
+      <ProcessIndex steps={site.process.map((s) => ({ id: s.id, title: L(s.title, lang) }))} />
       <ol className="steps html-only mt-10">
         {site.process.map((s, i) => (
           <li key={s.id} style={{ "--c": INKS[i % INKS.length] } as CSSProperties}>

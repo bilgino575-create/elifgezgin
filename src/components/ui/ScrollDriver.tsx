@@ -70,7 +70,8 @@ export default function ScrollDriver() {
         const v = sectionVisibility(s, p);
         el.style.setProperty("--vis", v.toFixed(3));
         el.dataset.hidden = v < 0.02 ? "true" : "false";
-        const d = Math.abs(p - s.anchor);
+        // the section whose range holds p wins; otherwise the nearest anchor
+        const d = p >= s.from && p <= s.to ? -1 : Math.abs(p - s.anchor);
         if (d < bestD) {
           bestD = d;
           best = s.id;

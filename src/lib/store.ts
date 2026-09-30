@@ -49,6 +49,8 @@ export interface AppState {
   hoverCard: boolean;
   /** the card was clicked: spin counter */
   spin: number;
+  /** the colour machine's live stage, 0..5 */
+  stage: number;
   /** active category filter */
   filter: Category | "all";
   /** slug being opened (camera flight before navigation) */
@@ -90,6 +92,7 @@ const initial: AppState = {
   hoverSkill: null,
   hoverCard: false,
   spin: 0,
+  stage: 0,
   filter: "all",
   opening: null,
   confetti: 0,
