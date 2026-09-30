@@ -12,8 +12,8 @@ interface Disposable {
  * neighbours (a shared "dispose everything" effect would tear down every
  * material whenever any single dependency changed).
  */
-export function useDispose<T extends Disposable>(value: T): T {
-  useEffect(() => () => value.dispose(), [value]);
+export function useDispose<T extends Disposable | null | undefined>(value: T): T {
+  useEffect(() => () => value?.dispose(), [value]);
   return value;
 }
 

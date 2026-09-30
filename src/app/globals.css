@@ -290,9 +290,29 @@ img {
   html.gl .panel-body.wide {
     width: min(100% - var(--gutter) * 2, 40rem);
   }
+  /* index cards: the narrow legends sit on a sheet of paper over the scene */
+  html.gl .panel-body.card-index {
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1.4rem 1.5rem 1.5rem;
+    box-shadow:
+      0 1px 0 var(--emboss-hi) inset,
+      0 24px 50px -30px var(--shadow);
+  }
+  @media (max-width: 767px) {
+    html.gl .panel-body.card-index,
+    html.gl .panel-body.card-index.align-right {
+      max-height: 46vh;
+      max-height: 46dvh;
+      padding: 1rem 1.1rem 1.1rem;
+    }
+  }
   html.gl #giris .panel-body {
-    width: min(100% - var(--gutter) * 2, 48rem);
-    margin-left: var(--gutter);
+    width: min(100% - var(--gutter) * 2, 34rem);
+    margin-left: max(var(--gutter), (100vw - 72rem) / 2);
   }
   @media (max-width: 767px) {
     html.gl .panel {
@@ -541,15 +561,16 @@ img {
   }
   .tag {
     display: inline-block;
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--spot);
-    border: 1px solid color-mix(in srgb, var(--spot) 40%, transparent);
+    color: var(--ink-3);
+    border: 1px solid var(--line-2);
     border-radius: 3px;
-    padding: 0.15rem 0.4rem;
+    padding: 0.1rem 0.35rem;
     line-height: 1.3;
+    vertical-align: middle;
   }
   .sheet {
     background: var(--paper);

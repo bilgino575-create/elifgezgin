@@ -6,16 +6,16 @@
   "category": "poster",
   "year": 2026,
   "role": {
-    "tr": "Tasarım",
-    "en": "Design"
+    "tr": "Konsept ve tasarım",
+    "en": "Concept and design"
   },
   "tools": [
     "Illustrator",
     "Photoshop"
   ],
   "text": {
-    "tr": "Sekiz kolonlu bir ızgaranın kendisini afişe dönüştüren tipografik bir çalışma. Tek renk, tek yazı, tek jest.",
-    "en": "A typographic study that turns an eight-column grid into the poster itself. One colour, one face, one gesture."
+    "tr": "Bir tipografi sergisi için afiş: sekiz kolonlu ızgara, sayfayı dolduran tek bir sözcük ve üst baskıyla çakışan iki mürekkep.",
+    "en": "Poster for a typography exhibition: an eight-column grid, one word filling the sheet and two inks meeting in overprint."
   },
   "sample": true,
   "order": 1,

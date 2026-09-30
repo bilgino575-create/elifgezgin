@@ -6,15 +6,15 @@
   "category": "identity",
   "year": 2026,
   "role": {
-    "tr": "Tasarım",
-    "en": "Design"
+    "tr": "Konsept ve tasarım",
+    "en": "Concept and design"
   },
   "tools": [
     "Illustrator"
   ],
   "text": {
-    "tr": "İki harfin tek bir çizgide buluştuğu monogram; kartvizitte kör kabartma, afişte tek renk.",
-    "en": "A monogram where two letters meet in one stroke; blind-embossed on the card, single colour on the poster."
+    "tr": "İki harfin tek bir çizgide buluştuğu monogram; kartvizitte kör kabartma, afişte tek renk, ekranda hareketli.",
+    "en": "A monogram where two letters meet in one stroke; blind-embossed on the card, single colour on the poster, animated on screen."
   },
   "sample": true,
   "order": 6,

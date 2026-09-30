@@ -6,16 +6,16 @@
   "category": "packaging",
   "year": 2026,
   "role": {
-    "tr": "Tasarım",
-    "en": "Design"
+    "tr": "Konsept ve tasarım",
+    "en": "Concept and design"
   },
   "tools": [
     "Illustrator",
     "Photoshop"
   ],
   "text": {
-    "tr": "Bir kâğıt kutusu için sarmalayan etiket. Ön yüzde mühür, yan yüzlerde ürün bilgisi.",
-    "en": "A wrap-around label for a paper box. A seal on the front, product information on the sides."
+    "tr": "Bir kâğıt kutusu için sarmalayan etiket. Ön yüzde mühür, yan yüzlerde ürün bilgisi; kesim çizgileri ve kırım payı bırakılmış.",
+    "en": "A wrap-around label for a paper box. A seal on the front, product information on the sides; die-cut and fold allowances left in."
   },
   "sample": true,
   "order": 5,

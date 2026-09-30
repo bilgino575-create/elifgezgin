@@ -23,8 +23,8 @@ export const works: Work[] = [
     "category": "poster",
     "year": 2026,
     "role": {
-      "tr": "Tasarım",
-      "en": "Design"
+      "tr": "Konsept ve tasarım",
+      "en": "Concept and design"
     },
     "tools": [
       "Illustrator",
@@ -35,8 +35,8 @@ export const works: Work[] = [
       "en": "On the Grid"
     },
     "text": {
-      "tr": "Sekiz kolonlu bir ızgaranın kendisini afişe dönüştüren tipografik bir çalışma. Tek renk, tek yazı, tek jest.",
-      "en": "A typographic study that turns an eight-column grid into the poster itself. One colour, one face, one gesture."
+      "tr": "Bir tipografi sergisi için afiş: sekiz kolonlu ızgara, sayfayı dolduran tek bir sözcük ve üst baskıyla çakışan iki mürekkep.",
+      "en": "Poster for a typography exhibition: an eight-column grid, one word filling the sheet and two inks meeting in overprint."
     },
     "client": null,
     "sample": true,
@@ -47,20 +47,20 @@ export const works: Work[] = [
       "src640": "/works/ornek-afis-izgara/cover-640.webp",
       "w": 1600,
       "h": 2000,
-      "blur": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAACQBACdASoYAB4APu1irVAppSQisBgIATAdiWwAvkg1f/o6xmIeGCJRYu3nSAAA/vHpm2YidWqKS6Zsrp/o6lRqckQgVzSP83f3/KE4+Z68fRy14zC2wZoGxIiCr+gb7gSLO6iYdrMRB0l5MSNKsMcnpDQn5geG+Fgp8nhM4dVA4ldzUviA/HisHc1jB/QAAAA="
+      "blur": "data:image/webp;base64,UklGRuQAAABXRUJQVlA4INgAAABwBQCdASoYAB4APu1mq0+ppSOiMBgIATAdiWwAt7g0xTMVOflS9mJ+M8KYpfdAhf/mNMMAAP7zijyO+SuIl6lt6Z3zwogUEc3Xr1tTwojGftjw+yucxnCzS5s4GvV7icOqNgP/H7NvuGhRa2GrD65EqytNg7+MsmwqVpgQMV7sSHE/chcYLgSbKlPIdRI0S/UR+JtMBOsAyIsSETGSERzrxKhgvavNeAIaUM7n7nIJthSL12QA+rR3iy7dhaB86Jonvq5UpyCE+Agyu/u5YRidxbmNvcLQAAA="
     },
     "gallery": [
       {
         "src": "/works/ornek-afis-izgara/gallery-1-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAACwBACdASoYAB4APu1ys1MppqSkKAgBMB2JagDHDvAt/8A9D+XjpAc278aYkd4gAP7tMuRcjUtGcm1ywg18KsFlXvZOxKHju4WUa6bozgxjaoHz4uC/4Z1LDfPWSOzN/dbisyckxr2oNHFGAAA="
+        "blur": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAAAQBQCdASoYAB4APtlco02oJaMiN/qoAQAbCWwAnSiskBbZgDv/Ys+f8p7gOHNRnTWsAP7zb+3eohcjrQM1KOpCQ99gWc6ixb4Ky3/yivoAGWjkCU/MA/IQxCN1C8I524V6AxEBj4K1FoN3njAItbkWLORjui/jP1F/Impt4CVg3XdPb73yl+5/6Aoc1SS9vlXfAQAA"
       },
       {
         "src": "/works/ornek-afis-izgara/gallery-2-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABQBACdASoYAB4APu1irFAppSQisBgIATAdiWwAAJJ/7k7m6+P2FCNT/TyAAP70O2kdp8SYebGjwNLN8WFlgUt0Hc0+5KMH+BtRHT150RHrP+o35UoXCSyMnhJDabtAjMefvP8kqHVY569BJz+sLzbd790ShOfP+kfEjvA25KITdDjKNTqDg/5oVSGMAAAA"
+        "blur": "data:image/webp;base64,UklGRt4AAABXRUJQVlA4INIAAABwBQCdASoYAB4APu1oq08ppiOiMBgIATAdiWwAyJg0xTMQj3N32UtZ9499CLaZG5fo+BBAAP70O2lcynaXCinsmMJddpquJZ9h3D0gZJG7evhb7P6rzTBL60sD7S48t2Sf53Ccthqsh1ndsZ5p/Oje8vepZgRqsKaC+eEcQ7htIzP7ZJC8ei7xn6PzTXqtXduu5+rIF5r2ifxG2rQq1lb+T1tySNVjJDL8OUJMTbs+bvcyS5HeGFaizW5NKivwGisNBQm8yIjoolsKxs1b4hWAAAA="
       }
     ]
   },
@@ -69,20 +69,20 @@ export const works: Work[] = [
     "category": "poster",
     "year": 2026,
     "role": {
-      "tr": "Tasarım",
-      "en": "Design"
+      "tr": "Konsept ve tasarım",
+      "en": "Concept and design"
     },
     "tools": [
       "Illustrator",
       "Photoshop"
     ],
     "title": {
-      "tr": "Eş Merkezli",
-      "en": "Concentric"
+      "tr": "Sessiz Seri",
+      "en": "Quiet Series"
     },
     "text": {
-      "tr": "Eş merkezli daireler ve bir siyah bant. Bir konser dizisi için tasarlanmış afiş örneği.",
-      "en": "Concentric circles and one black bar. A sample poster for a concert series."
+      "tr": "Altı akşamlık bir konser dizisi için afiş. Eş merkezli halkalar ses dalgasıdır; siyah bant sahnenin kendisi.",
+      "en": "Poster for a six-evening concert series. The concentric rings are the sound; the black bar is the stage."
     },
     "client": null,
     "sample": true,
@@ -93,20 +93,20 @@ export const works: Work[] = [
       "src640": "/works/ornek-afis-daireler/cover-640.webp",
       "w": 1600,
       "h": 2000,
-      "blur": "data:image/webp;base64,UklGRuwAAABXRUJQVlA4IOAAAABQBgCdASoYAB4APu1mpU4ppaMiMBgMATAdiUAZWL/88AVQuGAGdLhE20vH/QAg9iNCgdpuzLZEFkgqwAD+7W8x4EXt+4DtgObnVT3OG/0yNHZqHQEuBWC1wJqDfGavZ3PK1AdY4Eu+HgcUCenjoHwhylQPeJHRhWzUqUi7yzoOs5hKQUz9OXE85yfQw4FJLF5lPgcD9rSlhVcjwxW4Y2Fr8lGfPJI/q/nK0vDcihL10HKborAlFddRXkdWkBIZpGUL6pP5s3Q8UOC+S/Jr0WiiRh3V0YCZzWS2M/tTBlIAAA=="
+      "blur": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAACwBQCdASoYAB4APuVgpk2pJaOiMAwBIByJQBlo6/23+A2mW+48yIejVv7V2nTSvsYUBHZEEAAA/u/i6k+XHLCeQym3PZYAEyG6KqbSe5PitUdr+BJIpKHlpphXmBDYYm5E+3fGGbSgjK58krRQOCXVv4XLgzwGF/26XaSXRq0u/SFAM7ruX5AwVEohgEiMcZO7EYkD/fLYeVRdyybFzUk148nNKAd19NEzaYDqub0tmh/xoL9atNi5GtsguJ4ycivz+1T6msy+9AAA"
     },
     "gallery": [
       {
         "src": "/works/ornek-afis-daireler/gallery-1-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRmIBAABXRUJQVlA4IFYBAACQCACdASoYAB4APu1krFAppSQisBgIATAdiWIAv2s0d/9tHmc9Bz7GmAQIH0E6qigJUD3Dj7/yMyjsxPbG+8CHRsGht49Q0GcKYnTyAAD+7VzVYYxzBvEy1gRk0njig2SuPksr2aErEMMBMUiexdlQqbw1kujqs6HSp+n2gyTWL6xwZudxRCZXb0BEUYlcO4W23AZD+YFAiidjYaAikocVCnfkkS2C21hkCmIbNLtiwYb8Lw8HaL0boehQz5aICZ6aRj0tEBC8yyfwQFP1RIOvZdAzTKOk3fpyfXd63YgoON4eiENss3X+hk3T126zKf0raleo2FpAUMTi7HfPSjU2E+Lrd0JSQGuVNHY0nt6IfQ5Ni4EoWDqQJYTf0Q0tHbeQn8UfWH6KXlHlndhD75K36T3Cm1Xh0x08RGwBys48QxxVHkP9rUJmvgDrC2j3KKfwSuyacAA="
+        "blur": "data:image/webp;base64,UklGRngBAABXRUJQVlA4IGwBAACwBwCdASoYAB4APu1qsFAppaSiqAqpMB2JbAC1CGc9VbYFk5vi91Vbg3wNJ9Mq8fw5fyo6nPpJkNqouAkcq0Rm+XEt+W8AAP7tYWxjCSzSwI7kl0d9RJXGGqzcyagCLyEUIhlX4NLDZUUPDTtaUocBKqyxvEXifAECxQqn+HL+DVvyLTTkXAK1oesao8sf/HqSAugT0m/BhG32FEJuVOX2N4RJeBZV23vdxpR31hN+7v7I0/k38v9eynX/KRnHxZJsbaBsznj4Xk2s3qok+clYuAmHttHQqlKXYjoZlXwif2tjzfKTp376cmre8UvJ7vkNGuO+VRSpY4sEdB5SBtk8jsFY+FzE0V0wWyiHozPa46Sjb2cE9qQS7PdfR/jc3aaDa/zuq6/EsrPt3Vq1H/iRyMhe+KOwrO7XDLNJBvSgqfoT47wCVynfrI11enMYkbaJ/2644w5AK9FsDljRVyhQ9W5unw0W9gXlzoAA"
       },
       {
         "src": "/works/ornek-afis-daireler/gallery-2-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAACQBQCdASoYAB4APuVgo02pJaMiMAwBIByJQBmcP/ycMDEaNwStUZnBfVyHAJKpPySBFYqwAAD+8Oyyuv8AyGudH97tBJcpPGQGcjf2wJnV6z0Cjj1b6eYjkVapmeWKPgMAnWoD5UEkjFMZ50gvfUdWzW0DBMMDs7kamzSDOSPaA6SbfZb1zzmhs6wcoLQM/m8cqGi+RWJ2cT+kzyx0/kF2Zj8ADtlszB1Zb8+magued9hKvAHeUH2gGz0tuBIuuSUZjeQtPgs5aBJD5X6iruDjMABoNzieCARZ1oAA"
+        "blur": "data:image/webp;base64,UklGRtgAAABXRUJQVlA4IMwAAACwBQCdASoYAB4APuVepU2pJSOiMAwBIByJQBjS6/23+A2mm/waOAK7Bt21Y60tYhic4oTTpkAA/vDssxYu8rUtyUD8SPOfWD7Ja7jZq29gO0Bxv6FBvOhd97/1TJeu1OnrH6PuZM5E3r3MpydkOBE312GF6PTwBdnf1LfE3Q7Ln5s33y5N+rwtJmbkxbFJXfBobpAmAe4z4WBAAZzUdsh8XMk6bcJVSD50X3zdZayYHJAf3EeI+bMzmvFxroFA2LnCTJxOw+4wssx2AAA="
       }
     ]
   },
@@ -115,8 +115,8 @@ export const works: Work[] = [
     "category": "poster",
     "year": 2026,
     "role": {
-      "tr": "Tasarım",
-      "en": "Design"
+      "tr": "Konsept ve tasarım",
+      "en": "Concept and design"
     },
     "tools": [
       "Illustrator",
@@ -127,8 +127,8 @@ export const works: Work[] = [
       "en": "Seven"
     },
     "text": {
-      "tr": "Nokta ızgarasından büyüyen tek bir rakam. Baskıda nokta sıklığı kâğıdın dokusuyla birleşir.",
-      "en": "A single numeral growing out of a dot grid. In print, the dot frequency merges with the paper's grain."
+      "tr": "Atölyenin yedinci yılı için afiş: halftone bir gradyanın içinden büyüyen tek rakam, kâğıdın dokusuyla birleşen nokta sıklığı.",
+      "en": "Poster for the studio's seventh year: a single numeral growing out of a halftone gradient whose dots merge with the paper's grain."
     },
     "client": null,
     "sample": true,
@@ -139,20 +139,20 @@ export const works: Work[] = [
       "src640": "/works/ornek-afis-yedi/cover-640.webp",
       "w": 1600,
       "h": 2000,
-      "blur": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAAAwBACdASoYAB4APtFWok2oJKMiN+gBABoJQBmaBjRT59zuWZYGY9sACgAA/vHM+jY9V8TgWp0uCC7UwTT1j4/PEAK9Exvx15eDC7GafGerUfyZISnj7lOiOYh8EG3AfJjrAGijGool/jc6xK6p/pz7D97yG7DjE9pr6K3gAAA="
+      "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABQBACdASoYAB4APtFUoU2oJKMiN+gBABoJQBmLBjRUQjVYuJKV9ENpRyQQAP7zc6V7pS9RHOHqxt0DeRQHNX5NPRWcDN2kvlAWHdk4w/KmKxEeLTX0jL4wfvnYxpUR1pIp0BqgI/q71HwVGD99h+9v89CVds7mMGVkcVUTZYwAAA=="
     },
     "gallery": [
       {
         "src": "/works/ornek-afis-yedi/gallery-1-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAAAwBgCdASoYAB4APtleo02oJaMiN/qoAQAbCWgArj02ZcATZMMNtPnwUnJj7k0FOZKA5UVnFWrWNeAAAP7zcnIvZ4O/YyR1aCviWcarUZHAe+BQma1lb1mfTre1aTWxVpCZuZFBqDqNrPF2Uz/3JFreTsvQUGjDorHoLO0cirftYbw+7AZBjzcSAhObI/dRgIinhUuLb0YExYojc2zeYTowtJ2oKe9RRKN69JG9HAeu1WwwWCLkxUXx/zzHZxrXxeggIhASN8rwGdPtanyzOAvvbwVjDoeePH5g0IAA"
+        "blur": "data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAAAQBQCdASoYAB4APuFWpU2opKOiN/qoARAcCWYAxxTIB7U1vqYSWLC4bzBWCwtSmfZQAP73CINHjEDDbOG6wqifSg/VKc/90cVrTRIIUQprsOI64ZiW0Q5AMp2IKR/1GIRw4Fd0Q44Ux729kGAai9nfgWbClLGU666wyuv2p/8EYDSCBkdPjczVgrPJQSuIFSk4k7jdtrJyfvSlIHaptB9AcmujALwkdkAAAA=="
       },
       {
         "src": "/works/ornek-afis-yedi/gallery-2-1600.webp",
         "w": 1600,
         "h": 2000,
-        "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABQBACdASoYAB4APtFYok2oJSMiN+gBABoJQBh1hjRT+YJA2foshPTpUWgAAP70JMn49RHhTMGy0qrXztZTrG6ev6NWoFAwOxh6B2CZuenVuK3/CBhEZuxWLNCMTZ7lPQgwW/YCuwCdG0peO6sHBEethRmPbOYt0Zk8zF0GeIAAAA=="
+        "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABQBACdASoYAB4APtlcok2oJaMiN/qoAQAbCUAZQAQtf7fp6qllpxXfHJCAAP70JMn8W5GDk+skTMGFhYPN2O7cuxH6+BgJlAxJOx6j81TrE6hT7xkSZTHfeP+Pe1+sYYjYLdF9HiVpgqn/ZzNkfTE8K82mPeOXlJ/20/jik1cAAA=="
       }
     ]
   },
@@ -161,8 +161,8 @@ export const works: Work[] = [
     "category": "editorial",
     "year": 2026,
     "role": {
-      "tr": "Tasarım",
-      "en": "Design"
+      "tr": "Konsept ve tasarım",
+      "en": "Concept and design"
     },
     "tools": [
       "InDesign",
@@ -173,8 +173,8 @@ export const works: Work[] = [
       "en": "On Paper"
     },
     "text": {
-      "tr": "Bir deneme kitabı için kapak ve iç düzen örneği. Serif başlık, dar sütun, geniş kenar boşluğu.",
-      "en": "Cover and interior layout sample for a book of essays. Serif title, narrow measure, generous margins."
+      "tr": "Bir deneme kitabı için kapak ve iç düzen. Serif başlık, dar sütun, geniş kenar boşluğu; sırtta tek renk, kapakta kör kabartma.",
+      "en": "Cover and interior for a book of essays. Serif title, narrow measure, generous margins; one colour on the spine, a blind emboss on the cover."
     },
     "client": null,
     "sample": true,
@@ -185,20 +185,20 @@ export const works: Work[] = [
       "src640": "/works/ornek-kitap-kagit/cover-640.webp",
       "w": 1500,
       "h": 2100,
-      "blur": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAwBACdASoYACIAPu1uq08ppyOiMBVYATAdiUAZ1gFm2Pi6h8UONatVhwAA/guaKWgouJGtVB9a3TjQpZ/GKuFc2ETRXkj0pvUAOhs33GQ91iGf4AisAEPn1U+gAAAA"
+      "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoYACIAPu1mqk2ppaQiMAgBMB2JQBl8BDwACZPOwHHkdAD9AuMiRPTXz1FG9twshotjEyhCmIfyX1BUPwdx/3tNKHd5P2sz4tvgKybODxU3naBgAAA="
     },
     "gallery": [
       {
         "src": "/works/ornek-kitap-kagit/gallery-1-1600.webp",
         "w": 1600,
         "h": 2240,
-        "blur": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACwBACdASoYACIAPu1qrE8ppiQiKrgMATAdiWkAzuwLNtnheh4iiItTthFlssMAAP7tPOmada4q6kg0HVWoYu+5d+1UtoHg76/YGI01qtPDKlIx8eOSi3zlFJayyaWo5HvpgQNnqlOYD4QSwt5rXdPTDfF7KlhklYay/EOIj2hwAAAA"
+        "blur": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAAAwBQCdASoYACIAPu1orU8ppiQiKrgMATAdiWkA0MwLNnPq4Wl4tgbHfcX7mHsAYAu3AAD+77uJLfdR+ovZXc6vAt/t2YEhxR13jQu0bzdezRXddisG6QMrUTQ9paL0OMRZ51SkBD5LA+SGYxaZO8yxhzYt/SY0pIunRbQ+3JhTNlLRjFiJfzUnQAA="
       },
       {
         "src": "/works/ornek-kitap-kagit/gallery-2-1600.webp",
         "w": 1500,
         "h": 2100,
-        "blur": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAwCdASoYACIAPu1oqk2ppiQiMAgBMB2JQBnWBDvlv3q4TGuC7qAAAP5PhmmkqOWBlCoQ+obrB4kmoU1PDh/rmreq38AzxSMv5GHCVAURV4ORNFgs8q+whhzX4AAA"
+        "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAwCdASoYACIAPu1mqk2ppaQiMAgBMB2JQAALfXyOzlzUj27CAAD+T4dxqdEaAIDOkMZCjV6idAB9TIVPH/qMEeuJo5L1WelHfIps7EAug5GdmX4hDPvAAAA="
       }
     ]
   },
@@ -207,8 +207,8 @@ export const works: Work[] = [
     "category": "packaging",
     "year": 2026,
     "role": {
-      "tr": "Tasarım",
-      "en": "Design"
+      "tr": "Konsept ve tasarım",
+      "en": "Concept and design"
     },
     "tools": [
       "Illustrator",
@@ -219,8 +219,8 @@ export const works: Work[] = [
       "en": "Studio Label"
     },
     "text": {
-      "tr": "Bir kâğıt kutusu için sarmalayan etiket. Ön yüzde mühür, yan yüzlerde ürün bilgisi.",
-      "en": "A wrap-around label for a paper box. A seal on the front, product information on the sides."
+      "tr": "Bir kâğıt kutusu için sarmalayan etiket. Ön yüzde mühür, yan yüzlerde ürün bilgisi; kesim çizgileri ve kırım payı bırakılmış.",
+      "en": "A wrap-around label for a paper box. A seal on the front, product information on the sides; die-cut and fold allowances left in."
     },
     "client": null,
     "sample": true,
@@ -231,20 +231,20 @@ export const works: Work[] = [
       "src640": "/works/ornek-ambalaj-etiket/cover-640.webp",
       "w": 2000,
       "h": 1400,
-      "blur": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAACwBACdASoYABEAPu1wsVIppqSiqAgBMB2JZgCxDKtJ/k5+DaAnEXJ0TUVTKsfgAP6yP3ew7CskpL+MjlcSjQi3TUZ5HMc7eqSLHfH41wZsYqehZmHj9y7wQu91hucgdNPuwuf/SbP/6gz//UGfn7/xv9WvkyugxIAAAA=="
+      "blur": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAwBQCdASoYABEAPu1mrE+ppaQiMBgIATAdiWgAqScl4l+QAAZlNP0/00+LKvA7e4AXyAD+t+/YQ2Aja4IuqLpLBceLj5ef7tYFrC4L/4KvxfldSefLipWYBFQ6jJKbWfjuUR5HxPUbcfCqz2HGXFKcfryOUfXd+rB/G4ru7Ovbuxc1cYQAAA=="
     },
     "gallery": [
       {
         "src": "/works/ornek-ambalaj-etiket/gallery-1-1600.webp",
         "w": 1600,
         "h": 1120,
-        "blur": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAABwBACdASoYABEAPuVgpk2pJaOiMAwBIByJaQDKACHf4OVbARKHWOzws51OOAD+77O2gOSSkdGvrIGSeH/H+/wpc1WV8xrcq+Bu8CpMniEwgJnv9cAAAA=="
+        "blur": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAABQBACdASoYABEAPu1mqU2ppaQiMAgBMB2JaQDN/CHfwvJjDtF3lWUpDwAAAP7vs7EH9K0UIun4OHM0yvXmCER4xzgJCmvvKDbZvedtzOOY0LEj48+ABymFsQAAAA=="
       },
       {
         "src": "/works/ornek-ambalaj-etiket/gallery-2-1600.webp",
         "w": 1600,
         "h": 1120,
-        "blur": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABQBACdASoYABEAPu1wsFKppiSiqAgBMB2JZAC29oBcqARHKy27vOwJhQHAAP7OByiP2OiySmuEUeDSCoVDDJY/cYg4ACeGEgfCJTSLtBXM0RJL0JoFgkum2RzQ+rtV/9NI/40j/jSPmLftTBJGTkAAAAA="
+        "blur": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBQCdASoYABEAPu1ssFCppiSiqAqpMB2JaAC/a0ciUAYSFELDeNMIjI6k8ehtSrfYAP7SOUUIzo/3udQRWN0ApbaEB+1mkwjgH2wr1HlcZtqcQirWAZer+2wyOnkj/aZLu0XeGmFdv41nkRlbegbf4H/Rh/8MP69fxOvEjkI37knKnAAAAA=="
       }
     ]
   },
@@ -253,8 +253,8 @@ export const works: Work[] = [
     "category": "identity",
     "year": 2026,
     "role": {
-      "tr": "Tasarım",
-      "en": "Design"
+      "tr": "Konsept ve tasarım",
+      "en": "Concept and design"
     },
     "tools": [
       "Illustrator"
@@ -264,8 +264,8 @@ export const works: Work[] = [
       "en": "EG Monogram"
     },
     "text": {
-      "tr": "İki harfin tek bir çizgide buluştuğu monogram; kartvizitte kör kabartma, afişte tek renk.",
-      "en": "A monogram where two letters meet in one stroke; blind-embossed on the card, single colour on the poster."
+      "tr": "İki harfin tek bir çizgide buluştuğu monogram; kartvizitte kör kabartma, afişte tek renk, ekranda hareketli.",
+      "en": "A monogram where two letters meet in one stroke; blind-embossed on the card, single colour on the poster, animated on screen."
     },
     "client": null,
     "sample": true,
@@ -276,20 +276,20 @@ export const works: Work[] = [
       "src640": "/works/ornek-kimlik-eg/cover-640.webp",
       "w": 1600,
       "h": 1600,
-      "blur": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAABQBACdASoYABgAPu1oq08ppiOiMBgIATAdiUAYObF4Tfa3udGmgxijcqsgAP7tNx3uzSRtoH80hmcbFp0eMA4boUSe9Nu/nlyicvM/H/Ng0BlXMjfPCQyLJ51HrxZwXjCCh1Eov+nQ4Tnr9OFnW70P0pT51gij2QuQ4CHG+RNKwgHWzDIyWI21SLZuvwN333I+rt5XYAA="
+      "blur": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAACwBACdASoYABgAPu1kqk+ppSOiMBgIATAdiUAZC7F+jfa65WFhMe2NAfOR3u/AAP7vtex9sXwxGUoNXgNuFlWaCSTO9e6TX2znf8lFsBhoBdkexvXU24J3Z4+/MD2cxvBA/SgpGFaMuy6YrBieXL3w715amLt8hdTN96W5fumP3hZCc2MQRtJqXexHN1z4YjTgwqBzOAA="
     },
     "gallery": [
       {
         "src": "/works/ornek-kimlik-eg/gallery-1-1600.webp",
         "w": 1600,
         "h": 1600,
-        "blur": "data:image/webp;base64,UklGRuAAAABXRUJQVlA4INQAAADwBACdASoYABgAPu1qsFCppaSiqAqpMB2JaAAD5Ds2/gIa6dhHBP5wsCkKxgkrRMAA/vNpNeMV9K0eDBxHV4L9pIMd9BGlf+2clxPMb6Maocc3/ww6LffPQj/lnyLjdjNw/HtadM0+AAB5gwNPW78nv0fT/z6mjbKZB9yXZhss10lur2rhSFtNdnhsHAibBO3naMP1Ee8TXnpU9QWUfv3qfg3Ncv26e689NdsAcpXoRyX6Q0+VxmNK7xH+JWS1WiGRHLnBZGKnere+Mx5TbCFiUWhgAA=="
+        "blur": "data:image/webp;base64,UklGRuQAAABXRUJQVlA4INgAAABwBQCdASoYABgAPu1uqlCppqOiqAqpMB2JaADIpBOSIqSfrQM6/mHIPBO1namGrfLT2haAAP77ondK+8P2zqcEFqzu/cVzVPjjV9qupBCiE593j/n/j21dCL7j4A/9wFsRzkuY/F3dNFFzkGUiBGpd3ZhbnnB80GL838UNFWq9QgK8iZqffA1yZugrE/8dWOegJrYYjq6Yt7vQaTKg5+uxs3GzTZ1syTo24fdvamb6EMsCh+gQ/f3kAW9YLm5n95i2/BsGh2EPovXL//cHxq6HmCitixQAAAA="
       },
       {
         "src": "/works/ornek-kimlik-eg/gallery-2-1600.webp",
         "w": 1600,
         "h": 1600,
-        "blur": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAAAwBACdASoYABgAPu1oq08ppiOiMBgIATAdiUAXqwId/CHj69DBxk1XtsAA/vC9TwOu2wDiXSHFXJfngPS5jTlUA3cjurIrWZBoK8HlzpUIMYol/zkuTodkopyb4Y3YWpGDY3+gzuLqHH5xPGVCJPspGzCxgY8WX6S8hh9mgXBya3E54z7DEsfQ9MfYs9CC0AdzH7jJyiwAAA=="
+        "blur": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABwBACdASoYABgAPu1mpU2ppaMiMBgMATAdiUAZiwId/D7O66XMc0oBMXOzIAD+8pjSoC57fzvVlraQULpzdCeB39erFrz9Lk/05DexjEYLqr4ZN7sUNZPhMm+7+9gXQ3utK+Xl/dA7CQ01XC+dgWQyf7cKaXh6kV12kV1b/Uz6Gl2oAynvUbeHBZghtnDNAZAAAA=="
       }
     ]
   }

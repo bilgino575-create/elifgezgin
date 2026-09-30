@@ -1,10 +1,30 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import Scene from "./Scene";
+
+/** 30 fps on touch: the canvas runs in demand mode and this loop invalidates it. */
+function FrameCap({ fps, paused }: { fps: number; paused: boolean }) {
+  const invalidate = useThree((s) => s.invalidate);
+  useEffect(() => {
+    if (paused) return;
+    let raf = 0;
+    let last = 0;
+    const step = 1000 / fps - 1.5;
+    const loop = (t: number) => {
+      raf = requestAnimationFrame(loop);
+      if (t - last < step) return;
+      last = t;
+      invalidate();
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [invalidate, fps, paused]);
+  return null;
+}
 
 export default function Experience() {
   const tier = useStore((s) => s.tier);
@@ -37,6 +57,7 @@ export default function Experience() {
       eventSource={typeof document !== "undefined" ? document.body : undefined}
       eventPrefix="client"
     >
+      {touch ? <FrameCap fps={30} paused={!visible} /> : null}
       <Scene />
     </Canvas>
   );

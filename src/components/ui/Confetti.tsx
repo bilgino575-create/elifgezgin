@@ -16,7 +16,8 @@ export default function Confetti() {
     const ctx = c.getContext("2d");
     if (!ctx) return;
     let raf = 0;
-    let last = store.get().confetti;
+    // mounted lazily by the first "elif": start with the release that loaded us
+    let last = store.get().confetti - 1;
     let pieces: { x: number; y: number; vx: number; vy: number; r: number; vr: number; w: number; h: number; a: number; life: number }[] = [];
     let t0 = 0;
 
@@ -88,13 +89,15 @@ export default function Confetti() {
       if (!raf) raf = requestAnimationFrame(frame);
     };
 
-    const unsub = store.subscribe(() => {
+    const check = () => {
       const n = store.get().confetti;
       if (n !== last) {
         last = n;
         release();
       }
-    });
+    };
+    check();
+    const unsub = store.subscribe(check);
     return () => {
       unsub();
       if (raf) cancelAnimationFrame(raf);

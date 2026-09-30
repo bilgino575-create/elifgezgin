@@ -6,16 +6,16 @@
   "category": "poster",
   "year": 2026,
   "role": {
-    "tr": "Tasarım",
-    "en": "Design"
+    "tr": "Konsept ve tasarım",
+    "en": "Concept and design"
   },
   "tools": [
     "Illustrator",
     "Photoshop"
   ],
   "text": {
-    "tr": "Nokta ızgarasından büyüyen tek bir rakam. Baskıda nokta sıklığı kâğıdın dokusuyla birleşir.",
-    "en": "A single numeral growing out of a dot grid. In print, the dot frequency merges with the paper's grain."
+    "tr": "Atölyenin yedinci yılı için afiş: halftone bir gradyanın içinden büyüyen tek rakam, kâğıdın dokusuyla birleşen nokta sıklığı.",
+    "en": "Poster for the studio's seventh year: a single numeral growing out of a halftone gradient whose dots merge with the paper's grain."
   },
   "sample": true,
   "order": 3,

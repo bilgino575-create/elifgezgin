@@ -13,7 +13,7 @@ export default function Skills({ lang }: { lang: Lang }) {
     level: s.level ? L(s.level, lang) : undefined,
   }));
   return (
-    <Section id="beceriler" wide>
+    <Section id="beceriler" wide card>
       <p className="eyebrow mb-4">{d.skills.eyebrow}</p>
       <h2 id="beceriler-title" className="display h2">
         {d.skills.title}

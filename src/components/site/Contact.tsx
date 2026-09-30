@@ -11,7 +11,7 @@ export default function Contact({ lang }: { lang: Lang }) {
   const d = t(lang);
   const hasEmail = !!site.email;
   return (
-    <Section id="iletisim" wide>
+    <Section id="iletisim" wide card>
       <p className="eyebrow mb-4">{d.contact.eyebrow}</p>
       <h2 id="iletisim-title" className="display h2">
         {d.contact.title}

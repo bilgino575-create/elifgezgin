@@ -6,7 +6,7 @@ import { Section } from "./Track";
 export default function Process({ lang }: { lang: Lang }) {
   const d = t(lang);
   return (
-    <Section id="surec" wide align="right">
+    <Section id="surec" wide align="right" card>
       <p className="eyebrow mb-4">{d.process.eyebrow}</p>
       <h2 id="surec-title" className="display h2">
         {d.process.title}

@@ -1,21 +1,21 @@
 {
   "title": {
-    "tr": "Eş Merkezli",
-    "en": "Concentric"
+    "tr": "Sessiz Seri",
+    "en": "Quiet Series"
   },
   "category": "poster",
   "year": 2026,
   "role": {
-    "tr": "Tasarım",
-    "en": "Design"
+    "tr": "Konsept ve tasarım",
+    "en": "Concept and design"
   },
   "tools": [
     "Illustrator",
     "Photoshop"
   ],
   "text": {
-    "tr": "Eş merkezli daireler ve bir siyah bant. Bir konser dizisi için tasarlanmış afiş örneği.",
-    "en": "Concentric circles and one black bar. A sample poster for a concert series."
+    "tr": "Altı akşamlık bir konser dizisi için afiş. Eş merkezli halkalar ses dalgasıdır; siyah bant sahnenin kendisi.",
+    "en": "Poster for a six-evening concert series. The concentric rings are the sound; the black bar is the stage."
   },
   "sample": true,
   "order": 2,

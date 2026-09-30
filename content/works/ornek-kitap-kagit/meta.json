@@ -6,16 +6,16 @@
   "category": "editorial",
   "year": 2026,
   "role": {
-    "tr": "Tasarım",
-    "en": "Design"
+    "tr": "Konsept ve tasarım",
+    "en": "Concept and design"
   },
   "tools": [
     "InDesign",
     "Illustrator"
   ],
   "text": {
-    "tr": "Bir deneme kitabı için kapak ve iç düzen örneği. Serif başlık, dar sütun, geniş kenar boşluğu.",
-    "en": "Cover and interior layout sample for a book of essays. Serif title, narrow measure, generous margins."
+    "tr": "Bir deneme kitabı için kapak ve iç düzen. Serif başlık, dar sütun, geniş kenar boşluğu; sırtta tek renk, kapakta kör kabartma.",
+    "en": "Cover and interior for a book of essays. Serif title, narrow measure, generous margins; one colour on the spine, a blind emboss on the cover."
   },
   "sample": true,
   "order": 4,
