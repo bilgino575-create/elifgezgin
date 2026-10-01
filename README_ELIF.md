@@ -126,6 +126,16 @@ kapalıyken bölümlerde yavaşça hareket eden görseller olarak durur. Bunlar
 adla yeni dosya koy (`elif-00-hero.jpg` portre, `elif-10-paylasim-og-1200x630.jpg`
 paylaşım kartı).
 
+## 7b. Heykel
+
+`public/models/` klasöründeki iki `.glb` dosyası seni temsil eden stilize
+3B heykeldir (yapay zekâ ile `elif-00-hero` görselinden üretildi; fotoğraf
+değil, site de öyle söyler). `elif-heykel-masaustu.glb` bilgisayarda,
+`elif-heykel-mobil.glb` telefonda yüklenir; ikisi de sayfa açıldıktan sonra
+arka planda iner. Girişte ismin yanında kaidesinden yükselir, imlece döner;
+Hakkımda'da yazının yanında durur, parmakla ya da imleçle çevrilir.
+Değiştirmek istersen aynı adlarla yeni dosya koy (meshopt sıkıştırmalı GLB).
+
 ## 8. Yayınlama
 
 Site GitHub'daki `elifgezgin` deposundan Vercel'e otomatik yayınlanır.
