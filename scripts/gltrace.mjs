@@ -24,9 +24,6 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 await page.setViewport({ width: 1440, height: 900 });
-await page.evaluateOnNewDocument(() =>
-  localStorage.setItem("eg-theme", "dark"),
-);
 page.on("console", (m) => {
   if (m.type() === "error")
     console.log("console.error:", m.text().slice(0, 300));
@@ -35,12 +32,40 @@ await page.goto(
   `http://localhost:3000/?gl=1&tier=high&debug${q ? "&" + q : ""}`,
   { waitUntil: "domcontentloaded", timeout: 120000 },
 );
-await new Promise((r) => setTimeout(r, 14000));
-await page.evaluate((p) => {
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  window.scrollTo(0, p * max);
-}, p);
 await new Promise((r) => setTimeout(r, 6000));
+// the loader locks scrolling until it hands over
+for (let i = 0; i < 80; i++) {
+  const gone = await page.evaluate(() => {
+    const l = document.querySelector(".loader");
+    return !l || l.getAttribute("data-loaded") === "true";
+  });
+  if (gone) break;
+  await new Promise((r) => setTimeout(r, 500));
+}
+await page.evaluate((p) => {
+  const track = document.querySelector(".track");
+  const max = track.offsetHeight - window.innerHeight;
+  window.scrollTo({ top: track.offsetTop + p * max, behavior: "auto" });
+}, p);
+// the camera glides to its stop at this machine's frame rate: wait until it holds still over three frames
+{
+  let last = null;
+  const t0 = Date.now();
+  while (Date.now() - t0 < 60000) {
+    await new Promise((r) => setTimeout(r, 500));
+    const cur = await page.evaluate(() => {
+      const r = window.__r3f;
+      return r ? [...r.camera.position.toArray(), r.gl.info.render.frame] : null;
+    });
+    if (!cur) continue;
+    if (!last || cur[3] - last[3] < 3) {
+      if (!last) last = cur;
+      continue;
+    }
+    if (Math.hypot(cur[0] - last[0], cur[1] - last[1], cur[2] - last[2]) < 0.02 && Date.now() - t0 > 3000) break;
+    last = cur;
+  }
+}
 await page.evaluate(() => {
   const { gl } = window.__r3f;
   const ctx = gl.getContext();

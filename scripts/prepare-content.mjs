@@ -2,12 +2,11 @@
  * Build-time content pipeline (prebuild / predev).
  *
  * Reads content/works/<slug>/meta.json and the images next to it, writes
- * optimised WebP derivatives (≤ 2048 px, for textures with mipmaps; 1600 px
- * for galleries; 640 px for cards; a 24 px blur placeholder) to
- * public/works/<slug>/ and a typed manifest to src/content/works.generated.ts.
- * Also prepares content/portrait.jpg when present.
- *
- * Derivatives are only rewritten when the source is newer.
+ * optimised WebP derivatives to public/works/<slug>/ (2048 px for the
+ * stage's textures, 1600 px for the project page, 800 px for small uses,
+ * a 24 px blur placeholder) and a typed manifest to
+ * src/content/works.generated.ts. Derivatives are only rewritten when the
+ * source is newer.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -17,7 +16,10 @@ import sharp from "sharp";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const worksDir = join(root, "content", "works");
 const outDir = join(root, "public", "works");
-const CATEGORIES = new Set(["poster", "editorial", "packaging", "identity", "social"]);
+const CATEGORIES = new Set(["poster", "typography", "identity", "digital", "editorial", "series"]);
+const PRESENTATIONS = new Set(["poster", "chrome-type", "glass-cube", "projection", "spread", "particles"]);
+const defaultPresentation = { poster: "poster", typography: "chrome-type", identity: "glass-cube", digital: "projection", editorial: "spread", series: "particles" };
+const defaultStop = { poster: 4, typography: 2, identity: 3, digital: 5, editorial: 5, series: 4 };
 
 mkdirSync(worksDir, { recursive: true });
 mkdirSync(outDir, { recursive: true });
@@ -25,20 +27,21 @@ mkdirSync(outDir, { recursive: true });
 const fresh = (src, out) => existsSync(out) && statSync(out).mtimeMs >= statSync(src).mtimeMs;
 
 async function derivative(src, out, width, quality = 84) {
-  if (fresh(src, out)) return sharp(out).metadata();
-  const img = sharp(src).rotate();
-  const meta = await img.metadata();
-  const w = Math.min(width, meta.width ?? width);
-  await img.clone().resize({ width: w, withoutEnlargement: true }).webp({ quality, effort: 5 }).toFile(out);
-  return sharp(out).metadata();
+  if (!fresh(src, out)) {
+    await sharp(src).rotate().resize({ width, withoutEnlargement: true }).webp({ quality, effort: 5 }).toFile(out);
+  }
+  const m = await sharp(out).metadata();
+  return { w: m.width, h: m.height };
 }
-
-/** Three dominant colours of an image (k-means on a 32 px raster), as hex. The portal's room is built from them. */
+async function blur(src) {
+  const buf = await sharp(src).rotate().resize(24, 24, { fit: "inside" }).webp({ quality: 40 }).toBuffer();
+  return `data:image/webp;base64,${buf.toString("base64")}`;
+}
+/** three dominant colours (k-means on a 32 px raster) when meta.json gives none */
 async function palette(src, k = 3) {
   const { data, info } = await sharp(src).rotate().resize(32, 32, { fit: "fill" }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const px = [];
   for (let i = 0; i < info.width * info.height; i++) px.push([data[i * 3], data[i * 3 + 1], data[i * 3 + 2]]);
-  // seeds: spread by luminance
   const sorted = [...px].sort((a, b) => a[0] + a[1] + a[2] - (b[0] + b[1] + b[2]));
   let c = Array.from({ length: k }, (_, i) => [...sorted[Math.floor(((i + 0.5) / k) * sorted.length)]]);
   for (let iter = 0; iter < 10; iter++) {
@@ -58,142 +61,116 @@ async function palette(src, k = 3) {
       sum[best][2] += p[2];
       sum[best][3]++;
     }
-    c = c.map((old, j) => (sum[j][3] ? [sum[j][0] / sum[j][3], sum[j][1] / sum[j][3], sum[j][2] / sum[j][3]] : old));
-    c.forEach((cc, j) => (cc[3] = sum[j][3]));
+    c = sum.map((s, j) => (s[3] ? [s[0] / s[3], s[1] / s[3], s[2] / s[3]] : c[j]));
   }
-  // most frequent first
-  c.sort((a, b) => (b[3] ?? 0) - (a[3] ?? 0));
-  const hex = (v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, "0");
-  return c.map((cc) => `#${hex(cc[0])}${hex(cc[1])}${hex(cc[2])}`);
+  return c.map((v) => "#" + v.map((x) => Math.round(x).toString(16).padStart(2, "0")).join(""));
 }
 
-async function layerDerivative(src, out, width) {
-  if (fresh(src, out)) return sharp(out).metadata();
-  const img = sharp(src);
-  const meta = await img.metadata();
-  const w = Math.min(width, meta.width ?? width);
-  await img.clone().resize({ width: w, withoutEnlargement: true }).webp({ quality: 84, effort: 5, alphaQuality: 90 }).toFile(out);
-  return sharp(out).metadata();
-}
-
-async function blur(src) {
-  const buf = await sharp(src).rotate().resize(24).webp({ quality: 40 }).toBuffer();
-  return `data:image/webp;base64,${buf.toString("base64")}`;
-}
+const hex = /^#[0-9a-fA-F]{6}$/;
+const loc = (v, fallback = "") => (v && typeof v === "object" ? { tr: String(v.tr ?? v.en ?? fallback), en: String(v.en ?? v.tr ?? fallback) } : { tr: String(v ?? fallback), en: String(v ?? fallback) });
 
 const works = [];
-const dirs = readdirSync(worksDir, { withFileTypes: true }).filter((d) => d.isDirectory());
-for (const d of dirs) {
-  const dir = join(worksDir, d.name);
+for (const slug of readdirSync(worksDir).sort()) {
+  const dir = join(worksDir, slug);
+  if (!statSync(dir).isDirectory()) continue;
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    console.warn(`works: "${slug}" skipped — folder names use a-z, 0-9 and - only`);
+    continue;
+  }
   const metaPath = join(dir, "meta.json");
   if (!existsSync(metaPath)) {
-    console.warn(`content: ${d.name} has no meta.json, skipped`);
+    console.warn(`works: ${slug}/meta.json missing — skipped`);
     continue;
   }
-  const meta = JSON.parse(readFileSync(metaPath, "utf8"));
-  const slug = d.name;
-  const coverFile = meta.cover ?? "cover.jpg";
-  const coverSrc = join(dir, coverFile);
+  const m = JSON.parse(readFileSync(metaPath, "utf8"));
+  const category = CATEGORIES.has(m.category) ? m.category : "poster";
+  const presentation = PRESENTATIONS.has(m.presentation) ? m.presentation : defaultPresentation[category];
+  const stop = Number.isInteger(m.stop) && m.stop >= 2 && m.stop <= 5 ? m.stop : defaultStop[category];
+  const coverName = m.cover || "cover.jpg";
+  const coverSrc = join(dir, coverName);
   if (!existsSync(coverSrc)) {
-    console.warn(`content: ${slug} has no ${coverFile}, skipped`);
+    console.warn(`works: ${slug}/${coverName} missing — skipped`);
     continue;
-  }
-  if (!CATEGORIES.has(meta.category)) {
-    console.warn(`content: ${slug} category "${meta.category}" unknown, using "poster"`);
-    meta.category = "poster";
   }
   const o = join(outDir, slug);
   mkdirSync(o, { recursive: true });
-  const c2048 = await derivative(coverSrc, join(o, "cover-2048.webp"), 2048, 86);
-  await derivative(coverSrc, join(o, "cover-1024.webp"), 1024, 84);
-  await derivative(coverSrc, join(o, "cover-640.webp"), 640, 80);
+  const image = async (file, base) => {
+    const src = join(dir, file);
+    const big = await derivative(src, join(o, `${base}-2048.webp`), 2048);
+    const mid = await derivative(src, join(o, `${base}-1600.webp`), 1600);
+    await derivative(src, join(o, `${base}-800.webp`), 800, 80);
+    return { src: `/works/${slug}/${base}-1600.webp`, texture: `/works/${slug}/${base}-2048.webp`, small: `/works/${slug}/${base}-800.webp`, w: mid.w, h: mid.h, tw: big.w, th: big.h, blur: await blur(src) };
+  };
+  const cover = await image(coverName, "cover");
   const gallery = [];
-  const files = Array.isArray(meta.gallery)
-    ? meta.gallery
-    : readdirSync(dir).filter((f) => /\.(jpe?g|png|webp)$/i.test(f) && f !== coverFile).sort();
-  let i = 0;
-  for (const f of files) {
-    const src = join(dir, f);
-    if (!existsSync(src)) continue;
-    i++;
-    const m = await derivative(src, join(o, `gallery-${i}-1600.webp`), 1600, 84);
-    gallery.push({ src: `/works/${slug}/gallery-${i}-1600.webp`, w: m.width, h: m.height, blur: await blur(src) });
+  for (const [i, g] of (Array.isArray(m.gallery) ? m.gallery : []).entries()) {
+    if (existsSync(join(dir, g))) gallery.push(await image(g, `g${String(i + 1).padStart(2, "0")}`));
   }
-  // optional layers for the portal's depth pop: content/works/<slug>/layers/*.png|jpg, sorted by name (back to front)
-  const layers = [];
-  const layerDir = join(dir, "layers");
-  if (existsSync(layerDir)) {
-    const lf = readdirSync(layerDir).filter((f) => /\.(png|jpe?g|webp)$/i.test(f)).sort();
-    let li = 0;
-    for (const f of lf) {
-      li++;
-      const m = await layerDerivative(join(layerDir, f), join(o, `layer-${li}-1024.webp`), 1024);
-      layers.push({ src: `/works/${slug}/layer-${li}-1024.webp`, w: m.width, h: m.height, blur: "" });
-    }
-  }
+  const colors = Array.isArray(m.colors) && m.colors.every((c) => hex.test(c)) && m.colors.length >= 2 ? m.colors.slice(0, 3) : await palette(coverSrc);
+  const process = Array.isArray(m.process) ? m.process.map((s) => ({ title: loc(s.title), text: loc(s.text) })) : [];
   works.push({
     slug,
-    category: meta.category,
-    colors: await palette(coverSrc),
-    layers,
-    year: meta.year ?? null,
-    role: meta.role ?? null,
-    tools: meta.tools ?? [],
-    title: meta.title,
-    text: meta.text ?? { tr: "", en: "" },
-    client: meta.client ?? null,
-    sample: meta.sample === true,
-    order: typeof meta.order === "number" ? meta.order : 1000,
-    cover: {
-      src2048: `/works/${slug}/cover-2048.webp`,
-      src1024: `/works/${slug}/cover-1024.webp`,
-      src640: `/works/${slug}/cover-640.webp`,
-      w: c2048.width,
-      h: c2048.height,
-      blur: await blur(coverSrc),
-    },
+    title: loc(m.title, slug),
+    category,
+    presentation,
+    stop,
+    year: Number(m.year) || new Date().getFullYear(),
+    role: loc(m.role),
+    tools: Array.isArray(m.tools) ? m.tools.map(String) : [],
+    text: loc(m.text),
+    client: typeof m.client === "string" && m.client.trim() ? m.client.trim() : null,
+    sample: m.sample === true,
+    order: Number.isFinite(m.order) ? m.order : null,
+    colors,
+    cover,
     gallery,
+    process,
   });
 }
-works.sort((a, b) => a.order - b.order || (b.year ?? 0) - (a.year ?? 0) || a.slug.localeCompare(b.slug));
+works.sort((a, b) => (a.order ?? 1e9) - (b.order ?? 1e9) || b.year - a.year || a.slug.localeCompare(b.slug));
 
-let portrait = null;
-// the file name comes from content/site.ts (`portrait: "..."`), default portrait.jpg
-const siteTs = readFileSync(join(root, "content", "site.ts"), "utf8");
-const portraitFile = (siteTs.match(/portrait:\s*"([^"]+)"/) || [, "portrait.jpg"])[1];
-const portraitSrc = join(root, "content", portraitFile);
-if (existsSync(portraitSrc)) {
-  mkdirSync(join(root, "public", "portrait"), { recursive: true });
-  const m = await derivative(portraitSrc, join(root, "public", "portrait", "portrait-1600.webp"), 1600, 86);
-  portrait = { src: "/portrait/portrait-1600.webp", w: m.width, h: m.height, blur: await blur(portraitSrc) };
-}
-
-const ts = `/* generated by scripts/prepare-content.mjs — do not edit */
-import type { Category } from "@/i18n/dict";
+const ts = `// GENERATED by scripts/prepare-content.mjs — do not edit; edit content/works/<slug>/meta.json
 import type { Localized } from "../../content/site";
 
-export interface WorkImage { src: string; w: number; h: number; blur: string }
+export type Category = "poster" | "typography" | "identity" | "digital" | "editorial" | "series";
+export type Presentation = "poster" | "chrome-type" | "glass-cube" | "projection" | "spread" | "particles";
+export interface WorkImage {
+  /** 1600 px for pages, 2048 px for textures, 800 px for small uses; sizes of the 1600 and 2048 derivatives; a 24 px blur */
+  src: string;
+  texture: string;
+  small: string;
+  w: number;
+  h: number;
+  tw: number;
+  th: number;
+  blur: string;
+}
+export interface WorkProcessStep {
+  title: Localized;
+  text: Localized;
+}
 export interface Work {
   slug: string;
-  category: Category;
-  year: number | null;
-  role: Localized | null;
-  tools: string[];
   title: Localized;
+  category: Category;
+  presentation: Presentation;
+  /** the stop (2–5) where the work stands as an object */
+  stop: number;
+  year: number;
+  role: Localized;
+  tools: string[];
   text: Localized;
   client: string | null;
   sample: boolean;
-  order: number;
-  cover: { src2048: string; src1024: string; src640: string; w: number; h: number; blur: string };
-  gallery: WorkImage[];
-  /** three dominant colours of the cover, most frequent first */
+  order: number | null;
   colors: string[];
-  /** optional depth layers, back to front */
-  layers: WorkImage[];
+  cover: WorkImage;
+  gallery: WorkImage[];
+  process: WorkProcessStep[];
 }
+
 export const works: Work[] = ${JSON.stringify(works, null, 2)};
-export const portrait: WorkImage | null = ${JSON.stringify(portrait)};
 `;
 mkdirSync(join(root, "src", "content"), { recursive: true });
 writeFileSync(join(root, "src", "content", "works.generated.ts"), ts);
-console.log(`content: ${works.length} work(s)${portrait ? ", portrait" : ""} → src/content/works.generated.ts`);
+console.log(`works: ${works.length} prepared → public/works, src/content/works.generated.ts`);

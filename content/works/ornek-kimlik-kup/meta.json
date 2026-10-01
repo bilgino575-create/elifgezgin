@@ -1,0 +1,67 @@
+{
+  "title": {
+    "tr": "KÜP",
+    "en": "KÜP"
+  },
+  "category": "identity",
+  "year": 2026,
+  "role": {
+    "tr": "Marka kimliği",
+    "en": "Brand identity"
+  },
+  "tools": [
+    "Illustrator",
+    "Figma",
+    "InDesign"
+  ],
+  "text": {
+    "tr": "Bir seramik atölyesi için kimlik sistemi: üç eşkenar dörtgenden kurulu bir küp işareti, mor üstünde magenta-cyan-pembe üçlüsü, geniş bir kelime markası ve işaretin kendisinden türeyen bir desen. Sistem bir cam küpün içinde sergileniyor.",
+    "en": "An identity system for a ceramics studio: a cube mark built from three rhombi, a magenta–cyan–pink trio on deep purple, an expanded wordmark and a pattern grown from the mark itself. The system is shown inside a glass cube."
+  },
+  "presentation": "glass-cube",
+  "stop": 3,
+  "colors": [
+    "#2a0f5e",
+    "#e400ff",
+    "#19e3ff"
+  ],
+  "process": [
+    {
+      "title": {
+        "tr": "İşaret",
+        "en": "Mark"
+      },
+      "text": {
+        "tr": "Üç yüzlü küp: hem bir kil kalıbı hem bir harf kutusu.",
+        "en": "A three-faced cube: a clay mould and a letter box at once."
+      }
+    },
+    {
+      "title": {
+        "tr": "Renk",
+        "en": "Colour"
+      },
+      "text": {
+        "tr": "Mor zemin; magenta, cyan ve pembe üç yüzün ışığı.",
+        "en": "A purple ground; magenta, cyan and pink as the light on three faces."
+      }
+    },
+    {
+      "title": {
+        "tr": "Sistem",
+        "en": "System"
+      },
+      "text": {
+        "tr": "İşaret bir desene, kelime markası üç genişliğe açılır.",
+        "en": "The mark opens into a pattern, the wordmark into three widths."
+      }
+    }
+  ],
+  "sample": true,
+  "order": 3,
+  "cover": "cover.png",
+  "gallery": [
+    "01.png",
+    "02.png"
+  ]
+}

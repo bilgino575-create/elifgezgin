@@ -8,7 +8,7 @@ const eslintConfig = defineConfig([
   // Override default ignores of eslint-config-next.
   {
     // the 3D layer mutates three.js objects inside useFrame by design (zero allocations)
-    files: ["src/experience/**/*.{ts,tsx}"],
+    files: ["src/components/3d/**/*.{ts,tsx}"],
     rules: {
       "react-hooks/immutability": "off",
       "react-hooks/refs": "off",

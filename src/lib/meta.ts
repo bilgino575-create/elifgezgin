@@ -1,55 +1,72 @@
 import type { Metadata } from "next";
-import { site, siteUrl, L, workBySlug } from "./content";
-import type { Lang } from "./content";
-import { t } from "@/i18n/dict";
+import { site, L, type Lang } from "@/lib/content";
+import { home, workPath } from "@/lib/i18n";
+import type { Work } from "@/lib/content";
+
+const base = () => new URL(site.url);
 
 export function homeMetadata(lang: Lang): Metadata {
   const title = `${site.name} — ${L(site.title, lang)}`;
   const description = L(site.description, lang);
   return {
-    metadataBase: new URL(site.url),
-    title: { default: title, template: `%s — ${site.name}` },
+    metadataBase: base(),
+    title,
     description,
-    applicationName: site.name,
-    authors: [{ name: site.name, url: site.url }],
-    creator: site.name,
     alternates: {
-      canonical: lang === "tr" ? "/" : "/en",
+      canonical: home(lang),
       languages: { tr: "/", en: "/en", "x-default": "/" },
     },
     openGraph: {
       type: "website",
-      locale: lang === "tr" ? "tr_TR" : "en_US",
-      alternateLocale: lang === "tr" ? "en_US" : "tr_TR",
-      url: lang === "tr" ? "/" : "/en",
       title,
       description,
+      url: home(lang),
       siteName: site.name,
+      locale: lang === "tr" ? "tr_TR" : "en_US",
     },
     twitter: { card: "summary_large_image", title, description },
-    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
-    formatDetection: { email: false, address: false, telephone: false },
+    robots: { index: true, follow: true },
   };
 }
 
-export function workMetadata(lang: Lang, slug: string): Metadata {
-  const w = workBySlug(slug);
-  if (!w) return {};
-  const d = t(lang);
-  const title = L(w.title, lang);
-  const description = L(w.text, lang) || `${d.works.categories[w.category]} — ${site.name}`;
-  const path = lang === "tr" ? `/isler/${slug}` : `/en/work/${slug}`;
+export function workMetadata(lang: Lang, w: Work): Metadata {
+  const title = `${L(w.title, lang)} — ${site.name}`;
+  const description = L(w.text, lang);
   return {
+    metadataBase: base(),
     title,
     description,
-    alternates: { canonical: path, languages: { tr: `/isler/${slug}`, en: `/en/work/${slug}` } },
-    openGraph: {
-      type: "article",
-      url: path,
-      title,
-      description,
-      images: [{ url: siteUrl(w.cover.src1024), width: 1024, height: Math.round((1024 * w.cover.h) / w.cover.w), alt: title }],
+    alternates: {
+      canonical: workPath(lang, w.slug),
+      languages: { tr: workPath("tr", w.slug), en: workPath("en", w.slug), "x-default": workPath("tr", w.slug) },
     },
-    twitter: { card: "summary_large_image", title, description, images: [siteUrl(w.cover.src1024)] },
+    openGraph: { type: "article", title, description, url: workPath(lang, w.slug), siteName: site.name },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
+
+/** JSON-LD: the person and, on project pages, the creative work */
+export function personLd(lang: Lang) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: site.name,
+    jobTitle: L(site.title, lang),
+    url: site.url,
+    ...(site.email ? { email: site.email } : {}),
+    ...(site.social.length ? { sameAs: site.social.map((s) => s.url) } : {}),
+    knowsAbout: site.disciplines.map((d) => L(d, lang)),
+  };
+}
+export function workLd(lang: Lang, w: Work) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: L(w.title, lang),
+    description: L(w.text, lang),
+    dateCreated: String(w.year),
+    url: `${site.url}${workPath(lang, w.slug)}`,
+    image: `${site.url}${w.cover.src}`,
+    author: { "@type": "Person", name: site.name, url: site.url },
   };
 }

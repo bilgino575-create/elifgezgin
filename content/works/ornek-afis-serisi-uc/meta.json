@@ -1,0 +1,66 @@
+{
+  "title": {
+    "tr": "Üç",
+    "en": "Three"
+  },
+  "category": "series",
+  "year": 2026,
+  "role": {
+    "tr": "Afiş serisi",
+    "en": "Poster series"
+  },
+  "tools": [
+    "Illustrator",
+    "InDesign"
+  ],
+  "text": {
+    "tr": "Üç afişlik bir sayı sistemi: siyah yaprak, her afişte tek bir dev rakam ve rakamın gölgesi gibi kayan beş kontur. Pembe, cyan, sarı. Seri uzayda parçacıklara dağılıp yeniden toplanıyor: bir afiş biterken diğeri aynı parçalardan kuruluyor.",
+    "en": "A numeral system across three posters: black sheets, one giant numeral per poster and five outlines sliding like its shadow. Pink, cyan, yellow. In space the series scatters into particles and gathers again: as one poster ends, the next is built from the same pieces."
+  },
+  "presentation": "particles",
+  "stop": 4,
+  "colors": [
+    "#ff2e88",
+    "#19e3ff",
+    "#ffd400"
+  ],
+  "process": [
+    {
+      "title": {
+        "tr": "Sayı",
+        "en": "Numeral"
+      },
+      "text": {
+        "tr": "Rakam yaprağın tamamı: dar kesim, 1500 punto.",
+        "en": "The numeral is the whole sheet: condensed, 1500 pt."
+      }
+    },
+    {
+      "title": {
+        "tr": "Gölge",
+        "en": "Shadow"
+      },
+      "text": {
+        "tr": "Beş kontur kayar; afiş durur, sayı hareket eder.",
+        "en": "Five outlines slide; the sheet is still, the numeral moves."
+      }
+    },
+    {
+      "title": {
+        "tr": "Seri",
+        "en": "Series"
+      },
+      "text": {
+        "tr": "Aynı sistem, üç renk: yan yana bir ritim.",
+        "en": "The same system in three colours: a rhythm side by side."
+      }
+    }
+  ],
+  "sample": true,
+  "order": 6,
+  "cover": "cover.png",
+  "gallery": [
+    "01.png",
+    "02.png"
+  ]
+}

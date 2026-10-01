@@ -1,0 +1,67 @@
+{
+  "title": {
+    "tr": "Renk Dalgası",
+    "en": "Colour Wave"
+  },
+  "category": "digital",
+  "year": 2026,
+  "role": {
+    "tr": "Üretken tasarım ve sanat yönetimi",
+    "en": "Generative design and art direction"
+  },
+  "tools": [
+    "JavaScript",
+    "Processing",
+    "After Effects"
+  ],
+  "text": {
+    "tr": "Üretken bir dijital seri: otuz dört sinüs bandı, üç mürekkep ve bir faz değişkeni. Her kare aynı kuralın başka bir anı. Seri bir heykelin üzerine projeksiyonla gösteriliyor; yüzeyin kıvrımları dalgayı bozuyor.",
+    "en": "A generative digital series: thirty-four sine bands, three inks and one phase variable. Every frame is another moment of the same rule. The series is projected onto a sculpture; the surface's folds distort the wave."
+  },
+  "presentation": "projection",
+  "stop": 5,
+  "colors": [
+    "#19e3ff",
+    "#ff2e88",
+    "#6a2cff"
+  ],
+  "process": [
+    {
+      "title": {
+        "tr": "Kural",
+        "en": "Rule"
+      },
+      "text": {
+        "tr": "Tek bir fonksiyon: genlik ve frekans bandın sırasına bağlı.",
+        "en": "One function: amplitude and frequency follow the band's index."
+      }
+    },
+    {
+      "title": {
+        "tr": "Faz",
+        "en": "Phase"
+      },
+      "text": {
+        "tr": "Faz değişkeni seriyi üretir; her kare bir çıktı.",
+        "en": "The phase variable generates the series; every frame is a print."
+      }
+    },
+    {
+      "title": {
+        "tr": "Yüzey",
+        "en": "Surface"
+      },
+      "text": {
+        "tr": "Projeksiyon düz değil: kıvrımlı bir heykel dalgayı yeniden çizer.",
+        "en": "The projection is not flat: a folded sculpture redraws the wave."
+      }
+    }
+  ],
+  "sample": true,
+  "order": 4,
+  "cover": "cover.png",
+  "gallery": [
+    "01.png",
+    "02.png"
+  ]
+}

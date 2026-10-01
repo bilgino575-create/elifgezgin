@@ -1,0 +1,106 @@
+/* typography — Archivo's two axes do the art direction */
+.giant,
+.display,
+.h2,
+.h3 {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.giant {
+  font-size: var(--t-giant);
+  line-height: 0.82;
+  font-stretch: 62%;
+  letter-spacing: -0.015em;
+}
+.display {
+  font-size: var(--t-display);
+  line-height: 0.86;
+  font-stretch: 75%;
+}
+.h2 {
+  font-size: var(--t-h2);
+  line-height: 0.94;
+  font-stretch: 88%;
+}
+.h3 {
+  font-size: var(--t-h3);
+  line-height: 1.05;
+  font-weight: 700;
+  font-stretch: 100%;
+}
+.wide {
+  font-stretch: 125%;
+  letter-spacing: 0.02em;
+}
+.narrow {
+  font-stretch: 62%;
+}
+.lead {
+  font-size: var(--t-lead);
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  text-wrap: pretty;
+}
+.body {
+  font-size: var(--t-body);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.meta {
+  font-size: var(--t-meta);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.micro {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.serif-lead {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: calc(var(--t-lead) * 1.25);
+  line-height: 1.2;
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+.muted {
+  color: var(--fg2);
+}
+.outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--fg);
+}
+.caps {
+  text-transform: uppercase;
+}
+
+/* a word split into letters for the hover separation (ui/SplitWord) */
+.split {
+  display: inline-block;
+  white-space: nowrap;
+}
+.split .ch {
+  display: inline-block;
+  transition: transform var(--d-fast) var(--ease-out);
+  will-change: transform;
+}
+@media (hover: hover) {
+  .split:hover .ch {
+    transform: translateX(calc(var(--k) * 0.08em)) translateY(calc(var(--k) * -0.04em));
+  }
+}

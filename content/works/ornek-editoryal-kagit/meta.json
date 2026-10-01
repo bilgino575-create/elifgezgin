@@ -1,0 +1,66 @@
+{
+  "title": {
+    "tr": "KÂĞIT",
+    "en": "KÂĞIT"
+  },
+  "category": "editorial",
+  "year": 2026,
+  "role": {
+    "tr": "Editoryal tasarım ve sanat yönetimi",
+    "en": "Editorial design and art direction"
+  },
+  "tools": [
+    "InDesign",
+    "Illustrator"
+  ],
+  "text": {
+    "tr": "Kâğıt, yazı ve boşluk üzerine bir dergi: yoğun bir siyah sayfa ile üç kolonlu beyaz bir sayfa yan yana. Başlık kâğıdın kendisi kadar ağır, metin 10/14. Forma uzayda açılıyor: sol sayfa gelirken sağ sayfa katlanarak kalkıyor.",
+    "en": "A magazine on paper, type and white space: a dense black page beside a three-column white one. The title as heavy as the stock, the text at 10/14. The spread opens in space: the left page arrives as the right page folds up."
+  },
+  "presentation": "spread",
+  "stop": 5,
+  "colors": [
+    "#07060f",
+    "#ffd400",
+    "#f7f6f2"
+  ],
+  "process": [
+    {
+      "title": {
+        "tr": "Format",
+        "en": "Format"
+      },
+      "text": {
+        "tr": "230 × 300 mm; dış kenar iç kenarın iki katı.",
+        "en": "230 × 300 mm; the outer margin twice the inner."
+      }
+    },
+    {
+      "title": {
+        "tr": "Yazı",
+        "en": "Type"
+      },
+      "text": {
+        "tr": "Başlıkta dar Archivo, metinde normal; alıntıda Instrument Serif italik.",
+        "en": "Condensed Archivo for titles, normal for text; Instrument Serif italic for quotes."
+      }
+    },
+    {
+      "title": {
+        "tr": "Sayfa",
+        "en": "Page"
+      },
+      "text": {
+        "tr": "Her forma bir karşıtlık: siyah/beyaz, dolu/boş, dar/geniş.",
+        "en": "Every spread is a contrast: black/white, full/empty, narrow/wide."
+      }
+    }
+  ],
+  "sample": true,
+  "order": 5,
+  "cover": "cover.png",
+  "gallery": [
+    "01.png",
+    "02.png"
+  ]
+}

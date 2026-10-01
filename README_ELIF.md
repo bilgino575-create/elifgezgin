@@ -4,71 +4,91 @@ Bu site senin. Kod bilmene gerek yok; aşağıdaki her şey klasörlere dosya
 koymak ve birkaç satır metin değiştirmekten ibaret. Her değişiklikten sonra
 siteyi yayınlamak için en alttaki "Yayınlama" bölümüne bak.
 
+Site yedi duraklı bir gezi: 01 Renk (giriş), 02 Tipografi, 03 Marka,
+04 Afiş, 05 Dijital Sanat, 06 Elif (hakkında), 07 İletişim. İşlerin 02–05
+duraklarında uzayda duran nesneler olarak görünür; her birine tıklanınca
+kendi sayfası açılır.
+
 ## 1. Yeni bir iş eklemek
 
 1. `content/works/` klasörünün içine yeni bir klasör aç. Klasörün adı, işin
    adresinde görünecek: örneğin `content/works/lale-festivali` →
    `elifgezgin.com/isler/lale-festivali`. Sadece küçük harf, rakam ve tire
    kullan (Türkçe karakter ve boşluk kullanma).
-2. İşin ana görselini o klasöre **`cover.jpg`** adıyla koy. Kare, dikey ya da
-   yatay olabilir; site oranı otomatik alır. Uzun kenar en az 1600 piksel
-   olsun; büyük dosyalar sorun değil, site kendi küçültür.
+2. İşin ana görselini o klasöre **`cover.jpg`** adıyla koy (PNG de olur;
+   o zaman aşağıda `"cover": "cover.png"` yaz). Kare, dikey ya da yatay
+   olabilir. Uzun kenar en az 1600 piksel olsun; büyük dosyalar sorun değil,
+   site kendi küçültür.
 3. İstersen galeri görselleri ekle: `01.jpg`, `02.jpg`, `03.jpg` …
-   Sıralama dosya adına göre.
 4. Aynı klasöre **`meta.json`** adında bir dosya koy ve şunu yapıştırıp
    doldur:
 
 ```json
 {
-  "title": { "tr": "Lale Festivali Afişi", "en": "Tulip Festival Poster" },
+  "title": { "tr": "Lale Festivali", "en": "Tulip Festival" },
   "category": "poster",
-  "year": 2025,
+  "year": 2026,
   "role": { "tr": "Konsept ve tasarım", "en": "Concept and design" },
   "tools": ["Illustrator", "InDesign"],
   "text": {
-    "tr": "İki cümleyle işin hikâyesi: neydi, ne yaptın, ne oldu.",
-    "en": "The story of the work in two sentences."
+    "tr": "İki üç cümleyle işin hikâyesi: neydi, ne yaptın, ne oldu.",
+    "en": "The story of the work in two or three sentences."
   },
-  "client": "İstanbul Kültür Vakfı",
+  "colors": ["#ff2e88", "#19e3ff", "#07060f"],
+  "process": [
+    { "title": { "tr": "Fikir", "en": "Idea" }, "text": { "tr": "Bir cümle.", "en": "One sentence." } },
+    { "title": { "tr": "Sistem", "en": "System" }, "text": { "tr": "Bir cümle.", "en": "One sentence." } }
+  ],
   "sample": false,
   "cover": "cover.jpg",
   "gallery": ["01.jpg", "02.jpg"]
 }
 ```
 
-- **category** şu beşinden biri olmalı, duvardaki nesnenin şeklini belirler:
-  - `poster` → raya asılı baskı
-  - `editorial` → açılan kitap / dergi
-  - `packaging` → dönen kutu
-  - `identity` → kör kabartmalı kart (logolar için)
-  - `social` → çerçevesiz ekran (sosyal medya işleri için)
-- **client** satırını müşteri yoksa tamamen sil.
+- **category** şu altısından biri olmalı; işin hangi durakta ve nasıl
+  duracağını belirler:
+  - `poster` → 04 Afiş durağı, imlece eğilen dev afiş
+  - `series` → 04 Afiş durağı, parçacıklara dağılıp yeniden toplanan seri
+    (kapak + galerideki ilk iki görsel sırayla gösterilir)
+  - `typography` → 02 Tipografi durağı, krom 3B harfler (başlık kısa olsun)
+  - `identity` → 03 Marka durağı, cam küp içinde kimlik levhaları
+    (kapak + galerideki ilk iki görsel)
+  - `digital` → 05 Dijital Sanat durağı, sıvı heykel üzerine projeksiyon
+  - `editorial` → 05 Dijital Sanat durağı, uzayda açılan dergi forması
+    (kapak sol sayfa, galerinin ilk görseli sağ sayfa)
+- **colors** proje sayfasının renkleri (iki ya da üç tane). Satırı silersen
+  renkler kapaktan kendiliğinden alınır.
+- **process** süreç adımları; proje sayfasında numaralı liste olarak
+  görünür. İstemiyorsan `"process": []` yaz.
+- **client** diye bir satır ekleyebilirsin (`"client": "…"`) ama yalnızca
+  gerçek bir müşteri varsa.
 - **sample** her zaman `false` olsun; `true` sadece örnek işler içindir.
-- **order** diye bir satır eklersen (`"order": 1`) işler o sıraya göre dizilir.
-  Yoksa yıla göre yeniden eskiye sıralanır.
+- **order** diye bir satır eklersen (`"order": 1`) işler o sıraya göre
+  dizilir. Yoksa yıla göre yeniden eskiye sıralanır.
 
-Sonra kaydet, yayınla. Başka hiçbir şey gerekmez: site klasörleri kendisi okur.
+Her durakta en fazla iki iş uzayda durur (02 ve 03'te bir, 04 ve 05'te
+iki). Aynı türden fazla iş eklersen hepsi İletişim durağındaki "İşler"
+listesinde ve proje sayfalarının "Sonraki" bağlantısında yer alır; uzayda
+yalnızca sıradaki ilk olanlar görünür. Hangisinin görüneceğini `order` ile
+seçersin.
 
-**İsteğe bağlı, derinlik katmanları:** İşin klasörüne `layers` adında bir
-klasör açıp tasarımı katmanlar hâlinde koyarsan (ör. `1-arka.jpg`,
-`2-sekiller.png`, `3-yazi.png`; PNG'ler saydam olabilir, sıralama dosya
-adına göre arkadan öne) 3B sahnedeki portalın içinde katmanlar üzerine
-gelince derinlikte ayrılır. Koymazsan kapak tek katman olarak durur; hiçbir
-şey bozulmaz.
+Sonra kaydet, yayınla. Başka hiçbir şey gerekmez: site klasörleri kendisi
+okur ve görselleri hazırlar.
 
 ## 2. Örnek işleri kaldırmak
 
-Adı `ornek-` ile başlayan altı klasör örnek işlerdir; hepsinin sağ üstünde
-küçük "Örnek" etiketi görünür. Kendi işlerini eklediğinde bu klasörleri
-silmen yeterli. Sildiğin örnekler bir daha kendiliğinden geri gelmez
-(örnekler yalnızca `content/works` tamamen boşken üretilir).
+Adı `ornek-` ile başlayan altı klasör örnek işlerdir; sitede "Örnek proje"
+etiketiyle görünürler ve proje sayfalarında bunun gerçek bir müşteri işi
+olmadığı yazar. Kendi işlerini eklediğinde bu klasörleri silmen yeterli.
+Sildiğin örnekler kendiliğinden geri gelmez (örnekler yalnızca
+`content/works` tamamen boşken üretilir).
 
 ## 3. Bir işi düzenlemek veya silmek
 
 - Düzenlemek: klasördeki `meta.json` metnini ya da görselleri değiştir.
 - Silmek: klasörü sil.
 
-## 4. Adını, unvanını, hakkımda metnini değiştirmek
+## 4. Adını, unvanını, metinleri değiştirmek
 
 `content/site.ts` dosyasını aç. Her satırın ne olduğu yanında yazıyor.
 Tırnak içindeki metni değiştir, tırnakları koru. Örnek:
@@ -81,8 +101,13 @@ bio: {
 },
 ```
 
-- **email**: tırnak içine e-postanı yaz. Boş bırakırsan "E-postayı kopyala"
-  düğmesi ve iletişim formu görünmez (uydurma bir adres asla gösterilmez).
+- **description**: arama motorlarında ve paylaşım kartlarında görünen kısa
+  açıklama.
+- **tagline**: giriş durağında mesleğinin altındaki tek cümle.
+- **bio**: 06 Elif durağındaki metin.
+- **disciplines**: ismin etrafında uzayda dolaşan altı kelime.
+- **email**: tırnak içine e-postanı yaz. Boş bırakırsan e-posta bağlantısı
+  ve "Kopyala" düğmesi görünmez; yerine bir şey uydurulmaz.
 - **social**: yalnızca gerçekten var olan hesaplar. Örnek:
   ```ts
   social: [
@@ -91,52 +116,30 @@ bio: {
   ],
   ```
   `id` şunlardan biri olabilir: `behance`, `instagram`, `linkedin`, `dribbble`.
-- **skills**: beceriler listesi. Her becerinin `name` (adı) ve `description`
-  (bir cümlelik açıklama) var. İstersen `level: { tr: "İleri", en: "Advanced" }`
-  ekleyebilirsin; yoksa seviye hiç gösterilmez, yüzde ya da çubuk yoktur.
-- **tools**: kullandığın programlar, virgülle ayrılmış.
-- **process**: süreç adımları; katlanan sayfadaki altı panel.
-- **availability**: sitenin son cümlesi.
-- **url**: sitenin adresi (arama motorları için).
+- **availability**: İletişim durağının son satırı.
+- **url**: sitenin adresi (arama motorları ve paylaşım kartları için). Alan
+  adın alındığında Vercel'de `NEXT_PUBLIC_SITE_URL` değişkenini değiştirmen
+  yeterli; dosyaya dokunma.
 
-## 5. Rengi değiştirmek
+## 5. Renkler
 
-Sitede tek bir vurgu rengi var: başlığın altındaki çizgi, ray, kartelanın
-tonları, kartvizit. `content/site.ts` içinde:
+Her durağın kendi renkleri var (karanlık + neon, krem + kobalt + turuncu,
+mor + magenta + cyan, asit yeşili + siyah, beyaz stüdyo, siyah + ultraviyole
++ lime, elektrik mavisi). Bunlar tasarımın parçası; değiştirmek istersen
+`src/lib/stops.ts` dosyasındaki `palette` satırları ve `docs/GEZI.md`
+bunu anlatır. Projelerin kendi renklerini ise `meta.json` içindeki
+`colors` belirler.
 
-```ts
-spotColor: "#1F4BFF",
-```
-
-Tırnak içine istediğin rengin kodunu yaz (ör. `#C8102E`). Kod, her tasarım
-programının renk panelinde "Hex" olarak görünür.
-
-## 6. Fotoğrafını koymak
-
-`content/` klasörüne **`portrait.jpg`** adında bir fotoğraf koy (dikey,
-en az 1200 piksel). Hakkımda bölümünde basılı bir fotoğraf gibi, noktalı
-baskıyla görünür. Fotoğraf yoksa yerinde tipografik monogram durur.
-
-## 7. Atmosfer görselleri
-
-`content/atmosphere/` klasöründeki görseller sitenin havasını kuran soyut
-görsellerdir: 3B sahnede binlerce parçacık bu görsellere dönüşür, 3B
-kapalıyken bölümlerde yavaşça hareket eden görseller olarak durur. Bunlar
-**iş değildir**; İşler listesinde asla görünmez. Değiştirmek istersen aynı
-adla yeni dosya koy (`elif-00-hero.jpg` portre, `elif-10-paylasim-og-1200x630.jpg`
-paylaşım kartı).
-
-## 7b. Heykel
+## 6. Heykel
 
 `public/models/` klasöründeki iki `.glb` dosyası seni temsil eden stilize
-3B heykeldir (yapay zekâ ile `elif-00-hero` görselinden üretildi; fotoğraf
-değil, site de öyle söyler). `elif-heykel-masaustu.glb` bilgisayarda,
-`elif-heykel-mobil.glb` telefonda yüklenir; ikisi de sayfa açıldıktan sonra
-arka planda iner. Girişte ismin yanında kaidesinden yükselir, imlece döner;
-Hakkımda'da yazının yanında durur, parmakla ya da imleçle çevrilir.
+3B heykeldir (yapay zekâ ile üretildi; fotoğraf değil, site de öyle söyler).
+`elif-heykel-masaustu.glb` bilgisayarda, `elif-heykel-mobil.glb` telefonda
+yüklenir; ikisi de sayfa açıldıktan sonra arka planda iner. 06 Elif
+durağında ismin yanında kaidesinde durur; parmakla ya da imleçle çevrilir.
 Değiştirmek istersen aynı adlarla yeni dosya koy (meshopt sıkıştırmalı GLB).
 
-## 8. Yayınlama
+## 7. Yayınlama
 
 Site GitHub'daki `elifgezgin` deposundan Vercel'e otomatik yayınlanır.
 

@@ -1,0 +1,66 @@
+{
+  "title": {
+    "tr": "Sessiz Şehir",
+    "en": "Silent City"
+  },
+  "category": "poster",
+  "year": 2026,
+  "role": {
+    "tr": "Konsept ve tasarım",
+    "en": "Concept and design"
+  },
+  "tools": [
+    "Illustrator",
+    "InDesign"
+  ],
+  "text": {
+    "tr": "Bir ses sanatı sergisi için afiş sistemi: asit yeşili bir yaprak, yoğunlaştırılmış tek bir başlık ve şehrin susan hoparlörü olarak siyah bir disk. İki renk serigrafi; sistem iki afişe ve bir davetiyeye uzanıyor.",
+    "en": "A poster system for a sound-art exhibition: an acid-green sheet, one condensed title and a black disc as the city's silenced speaker. Two-colour screen print; the system extends to two posters and an invitation."
+  },
+  "presentation": "poster",
+  "stop": 4,
+  "colors": [
+    "#c8ff00",
+    "#07060f",
+    "#ff2e88"
+  ],
+  "process": [
+    {
+      "title": {
+        "tr": "Fikir",
+        "en": "Idea"
+      },
+      "text": {
+        "tr": "Sessizlik bir boşluk değil, bir disk: bir hoparlörün ses çıkarmayan yüzü.",
+        "en": "Silence is not a gap but a disc: the mute face of a speaker."
+      }
+    },
+    {
+      "title": {
+        "tr": "Yazı",
+        "en": "Type"
+      },
+      "text": {
+        "tr": "Archivo'nun en dar, en ağır kesimi; iki satır, yaprağın yarısını doldurur.",
+        "en": "Archivo at its narrowest and heaviest; two lines fill half the sheet."
+      }
+    },
+    {
+      "title": {
+        "tr": "Baskı",
+        "en": "Print"
+      },
+      "text": {
+        "tr": "İki renk serigrafi: siyah ve pembe, asit yeşili kâğıt üstünde.",
+        "en": "Two-colour screen print: black and pink on acid-green stock."
+      }
+    }
+  ],
+  "sample": true,
+  "order": 1,
+  "cover": "cover.png",
+  "gallery": [
+    "01.png",
+    "02.png"
+  ]
+}

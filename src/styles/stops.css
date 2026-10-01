@@ -1,0 +1,583 @@
+/* ───────────────────────── the track and the stops ───────────────────────── */
+#stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+#stage canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+.track {
+  position: relative;
+  z-index: 1;
+}
+
+/* with the stage: each stop is a page that holds while the camera holds, then leaves */
+html.js.gl .track {
+  height: calc(var(--track-vh) * var(--vh));
+}
+/* the scrollable range (track − viewport) is cut into seven equal segments; a stop starts at its segment
+   and is one viewport taller than it, so its layer sticks for exactly the segment and the next one comes in beneath */
+html.js.gl .stop {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: calc(var(--i) * (100% - 100 * var(--vh)) / 7);
+  height: calc((100% - 100 * var(--vh)) / 7 + 100 * var(--vh));
+}
+html.js.gl .stop-layer {
+  position: sticky;
+  top: 0;
+  height: calc(100 * var(--vh));
+  pointer-events: none;
+}
+html.js.gl .stop-layer a,
+html.js.gl .stop-layer button {
+  pointer-events: auto;
+}
+html.gl .fb {
+  display: none;
+}
+
+/* without it: the 2D journey — seven full-height compositions in their own inks */
+html:not(.gl) .stop {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(60% 55% at 82% 18%, color-mix(in srgb, var(--a) 38%, transparent), transparent 70%),
+    radial-gradient(45% 45% at 14% 86%, color-mix(in srgb, var(--b) 30%, transparent), transparent 72%),
+    radial-gradient(30% 30% at 55% 60%, color-mix(in srgb, var(--c) 18%, transparent), transparent 70%),
+    var(--bg);
+  overflow: hidden;
+}
+html:not(.gl) .stop-layer {
+  position: relative;
+  min-height: 100vh;
+}
+
+.stop-layer {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: auto 1fr auto;
+  column-gap: var(--gutter);
+  padding: calc(var(--nav-h) + 1.5rem) var(--gutter) calc(var(--gutter) + 1rem);
+  color: var(--fg);
+}
+/* the route map keeps the left edge on wide screens */
+@media (min-width: 1024px) {
+  html.gl .stop-layer {
+    padding-left: calc(var(--gutter) + 3.6rem);
+  }
+}
+.stop-head {
+  grid-row: 1;
+  grid-column: 1 / span 6;
+  display: flex;
+  gap: 0.8em;
+  align-items: baseline;
+  opacity: 0.85;
+}
+.stop-head .sep {
+  opacity: 0.5;
+}
+.stop-body {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+/* every stop takes a different corner */
+.corner-bl .stop-body { grid-row: 3; grid-column: 1 / span 8; align-self: end; }
+.corner-tr .stop-body { grid-row: 2; grid-column: 7 / -1; align-self: start; padding-top: 2vh; }
+.corner-tl .stop-body { grid-row: 2; grid-column: 1 / span 6; align-self: start; padding-top: 2vh; }
+.corner-br .stop-body { grid-row: 3; grid-column: 6 / -1; align-self: end; }
+.corner-bc .stop-body { grid-row: 3; grid-column: 2 / 12; align-self: end; }
+.corner-l .stop-body { grid-row: 2 / span 2; grid-column: 1 / span 6; align-self: center; }
+.corner-c .stop-body { grid-row: 2; grid-column: 2 / 12; align-self: center; text-align: center; }
+@media (max-width: 767px) {
+  .stop-layer {
+    grid-template-columns: 1fr;
+  }
+  .stop-head {
+    grid-column: 1;
+  }
+  .corner-bl .stop-body,
+  .corner-tr .stop-body,
+  .corner-tl .stop-body,
+  .corner-br .stop-body,
+  .corner-bc .stop-body,
+  .corner-l .stop-body,
+  .corner-c .stop-body {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: end;
+    padding-top: 0;
+    text-align: left;
+  }
+  .corner-c .stop-body {
+    text-align: center;
+  }
+}
+
+/* the stop's content rises when the camera arrives */
+/* over the stage, every word carries a breath of the void behind it: the type stays legible on chrome and glass */
+html.gl .stop-body,
+html.gl .stop-head {
+  text-shadow: 0 0.04em 0.35em color-mix(in srgb, var(--bg) 70%, transparent), 0 0 0.06em color-mix(in srgb, var(--bg) 55%, transparent);
+}
+html.gl .stop-body > * {
+  opacity: 0;
+  transform: translateY(0.6rem);
+  transition:
+    opacity var(--d-slow) var(--ease-out),
+    transform var(--d-slow) var(--ease-out);
+}
+html.gl .stop[data-active="true"] .stop-body > * {
+  opacity: 1;
+  transform: none;
+}
+html.gl .stop[data-active="true"] .stop-body > :nth-child(2) { transition-delay: 60ms; }
+html.gl .stop[data-active="true"] .stop-body > :nth-child(3) { transition-delay: 120ms; }
+html.gl .stop[data-active="true"] .stop-body > :nth-child(4) { transition-delay: 180ms; }
+html.gl.reduced .stop-body > * {
+  transition: none;
+  transform: none;
+  opacity: 1;
+}
+
+/* ───────────────────────── 01 renk ───────────────────────── */
+.hero-role {
+  display: block;
+  text-shadow: 0 0 0.06em var(--bg), 0 0 0.2em color-mix(in srgb, var(--bg) 85%, transparent), 0 0.05em 0.6em color-mix(in srgb, var(--bg) 80%, transparent);
+  font-size: clamp(2rem, 4.4vw, 5rem);
+  font-weight: 800;
+  font-stretch: 112%;
+  letter-spacing: 0.03em;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.hero-role .line {
+  display: inline-block;
+  margin-right: 0.35em;
+}
+@media (max-width: 767px) {
+  .hero-role .line {
+    display: block;
+    margin-right: 0;
+  }
+}
+.hero-tag {
+  margin-top: 1.4rem;
+  max-width: 24ch;
+}
+.hero-hint {
+  margin-top: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  opacity: 0.75;
+}
+.fb-hero .fb-name,
+.fb-about .fb-name {
+  position: absolute;
+  left: var(--gutter);
+  top: 16vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+.fb-hero .fb-name .l2,
+.fb-about .fb-name .l2 {
+  margin-left: 0.18em;
+  -webkit-text-stroke: 2px var(--fg);
+}
+.glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(70px);
+  opacity: 0.75;
+  animation: drift 14s var(--ease-in-out) infinite alternate;
+}
+.glow-a { width: 42vw; height: 42vw; right: -8vw; top: -6vw; background: var(--a); }
+.glow-b { width: 30vw; height: 30vw; right: 22vw; bottom: 4vh; background: var(--b); animation-delay: -5s; }
+.glow-c { width: 18vw; height: 18vw; left: 40vw; top: 48vh; background: var(--c); animation-delay: -9s; }
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-6vw, 5vh) scale(1.12); }
+}
+.fb-ribbon {
+  position: absolute;
+  inset: auto 0 0 0;
+  width: 100%;
+  height: 60vh;
+  opacity: 0.8;
+}
+
+/* ───────────────────────── the project blocks ───────────────────────── */
+.proj {
+  max-width: 38rem;
+}
+.proj.compact {
+  max-width: 26rem;
+}
+.proj-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7em;
+  align-items: center;
+  opacity: 0.85;
+}
+.proj-kicker .sep {
+  opacity: 0.5;
+}
+.proj h2 {
+  margin-top: 0.5rem;
+}
+.proj-title {
+  display: inline-block;
+}
+.proj-text {
+  margin-top: 1.1rem;
+  max-width: 34rem;
+}
+.proj-meta {
+  display: flex;
+  gap: 2.4rem;
+  margin-top: 1.2rem;
+}
+.proj-meta dt {
+  opacity: 0.6;
+  font-size: var(--t-micro);
+}
+.proj-meta dd {
+  margin: 0.2em 0 0;
+}
+.proj .cta {
+  margin-top: 1.4rem;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+.stack .proj-text {
+  font-size: var(--t-body);
+  max-width: 30rem;
+}
+.proj.compact .cta {
+  margin-top: 0.9rem;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: end;
+}
+@media (max-width: 767px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .stack {
+    gap: 1.4rem;
+  }
+  .proj.compact .proj-meta {
+    display: none;
+  }
+}
+
+/* ───────────────────────── the 2D journey's art ───────────────────────── */
+.fb {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.fb-art {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(42vw, 560px);
+  aspect-ratio: var(--ar, 2 / 3);
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+}
+.fb-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fb-art.tilt {
+  transform: translateY(-50%) perspective(1400px) rotateY(-14deg) rotateX(4deg);
+  transition: transform var(--d-slow) var(--ease-out);
+}
+.fb-art.tilt:hover {
+  transform: translateY(-50%) perspective(1400px) rotateY(6deg) rotateX(-3deg);
+}
+.fb-art.glass {
+  padding: clamp(10px, 2vw, 28px);
+  background: color-mix(in srgb, #fff 8%, transparent);
+  border: 1px solid color-mix(in srgb, #fff 30%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 10px;
+  box-shadow: inset 0 0 60px color-mix(in srgb, var(--b) 20%, transparent);
+}
+.fb-art.glass img {
+  border-radius: 4px;
+}
+.fb-art.round {
+  width: min(34vw, 440px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  right: auto;
+  left: 18vw;
+  top: 40%;
+}
+.fb-art.wide {
+  width: min(44vw, 640px);
+  top: 36%;
+}
+.fb-art.small {
+  position: static;
+  transform: none;
+  width: 100%;
+}
+/* 02: the words take the top right, the widths the top left, the card the bottom right */
+.fb-type .fb-art {
+  top: auto;
+  bottom: 6vh;
+  transform: none;
+  width: min(28vw, 400px);
+}
+.fb-type .fb-art.tilt:hover {
+  transform: perspective(1400px) rotateY(6deg) rotateX(-3deg);
+}
+.fb-type .fb-widths {
+  position: absolute;
+  left: var(--gutter);
+  top: 14vh;
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(2.6rem, 7vw, 7rem);
+  line-height: 0.95;
+  color: var(--a);
+  opacity: 0.9;
+}
+.fb-type .fb-widths span:nth-child(even) {
+  color: var(--b);
+}
+/* 04: the words take the bottom right, so the poster leans at the left and the series hangs top right */
+.fb-posters .fb-art.tilt {
+  right: auto;
+  left: calc(var(--gutter) + 2vw);
+}
+.fb-series {
+  position: absolute;
+  right: var(--gutter);
+  top: 12vh;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  width: min(36vw, 420px);
+}
+.fb-about .fb-name {
+  opacity: 0.18;
+  top: 24vh;
+  left: 36vw;
+}
+.fb-word {
+  position: absolute;
+  padding: 0.5em 0.9em;
+  border: 1px solid color-mix(in srgb, var(--fg) 45%, transparent);
+  border-radius: 999px;
+  animation: float 9s var(--ease-in-out) infinite alternate;
+  animation-delay: calc(var(--i) * -1.4s);
+}
+.fb-word:nth-child(1) { left: 48vw; top: 22vh; color: var(--b); border-color: var(--b); }
+.fb-word:nth-child(2) { left: 66vw; top: 34vh; }
+.fb-word:nth-child(3) { left: 54vw; top: 50vh; color: var(--c); border-color: var(--c); }
+.fb-word:nth-child(4) { left: 74vw; top: 62vh; }
+.fb-word:nth-child(5) { left: 44vw; top: 70vh; color: var(--b); border-color: var(--b); }
+.fb-word:nth-child(6) { left: 80vw; top: 18vh; color: var(--c); border-color: var(--c); }
+@keyframes float {
+  from { transform: translate(0, 0) rotate(-2deg); }
+  to { transform: translate(1.2vw, -2vh) rotate(3deg); }
+}
+.fb-contact {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.fb-contact .ring {
+  position: absolute;
+  width: min(70vmin, 720px);
+  height: min(70vmin, 720px);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--fg) 40%, transparent);
+  mask: conic-gradient(from 0deg, #000 0 55%, transparent 60% 100%);
+  -webkit-mask: conic-gradient(from 0deg, #000 0 55%, transparent 60% 100%);
+  animation: turn 28s linear infinite;
+}
+.fb-contact .ring-2 {
+  width: min(54vmin, 560px);
+  height: min(54vmin, 560px);
+  border-color: var(--b);
+  animation-direction: reverse;
+  animation-duration: 36s;
+}
+@keyframes turn {
+  to { transform: rotate(360deg); }
+}
+@media (max-width: 767px) {
+  .fb-art,
+  .fb-art.round,
+  .fb-art.wide {
+    position: absolute;
+    right: var(--gutter);
+    left: auto;
+    top: calc(var(--nav-h) + 2.5rem);
+    transform: none;
+    width: 52vw;
+  }
+  /* 04 on phones: the poster small at the left, the series beside it, the words below both */
+  .fb-posters .fb-art.tilt {
+    left: var(--gutter);
+    right: auto;
+    width: 36vw;
+  }
+  .fb-art.tilt,
+  .fb-art.tilt:hover {
+    transform: perspective(900px) rotateY(-10deg);
+  }
+  .fb-type .fb-widths {
+    font-size: 2rem;
+    top: 20vh;
+  }
+  .fb-series {
+    width: 48vw;
+    bottom: auto;
+    top: calc(var(--nav-h) + 2.5rem);
+    left: auto;
+    right: var(--gutter);
+  }
+  .fb-hero .fb-name,
+  .fb-about .fb-name {
+    top: 14vh;
+  }
+  .fb-word {
+    display: none;
+  }
+}
+
+/* ───────────────────────── 06 elif ───────────────────────── */
+.about {
+  max-width: 36rem;
+}
+.about .eyebrow {
+  opacity: 0.8;
+}
+.about-name {
+  margin-top: 0.4rem;
+}
+.about-prose {
+  margin-top: 1.2rem;
+  display: grid;
+  gap: 0.9em;
+}
+.about-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.9rem;
+  margin-top: 1.4rem;
+  opacity: 0.85;
+}
+.about-words li::before {
+  content: "— ";
+  opacity: 0.5;
+}
+html.gl .about-words {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ───────────────────────── 07 iletişim ───────────────────────── */
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.contact-lines,
+.contact-avail,
+.contact-soon,
+.works-index {
+  text-shadow: 0 0 0.06em var(--bg), 0 0 0.22em var(--bg), 0 0.05em 0.6em color-mix(in srgb, var(--bg) 85%, transparent);
+}
+.contact-lines .line {
+  display: block;
+}
+.contact-lines .serif {
+  font-size: 0.86em;
+  font-weight: 400;
+  line-height: 0.9;
+}
+.contact-avail {
+  margin-top: 2.2rem;
+}
+.contact-email {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+.social {
+  display: flex;
+  gap: 1.6rem;
+  margin-top: 1.4rem;
+}
+.contact-soon {
+  margin-top: 1.4rem;
+}
+/* every work, one line of the route's index under the address */
+.works-index {
+  margin-top: clamp(1.8rem, 5vh, 3.2rem);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem 1rem;
+  opacity: 0.85;
+}
+.works-index ol {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.works-index li + li::before {
+  content: "·";
+  margin-right: 1rem;
+  opacity: 0.5;
+}
+.foot {
+  margin-top: clamp(2.5rem, 7vh, 5rem);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 2.4rem;
+  opacity: 0.85;
+}

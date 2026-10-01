@@ -1,7 +1,7 @@
 /**
  * WCAG AA contrast report against the RENDERED background.
  *
- * For each theme × viewport the page is screenshotted with all text made
+ * For each viewport the page is screenshotted with all text made
  * transparent, so what remains is exactly what sits behind every glyph
  * (stage, colour field, scrims, chips, the canvas at a scroll stop). Each
  * visible text element's box is then sampled from that image and the
@@ -20,8 +20,38 @@ const get = (k, d) => {
   return i >= 0 && args[i + 1] && !args[i + 1].startsWith("--") ? args[i + 1] : d;
 };
 const gl = args.includes("--gl");
-const url = get("url", "http://localhost:3000") + get("path", "/") + (gl ? "?gl=1&tier=low" : "?nogl");
-const stops = gl ? get("p", "0,0.28,0.51,0.65,0.78,0.9,1").split(",").map(Number) : [0];
+const url = get("url", "http://localhost:3000") + get("path", "/") + (gl ? "?gl=1&tier=low&debug" : "?nogl");
+// the hold of each stop on the journey
+const stops = gl ? get("p", "0,0.186,0.329,0.471,0.614,0.757,0.9").split(",").map(Number) : [0];
+
+/** scroll the journey to p and wait for the camera to hold still (the glide runs at this machine's frame rate) */
+async function goTo(page, pp) {
+  await page.evaluate((pp) => {
+    const track = document.querySelector(".track");
+    const max = track ? track.offsetHeight - window.innerHeight : document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: (track ? track.offsetTop : 0) + pp * Math.max(1, max), behavior: "auto" });
+  }, pp);
+  let last = null;
+  const t0 = Date.now();
+  while (Date.now() - t0 < 60000) {
+    await new Promise((r) => setTimeout(r, 500));
+    const cur = await page.evaluate(() => {
+      const r = window.__r3f;
+      return r ? [...r.camera.position.toArray(), r.camera.fov, r.gl.info.render.frame] : null;
+    });
+    if (!cur) {
+      if (Date.now() - t0 > 3000) return;
+      continue;
+    }
+    if (!last) {
+      last = cur;
+      continue;
+    }
+    if (cur[4] - last[4] < 3) continue;
+    if (Math.hypot(cur[0] - last[0], cur[1] - last[1], cur[2] - last[2]) < 0.02 && Math.abs(cur[3] - last[3]) < 0.02 && Date.now() - t0 > 3000) return;
+    last = cur;
+  }
+}
 
 const lum = (r, g, b) => {
   const f = (v) => {
@@ -62,7 +92,9 @@ async function audit(page, label, state) {
       const el = n.parentElement;
       if (!el || seen.has(el)) continue;
       seen.add(el);
-      if (el.closest("script,style,noscript,.sr-only,[hidden],.hud")) continue;
+      if (el.closest("script,style,noscript,.sr-only,[hidden],.hud,.loader,.cursor")) continue;
+      // text drawn in difference blend (the no-WebGL nav) inverts against whatever is behind it; the pixel test cannot judge it
+      if ([...(function* () { let a = el; while (a && a !== document.body) { yield a; a = a.parentElement; } })()].some((a) => getComputedStyle(a).mixBlendMode === "difference")) continue;
       if (state && !el.closest(state)) continue;
       const cs = getComputedStyle(el);
       if (cs.display === "none" || cs.visibility === "hidden" || cs.color === "transparent") continue;
@@ -120,7 +152,7 @@ async function audit(page, label, state) {
   }, state);
   if (!els.length) return;
   // screenshot with text transparent (outline/underline kept: they are not glyphs but count as background)
-  await page.addStyleTag({ content: "body * { color: transparent !important; caret-color: transparent !important; -webkit-text-fill-color: transparent !important; } .cursor{display:none!important}" });
+  await page.addStyleTag({ content: "body * { color: transparent !important; caret-color: transparent !important; -webkit-text-fill-color: transparent !important; } .cursor{display:none!important} .loader{display:none!important} .stop-body h2 a::after, .stop-body h3 a::after { display:none!important }" });
   const png = await page.screenshot({ type: "png" });
   // a state that changed between the read and the shot (the active nav pill moving) is not a real pair: drop it
   const after = await page.evaluate(() => {
@@ -167,49 +199,67 @@ async function audit(page, label, state) {
   }
 }
 
-for (const theme of ["dark", "light"]) {
-  for (const [w, h] of [[1440, 900], [390, 844]]) {
-    const page = await browser.newPage();
-    await page.setViewport({ width: w, height: h, isMobile: w < 600, hasTouch: w < 600 });
-    await page.evaluateOnNewDocument((t) => localStorage.setItem("eg-theme", t), theme);
-    await page.goto(url, { waitUntil: "domcontentloaded" });
-    await new Promise((r) => setTimeout(r, gl ? 12000 : 1500));
-    const label = `${theme} ${w}px`;
-    if (gl) {
-      for (const p of stops) {
-        await page.evaluate((p) => window.__snap?.(p), p);
-        await new Promise((r) => setTimeout(r, 2500));
-        await audit(page, `${label} p=${p}`, null);
-      }
-    } else {
-      // no-WebGL: the whole document, viewport by viewport
-      const total = await page.evaluate(() => document.documentElement.scrollHeight);
-      for (let y = 0; y < total; y += h) {
-        await page.evaluate((y) => window.scrollTo(0, y), y);
-        // let the section tracker and the 0.2 s colour transitions settle before reading styles
-        await new Promise((r) => setTimeout(r, 700));
-        await audit(page, `${label} y=${y}`, null);
-      }
-      await page.evaluate(() => window.scrollTo(0, 0));
-      // button states: hover and keyboard focus on every visible control
-      const controls = await page.$$("button, a.btn, a.chip, .chip, .nav-links a, .icon-btn, .link");
-      for (const c of controls) {
-        const box = await c.boundingBox();
-        if (!box) continue;
-        await c.evaluate((el) => el.scrollIntoView({ block: "center" }));
-        await new Promise((r) => setTimeout(r, 120));
-        await c.hover();
-        await new Promise((r) => setTimeout(r, 300));
-        await audit(page, `${label} hover`, "button, a.btn, a.chip, .chip, .nav-links a, .icon-btn, .link");
-        await c.focus();
-        await page.keyboard.press("Shift"); // focus-visible needs a keyboard interaction
-        await new Promise((r) => setTimeout(r, 200));
-        await audit(page, `${label} focus`, "button, a.btn, a.chip, .chip, .nav-links a, .icon-btn, .link");
-        await page.mouse.move(0, 0);
-      }
+const CONTROLS = "button, .cta, .nav-links a, .nav a, .menu-btn, .route a, .stop-body a, .work-page a, footer a";
+for (const [w, h] of [[1440, 900], [390, 844]]) {
+  const page = await browser.newPage();
+  await page.setViewport({ width: w, height: h, isMobile: w < 600, hasTouch: w < 600 });
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await page.addStyleTag({ content: "html { scroll-behavior: auto !important }" });
+  await new Promise((r) => setTimeout(r, gl ? 6000 : 1500));
+  if (gl) {
+    // the loader locks scrolling until it hands over
+    for (let i = 0; i < 80; i++) {
+      const gone = await page.evaluate(() => {
+        const l = document.querySelector(".loader");
+        return !l || l.getAttribute("data-loaded") === "true";
+      });
+      if (gone) break;
+      await new Promise((r) => setTimeout(r, 500));
     }
-    await page.close();
+    await new Promise((r) => setTimeout(r, 1500));
   }
+  const label = `${w}px`;
+  if (gl && (await page.$(".track"))) {
+    for (const p of stops) {
+      await goTo(page, p);
+      await new Promise((r) => setTimeout(r, 1200));
+      await audit(page, `${label} p=${p}`, null);
+    }
+  } else {
+    // no-WebGL and project pages: the whole document, viewport by viewport
+    const total = await page.evaluate(() => document.documentElement.scrollHeight);
+    for (let y = 0; y < total; y += h) {
+      await page.evaluate((y) => window.scrollTo(0, y), y);
+      // let the stop tracker and the colour transitions settle before reading styles
+      await new Promise((r) => setTimeout(r, 700));
+      await audit(page, `${label} y=${y}`, null);
+    }
+    await page.evaluate(() => window.scrollTo(0, 0));
+    // button states: hover and keyboard focus on every visible control
+    const controls = await page.$$(CONTROLS);
+    for (const c of controls) {
+      const box = await c.boundingBox();
+      if (!box) continue;
+      await c.evaluate((el) => el.scrollIntoView({ block: "center" }));
+      await new Promise((r) => setTimeout(r, 120));
+      await c.hover();
+      await new Promise((r) => setTimeout(r, 300));
+      await audit(page, `${label} hover`, CONTROLS);
+      await c.focus();
+      await page.keyboard.press("Shift"); // focus-visible needs a keyboard interaction
+      // focus can start a smooth scroll; the boxes must be read once it has ended
+      await new Promise((r) => setTimeout(r, 900));
+      await audit(page, `${label} focus`, CONTROLS);
+      await page.mouse.move(0, 0);
+    }
+    // the phone menu, open
+    if (w < 600 && (await page.$(".menu-btn"))) {
+      await page.click(".menu-btn");
+      await new Promise((r) => setTimeout(r, 700));
+      await audit(page, `${label} menu`, ".menu");
+    }
+  }
+  await page.close();
 }
 await browser.close();
 for (const f of fails) console.log(f);

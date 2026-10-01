@@ -1,24 +1,9 @@
-import { works, portrait, type Work } from "@/content/works.generated";
-import { site, type Lang, type Localized } from "../../content/site";
+export { site, L } from "../../content/site";
+export type { Lang, Localized, SocialLink } from "../../content/site";
+export { works } from "@/content/works.generated";
+export type { Work, WorkImage, WorkProcessStep, Presentation, Category } from "@/content/works.generated";
 
-export { works, portrait, site };
-export type { Work, Lang, Localized };
-
-export function L(v: Localized | null | undefined, lang: Lang): string {
-  if (!v) return "";
-  return v[lang] || v.tr || "";
-}
-
-export function workBySlug(slug: string): Work | undefined {
-  return works.find((w) => w.slug === slug);
-}
-
-export function nextWork(slug: string): Work | undefined {
-  const i = works.findIndex((w) => w.slug === slug);
-  if (i < 0 || works.length < 2) return undefined;
-  return works[(i + 1) % works.length];
-}
-
-export function siteUrl(path = "") {
-  return site.url.replace(/\/$/, "") + path;
+/** Turkish-aware upper case: i → İ, ı → I, under any lang (the names are Turkish). */
+export function upper(s: string, lang: "tr" | "en" = "tr") {
+  return lang === "tr" ? s.toLocaleUpperCase("tr-TR") : s.toLocaleUpperCase("en-US");
 }

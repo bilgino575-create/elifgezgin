@@ -1,19 +1,19 @@
 /**
- * Procedural sample works.
+ * Örnek işler — sample work, rendered from SVG with sharp.
  *
- * Until Elif's real work arrives, six pieces are rendered from SVG with sharp:
- * three Swiss-style posters, a book cover, a packaging label and a logo mark.
- * They are designed like real studio work (overprint, halftone gradients,
- * type at scale, printer's marks) so the portfolio reads as a designer's
- * from the first second. Each is written to content/works/<slug>/ with a
- * meta.json that carries `"sample": true`, so the UI marks it "Örnek".
+ * Until Elif's real work arrives, six pieces are generated so the journey
+ * has something physical at every stop: a poster, a typographic identity,
+ * a brand identity system, a generative digital piece, a magazine spread
+ * and a poster series. They are designed like real studio work in the
+ * site's colour universe, and every one carries `"sample": true`, which the
+ * site shows as "örnek proje / sample project". No clients, no awards.
  *
- * Runs only when content/works has no work folders at all, so deleting the
- * samples (README_ELIF.md) is permanent.
+ * Runs only when content/works has no work folders (so deleting the samples
+ * is permanent); `--force` regenerates them.
  *
  *   node scripts/samples.mjs [--force]
  */
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,317 +38,342 @@ if (existing.length && !force) {
   process.exit(0);
 }
 
-const siteTs = readFileSync(join(root, "content", "site.ts"), "utf8");
-const SPOT = (siteTs.match(/spotColor:\s*"(#[0-9a-fA-F]{6})"/) || [, "#1F4BFF"])[1];
-const PAPER = "#F6F5F1";
-const INK = "#111214";
-const SANS = "'Schibsted Grotesk', 'DejaVu Sans', sans-serif";
-const SERIF = "'Instrument Serif', 'DejaVu Serif', serif";
+const INK = "#07060f";
+const OFF = "#f7f6f2";
+const CREAM = "#f3eee3";
+const ELECTRIC = "#1f3bff";
+const CYAN = "#19e3ff";
+const PINK = "#ff2e88";
+const MAGENTA = "#e400ff";
+const LIME = "#c8ff00";
+const ORANGE = "#ff5a1f";
+const YELLOW = "#ffd400";
+const VIOLET = "#6a2cff";
+const PURPLE = "#2a0f5e";
+const SANS = "Archivo";
+const SERIF = "'Instrument Serif'";
 const YEAR = new Date().getFullYear();
 
-/** shared defs: paper grain, halftone patterns, a soft vignette */
-function defs(w, h) {
-  return `
-<filter id="grain" x="0" y="0" width="100%" height="100%">
-  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
-  <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.07 0"/>
-</filter>
-<pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-  <circle cx="11" cy="11" r="4.2" fill="${INK}"/>
-</pattern>
-<pattern id="dotsFine" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-  <circle cx="7" cy="7" r="1.8" fill="${INK}"/>
-</pattern>
-<pattern id="lines" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
-  <rect width="16" height="6" fill="${INK}"/>
-</pattern>
-<linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0" stop-color="${INK}" stop-opacity="1"/>
-  <stop offset="1" stop-color="${INK}" stop-opacity="0"/>
-</linearGradient>
-<radialGradient id="glow" cx="0.5" cy="0.45" r="0.6">
-  <stop offset="0" stop-color="${SPOT}" stop-opacity="0.95"/>
-  <stop offset="1" stop-color="${SPOT}" stop-opacity="0.35"/>
-</radialGradient>
-<mask id="halfFade"><rect width="${w}" height="${h}" fill="url(#fade)"/></mask>`;
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+/** Archivo text: weight 100–900, width as a font-stretch keyword (fontconfig maps the variable axis) */
+function T(x, y, text, { size = 100, weight = 900, width = "normal", fill = INK, anchor = "start", italic = false, serif = false, ls = 0, opacity = 1 } = {}) {
+  const fam = serif ? SERIF : SANS;
+  return `<text x="${x}" y="${y}" font-family="${fam}" font-size="${size}" font-weight="${weight}" font-stretch="${width}"${italic ? ' font-style="italic"' : ""} fill="${fill}" text-anchor="${anchor}" letter-spacing="${ls}" opacity="${opacity}">${esc(text)}</text>`;
 }
+const grain = (id = "grain", a = 0.08) => `<filter id="${id}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="3" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 ${a} 0"/></filter>`;
+const grainRect = (w, h, id = "grain") => `<rect width="${w}" height="${h}" filter="url(#${id})" style="mix-blend-mode:overlay"/>`;
+const svg = (w, h, body) => `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${body}</svg>`;
+/** editorial meta row: small caps, tracked */
+const meta = (x, y, text, fill, size = 26, anchor = "start") => T(x, y, text.toLocaleUpperCase("tr-TR"), { size, weight: 600, fill, ls: size * 0.14, anchor });
 
-function frame(w, h, body, bg = PAPER) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-<defs>${defs(w, h)}</defs>
-<rect width="${w}" height="${h}" fill="${bg}"/>
-${body}
-<rect width="${w}" height="${h}" filter="url(#grain)" opacity="0.9" style="mix-blend-mode:multiply"/>
-</svg>`;
-}
-
-/** Registration mark used across the samples as a quiet signature. */
-function regMark(x, y, r = 22, c = INK) {
-  return `<g stroke="${c}" stroke-width="2" fill="none">
-<circle cx="${x}" cy="${y}" r="${r}"/><circle cx="${x}" cy="${y}" r="${r * 0.35}"/>
-<path d="M${x - r * 1.5} ${y}H${x + r * 1.5}M${x} ${y - r * 1.5}V${y + r * 1.5}"/></g>`;
-}
-
-/** Crop marks in the four corners. */
-function cropMarks(w, h, m = 60, len = 40, c = INK) {
-  const g = `stroke="${c}" stroke-width="2"`;
-  return `<g ${g}>
-<path d="M${m - len - 8} ${m}H${m - 8}M${m} ${m - len - 8}V${m - 8}"/>
-<path d="M${w - m + 8} ${m}H${w - m + len + 8}M${w - m} ${m - len - 8}V${m - 8}"/>
-<path d="M${m - len - 8} ${h - m}H${m - 8}M${m} ${h - m + 8}V${h - m + len + 8}"/>
-<path d="M${w - m + 8} ${h - m}H${w - m + len + 8}M${w - m} ${h - m + 8}V${h - m + len + 8}"/></g>`;
-}
-
-const W = 1600;
-const H = 2000;
-
-const posters = [
-  {
-    slug: "ornek-afis-izgara",
-    title: { tr: "Izgara Üzerine", en: "On the Grid" },
-    text: {
-      tr: "Bir tipografi sergisi için afiş: sekiz kolonlu ızgara, sayfayı dolduran tek bir sözcük ve üst baskıyla çakışan iki mürekkep.",
-      en: "Poster for a typography exhibition: an eight-column grid, one word filling the sheet and two inks meeting in overprint.",
-    },
-    svg: () => {
-      const cols = 8;
-      const m = 100;
-      const cw = (W - m * 2) / cols;
-      let g = "";
-      for (let i = 0; i <= cols; i++) g += `<line x1="${m + i * cw}" y1="${m}" x2="${m + i * cw}" y2="${H - m}" stroke="${INK}" stroke-opacity="0.16" stroke-width="2"/>`;
-      for (let j = 0; j <= 12; j++) g += `<line x1="${m}" y1="${m + (j * (H - 2 * m)) / 12}" x2="${W - m}" y2="${m + (j * (H - 2 * m)) / 12}" stroke="${INK}" stroke-opacity="0.16" stroke-width="2"/>`;
-      return `${g}
-<rect x="${m}" y="${m + 2 * ((H - 2 * m) / 12)}" width="${cw * 5}" height="${((H - 2 * m) / 12) * 5}" fill="${SPOT}"/>
-<rect x="${m + cw * 3}" y="${m + 4 * ((H - 2 * m) / 12)}" width="${cw * 5}" height="${((H - 2 * m) / 12) * 5}" fill="${INK}" style="mix-blend-mode:multiply" opacity="0.92"/>
-<rect x="${m + cw * 3}" y="${m + 4 * ((H - 2 * m) / 12)}" width="${cw * 5}" height="${((H - 2 * m) / 12) * 5}" fill="url(#dotsFine)" opacity="0.35" mask="url(#halfFade)"/>
-<text x="${m - 6}" y="${H - m - 30}" font-family="${SANS}" font-weight="700" font-size="330" letter-spacing="-18" fill="${INK}">Izgara</text>
-<text x="${m}" y="${m + 62}" font-family="${SANS}" font-weight="600" font-size="38" letter-spacing="2" fill="${INK}">TİPOGRAFİ SERGİSİ</text>
-<text x="${W - m}" y="${m + 62}" text-anchor="end" font-family="${SANS}" font-weight="500" font-size="38" fill="${INK}">12.03 — 04.05.${YEAR}</text>
-<text x="${m + 28}" y="${m + 2 * ((H - 2 * m) / 12) + 70}" font-family="${SANS}" font-weight="500" font-size="40" fill="${PAPER}">8 kolon · 12 satır · 2 mürekkep</text>
-<g transform="translate(${W - m - 60} ${H * 0.5}) rotate(-90)"><text font-family="${SANS}" font-size="30" font-weight="500" letter-spacing="6" fill="${INK}">ÜST BASKI · PANTONE + SİYAH</text></g>
-${cropMarks(W, H)}
-${regMark(W - m - 30, m + 130)}`;
-    },
-  },
-  {
-    slug: "ornek-afis-daireler",
-    title: { tr: "Sessiz Seri", en: "Quiet Series" },
-    text: {
-      tr: "Altı akşamlık bir konser dizisi için afiş. Eş merkezli halkalar ses dalgasıdır; siyah bant sahnenin kendisi.",
-      en: "Poster for a six-evening concert series. The concentric rings are the sound; the black bar is the stage.",
-    },
-    svg: () => {
-      let c = "";
-      for (let i = 1; i <= 11; i++) {
-        const r = i * 70;
-        const spot = i % 3 === 0;
-        c += `<circle cx="${W * 0.55}" cy="${H * 0.4}" r="${r}" fill="none" stroke="${spot ? SPOT : INK}" stroke-width="${spot ? 30 : 5 + (11 - i)}" opacity="${spot ? 1 : 0.9}"/>`;
-      }
-      return `
-<rect x="0" y="0" width="${W}" height="${H * 0.78}" fill="url(#dotsFine)" opacity="0.08"/>
-${c}
-<circle cx="${W * 0.55}" cy="${H * 0.4}" r="820" fill="url(#lines)" opacity="0.12" style="mix-blend-mode:multiply"/>
-<rect x="0" y="${H * 0.78}" width="${W}" height="${H * 0.22}" fill="${INK}"/>
-<text x="100" y="${H * 0.78 + 190}" font-family="${SERIF}" font-size="210" fill="${PAPER}">Sessiz Seri</text>
-<text x="100" y="${H * 0.78 + 290}" font-family="${SANS}" font-size="38" font-weight="500" fill="${PAPER}" opacity="0.8">Altı akşam · tek sahne · ${YEAR}</text>
-<text x="${W - 100}" y="${H * 0.78 + 290}" text-anchor="end" font-family="${SANS}" font-size="38" font-weight="500" fill="${SPOT}">20:30</text>
-<text x="100" y="150" font-family="${SANS}" font-size="40" font-weight="600" fill="${INK}">No. 02</text>
-<text x="100" y="205" font-family="${SANS}" font-size="30" font-weight="500" fill="${INK}" opacity="0.6">konser dizisi</text>
-${regMark(W - 130, 130)}
-${cropMarks(W, H)}`;
-    },
-  },
-  {
-    slug: "ornek-afis-yedi",
-    title: { tr: "Yedi", en: "Seven" },
-    text: {
-      tr: "Atölyenin yedinci yılı için afiş: halftone bir gradyanın içinden büyüyen tek rakam, kâğıdın dokusuyla birleşen nokta sıklığı.",
-      en: "Poster for the studio's seventh year: a single numeral growing out of a halftone gradient whose dots merge with the paper's grain.",
-    },
-    svg: () => {
-      let d = "";
-      const n = 24;
-      const gap = (W - 200) / n;
-      for (let i = 0; i <= n; i++)
-        for (let j = 0; j <= Math.round(n * 1.2); j++) {
-          const y = 100 + j * gap;
-          const t = y / H;
-          const r = 2 + Math.pow(t, 1.6) * 16;
-          d += `<circle cx="${100 + i * gap}" cy="${y}" r="${r.toFixed(1)}" fill="${INK}"/>`;
-        }
-      return `${d}
-<text x="${W / 2}" y="${H * 0.66}" text-anchor="middle" font-family="${SERIF}" font-size="1600" fill="${SPOT}" style="mix-blend-mode:multiply">7</text>
-<text x="${W / 2 + 26}" y="${H * 0.66 + 26}" text-anchor="middle" font-family="${SERIF}" font-size="1600" fill="none" stroke="${PAPER}" stroke-width="6" opacity="0.9">7</text>
-<rect x="100" y="${H - 230}" width="${W - 200}" height="6" fill="${PAPER}"/>
-<text x="100" y="${H - 140}" font-family="${SANS}" font-size="44" font-weight="600" fill="${PAPER}">Yedinci yıl</text>
-<text x="${W - 100}" y="${H - 140}" text-anchor="end" font-family="${SANS}" font-size="44" font-weight="500" fill="${PAPER}">Atölye sergisi · ${YEAR}</text>
-${cropMarks(W, H, 60, 40, PAPER)}`;
-    },
-  },
-];
-
-const book = {
-  slug: "ornek-kitap-kagit",
-  category: "editorial",
-  title: { tr: "Kâğıt Üzerine", en: "On Paper" },
-  text: {
-    tr: "Bir deneme kitabı için kapak ve iç düzen. Serif başlık, dar sütun, geniş kenar boşluğu; sırtta tek renk, kapakta kör kabartma.",
-    en: "Cover and interior for a book of essays. Serif title, narrow measure, generous margins; one colour on the spine, a blind emboss on the cover.",
-  },
-  w: 1500,
-  h: 2100,
-  svg: () => `
-<rect x="0" y="0" width="130" height="2100" fill="${SPOT}"/>
-<rect x="130" y="0" width="14" height="2100" fill="${INK}" opacity="0.12"/>
-<circle cx="1000" cy="1180" r="360" fill="url(#dots)" opacity="0.1"/>
-<circle cx="1000" cy="1180" r="360" fill="none" stroke="${INK}" stroke-width="3" opacity="0.5"/>
-<text x="230" y="520" font-family="${SERIF}" font-size="200" fill="${INK}">Kâğıt</text>
-<text x="230" y="720" font-family="${SERIF}" font-size="200" fill="${INK}">Üzerine</text>
-<text x="230" y="840" font-family="${SERIF}" font-style="italic" font-size="72" fill="${INK}" opacity="0.7">Denemeler</text>
-<text x="230" y="940" font-family="${SANS}" font-size="30" font-weight="500" letter-spacing="6" fill="${SPOT}">İKİNCİ BASKI</text>
-<line x1="230" y1="1560" x2="1320" y2="1560" stroke="${INK}" stroke-width="3"/>
-<text x="230" y="1650" font-family="${SANS}" font-size="40" font-weight="500" fill="${INK}">Elif Gezgin · tasarım</text>
-<text x="230" y="1710" font-family="${SANS}" font-size="30" fill="${INK}" opacity="0.55">Kapak: 300 g kabartma karton · İç: 90 g kitap kâğıdı</text>
-<text x="230" y="1980" font-family="${SANS}" font-size="32" fill="${INK}" opacity="0.6">Örnek yayın · ${YEAR}</text>
-${regMark(1320, 1980, 18)}`,
-};
-
-const label = {
-  slug: "ornek-ambalaj-etiket",
-  category: "packaging",
-  title: { tr: "Atölye Etiketi", en: "Studio Label" },
-  text: {
-    tr: "Bir kâğıt kutusu için sarmalayan etiket. Ön yüzde mühür, yan yüzlerde ürün bilgisi; kesim çizgileri ve kırım payı bırakılmış.",
-    en: "A wrap-around label for a paper box. A seal on the front, product information on the sides; die-cut and fold allowances left in.",
-  },
-  w: 2000,
-  h: 1400,
-  svg: () => `
-<rect x="0" y="0" width="2000" height="1400" fill="${SPOT}"/>
-<rect x="60" y="60" width="1880" height="1280" fill="${PAPER}"/>
-<rect x="500" y="60" width="1000" height="1280" fill="url(#dotsFine)" opacity="0.06"/>
-<circle cx="1000" cy="640" r="340" fill="none" stroke="${INK}" stroke-width="10"/>
-<circle cx="1000" cy="640" r="300" fill="none" stroke="${INK}" stroke-width="3"/>
-<circle cx="1000" cy="640" r="270" fill="${SPOT}" opacity="0.08"/>
-<text x="1000" y="600" text-anchor="middle" font-family="${SERIF}" font-size="160" fill="${INK}">Atölye</text>
-<text x="1000" y="720" text-anchor="middle" font-family="${SANS}" font-size="44" font-weight="600" letter-spacing="14" fill="${INK}">EL BASKISI</text>
-<text x="1000" y="790" text-anchor="middle" font-family="${SANS}" font-size="30" font-weight="500" letter-spacing="4" fill="${SPOT}">EST. ${YEAR}</text>
-<text x="140" y="1180" font-family="${SANS}" font-size="38" font-weight="500" fill="${INK}">250 g · %100 pamuk kâğıt</text>
-<text x="140" y="1240" font-family="${SANS}" font-size="28" fill="${INK}" opacity="0.6">Elle sayılmış 50 yaprak</text>
-<text x="1860" y="1180" text-anchor="end" font-family="${SANS}" font-size="38" font-weight="500" fill="${INK}">No. 04 / ${YEAR}</text>
-<text x="1860" y="1240" text-anchor="end" font-family="${SANS}" font-size="28" fill="${INK}" opacity="0.6">Parti 07 · 1/50</text>
-<line x1="500" y1="60" x2="500" y2="1340" stroke="${INK}" stroke-opacity="0.35" stroke-dasharray="14 18" stroke-width="3"/>
-<line x1="1500" y1="60" x2="1500" y2="1340" stroke="${INK}" stroke-opacity="0.35" stroke-dasharray="14 18" stroke-width="3"/>
-<text x="280" y="700" text-anchor="middle" font-family="${SANS}" font-size="26" font-weight="500" letter-spacing="8" fill="${INK}" opacity="0.5" transform="rotate(-90 280 700)">KIRIM PAYI</text>
-${regMark(300, 400, 24)}${regMark(1700, 400, 24)}`,
-};
-
-const logo = {
-  slug: "ornek-kimlik-eg",
-  category: "identity",
-  title: { tr: "EG Monogramı", en: "EG Monogram" },
-  text: {
-    tr: "İki harfin tek bir çizgide buluştuğu monogram; kartvizitte kör kabartma, afişte tek renk, ekranda hareketli.",
-    en: "A monogram where two letters meet in one stroke; blind-embossed on the card, single colour on the poster, animated on screen.",
-  },
-  w: 1600,
-  h: 1600,
-  svg: () => `
-<rect width="1600" height="1600" fill="${PAPER}"/>
-<circle cx="800" cy="760" r="620" fill="url(#dotsFine)" opacity="0.05"/>
-<g transform="translate(800 760)">
-  <path d="M-330 -260 H90 M-330 -260 V300 H90 M-330 20 H10" fill="none" stroke="${SPOT}" stroke-width="86" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M330 -170 A250 250 0 1 0 330 190 V20 H150" fill="none" stroke="${INK}" stroke-width="86" stroke-linecap="square"/>
-</g>
-<text x="800" y="1400" text-anchor="middle" font-family="${SANS}" font-size="44" font-weight="600" letter-spacing="16" fill="${INK}">ELİF GEZGİN</text>
-<text x="800" y="1460" text-anchor="middle" font-family="${SANS}" font-size="26" font-weight="500" letter-spacing="8" fill="${INK}" opacity="0.55">GRAFİK TASARIMCI · ${YEAR}</text>
-${cropMarks(1600, 1600, 80, 36)}`,
-};
-
-async function render(svg, out, w, h) {
-  await sharp(Buffer.from(svg), { density: 96 }).resize(w, h).jpeg({ quality: 90, mozjpeg: true }).toFile(out);
-}
-
-/**
- * The same design as three layers for the portals' depth pop: background
- * (paper, grain and full-bleed rects), shapes (everything else that is not
- * text) and type. Elements are split at the top level of the body; a group
- * that contains text counts as type.
- */
-function splitLayers(body, w, h) {
-  // top-level elements, nesting-aware (a <g> may contain groups)
-  const els = [];
-  const tagRe = /<(\/?)([a-zA-Z]+)\b[^>]*?(\/?)>/g;
-  let depth = 0;
-  let start = -1;
-  for (const m of body.matchAll(tagRe)) {
-    const closing = m[1] === "/";
-    const selfClosing = m[3] === "/";
-    if (!closing && depth === 0) start = m.index;
-    if (!closing && !selfClosing) depth++;
-    if (closing) depth--;
-    if (depth === 0 && start >= 0) {
-      els.push(body.slice(start, m.index + m[0].length));
-      start = -1;
-    }
-  }
-  const bg = [];
-  const shapes = [];
-  const type = [];
-  for (const el of els) {
-    const full = el.startsWith("<rect") && new RegExp(`width="${w}"`).test(el) && new RegExp(`height="${h}"`).test(el);
-    if (el.includes("<text")) type.push(el);
-    else if (full) bg.push(el);
-    else shapes.push(el);
-  }
-  return { bg: bg.join("\n"), shapes: shapes.join("\n"), type: type.join("\n") };
-}
-function transparentFrame(w, h, body) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs>${defs(w, h)}</defs>${body}</svg>`;
-}
-async function renderPng(svg, out, w, h) {
-  await sharp(Buffer.from(svg), { density: 96 }).resize(w, h).png({ compressionLevel: 9 }).toFile(out);
-}
-
-async function writeWork(work, index) {
-  const dir = join(worksDir, work.slug);
+async function write(slug, file, markup) {
+  const dir = join(worksDir, slug);
   mkdirSync(dir, { recursive: true });
-  const w = work.w ?? W;
-  const h = work.h ?? H;
-  const body = work.svg();
-  const svg = frame(w, h, body);
-  await render(svg, join(dir, "cover.jpg"), w, h);
-  // layers for the portal (content/works/<slug>/layers/*.png, optional for real works too)
-  const layers = splitLayers(body, w, h);
-  mkdirSync(join(dir, "layers"), { recursive: true });
-  await render(frame(w, h, layers.bg), join(dir, "layers", "1-bg.jpg"), w, h);
-  await renderPng(transparentFrame(w, h, layers.shapes), join(dir, "layers", "2-shapes.png"), w, h);
-  await renderPng(transparentFrame(w, h, layers.type), join(dir, "layers", "3-type.png"), w, h);
-  // two gallery images: a detail crop and the negative proof
-  const cover = sharp(join(dir, "cover.jpg"));
-  await cover
-    .clone()
-    .extract({ left: Math.round(w * 0.1), top: Math.round(h * 0.1), width: Math.round(w * 0.5), height: Math.round(h * 0.5) })
-    .resize(1600)
-    .jpeg({ quality: 88, mozjpeg: true })
-    .toFile(join(dir, "01.jpg"));
-  await cover.clone().negate({ alpha: false }).jpeg({ quality: 88, mozjpeg: true }).toFile(join(dir, "02.jpg"));
-  const meta = {
-    title: work.title,
-    category: work.category ?? "poster",
+  await sharp(Buffer.from(markup)).png({ compressionLevel: 8 }).toFile(join(dir, file));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 01  SESSİZ ŞEHİR — a poster for a sound-art exhibition (floating poster, stop 04)
+// acid green sheet, one condensed black title stacked, a black disc with a thin ring, a column of meta
+async function sessizSehir() {
+  const W = 1600;
+  const H = 2400;
+  const title = (fill, dx = 0, dy = 0, opacity = 1) =>
+    T(96 + dx, 760 + dy, "SESSİZ", { size: 520, weight: 900, width: "condensed", fill, opacity }) + T(96 + dx, 1230 + dy, "ŞEHİR", { size: 520, weight: 900, width: "condensed", fill, opacity });
+  const disc = (bg, fg, dot) => `<circle cx="1180" cy="1690" r="330" fill="${bg}"/><circle cx="1180" cy="1690" r="392" fill="none" stroke="${bg}" stroke-width="6"/><circle cx="1180" cy="1690" r="118" fill="${fg}"/><circle cx="1180" cy="1690" r="40" fill="${dot}"/>`;
+  const col = (c) => meta(96, 1500, "Ses sanatı üzerine bir sergi", c) + meta(96, 1548, "12.09 — 04.10", c) + meta(96, 1596, "Giriş ücretsiz", c) + T(96, 1700, "Şehrin sesi kesilince geriye ne kalır?", { size: 40, serif: true, italic: true, fill: c }) + T(96, 1752, "Dokuz sanatçı, dokuz oda, bir sessizlik.", { size: 40, serif: true, italic: true, fill: c });
+  const rule = (c) => `<rect x="96" y="2210" width="1408" height="4" fill="${c}"/>` + meta(96, 2290, "Afiş 01 · 70 × 100 cm · iki renk serigrafi", c, 24) + meta(1504, 2290, `Örnek çalışma · ${YEAR}`, c, 24, "end");
+  const grid = (c) => Array.from({ length: 9 }, (_, i) => `<line x1="${96 + i * 176}" y1="96" x2="${96 + i * 176}" y2="2304" stroke="${c}" stroke-opacity="0.12" stroke-width="2"/>`).join("");
+  const cover = svg(W, H, `<defs>${grain()}</defs><rect width="${W}" height="${H}" fill="${LIME}"/>${grid(INK)}${title(PINK, 14, 14)}${title(INK)}${disc(INK, LIME, PINK)}${col(INK)}${rule(INK)}${grainRect(W, H)}`);
+  await write("ornek-afis-sessiz-sehir", "cover.png", cover);
+  const v2 = svg(W, H, `<defs>${grain("g2", 0.1)}</defs><rect width="${W}" height="${H}" fill="${INK}"/>${grid(LIME)}${title(LIME)}${disc(LIME, INK, PINK)}${col(LIME)}${rule(LIME)}${grainRect(W, H, "g2")}`);
+  await write("ornek-afis-sessiz-sehir", "01.png", v2);
+  const v3 = svg(W, H, `<defs>${grain("g3", 0.08)}</defs><rect width="${W}" height="${H}" fill="${LIME}"/><circle cx="800" cy="1120" r="640" fill="${INK}"/><circle cx="800" cy="1120" r="700" fill="none" stroke="${INK}" stroke-width="6"/><circle cx="800" cy="1120" r="230" fill="${LIME}"/><circle cx="800" cy="1120" r="76" fill="${PINK}"/>${T(96, 2150, "SESSİZ ŞEHİR", { size: 120, weight: 900, width: "condensed", fill: INK })}${meta(96, 2290, "Afiş 02 · 70 × 100 cm", INK, 24)}${grainRect(W, H, "g3")}`);
+  await write("ornek-afis-sessiz-sehir", "02.png", v3);
+  return {
+    title: { tr: "Sessiz Şehir", en: "Silent City" },
+    category: "poster",
     year: YEAR,
     role: { tr: "Konsept ve tasarım", en: "Concept and design" },
-    tools: work.category === "identity" ? ["Illustrator"] : work.category === "editorial" ? ["InDesign", "Illustrator"] : ["Illustrator", "Photoshop"],
-    text: work.text,
+    tools: ["Illustrator", "InDesign"],
+    text: {
+      tr: "Bir ses sanatı sergisi için afiş sistemi: asit yeşili bir yaprak, yoğunlaştırılmış tek bir başlık ve şehrin susan hoparlörü olarak siyah bir disk. İki renk serigrafi; sistem iki afişe ve bir davetiyeye uzanıyor.",
+      en: "A poster system for a sound-art exhibition: an acid-green sheet, one condensed title and a black disc as the city's silenced speaker. Two-colour screen print; the system extends to two posters and an invitation.",
+    },
+    presentation: "poster",
+    stop: 4,
+    colors: [LIME, INK, PINK],
+    process: [
+      { title: { tr: "Fikir", en: "Idea" }, text: { tr: "Sessizlik bir boşluk değil, bir disk: bir hoparlörün ses çıkarmayan yüzü.", en: "Silence is not a gap but a disc: the mute face of a speaker." } },
+      { title: { tr: "Yazı", en: "Type" }, text: { tr: "Archivo'nun en dar, en ağır kesimi; iki satır, yaprağın yarısını doldurur.", en: "Archivo at its narrowest and heaviest; two lines fill half the sheet." } },
+      { title: { tr: "Baskı", en: "Print" }, text: { tr: "İki renk serigrafi: siyah ve pembe, asit yeşili kâğıt üstünde.", en: "Two-colour screen print: black and pink on acid-green stock." } },
+    ],
     sample: true,
-    order: index + 1,
-    cover: "cover.jpg",
-    gallery: ["01.jpg", "02.jpg"],
+    order: 1,
+    cover: "cover.png",
+    gallery: ["01.png", "02.png"],
   };
-  writeFileSync(join(dir, "meta.json"), JSON.stringify(meta, null, 2) + "\n");
-  console.log("sample:", work.slug);
 }
 
-const all = [...posters, book, label, logo];
-for (let i = 0; i < all.length; i++) await writeWork(all[i], i);
-console.log(`samples: ${all.length} generated with spot ${SPOT}`);
+// ─────────────────────────────────────────────────────────────────────────────
+// 02  SES — a typographic identity (chrome typography, stop 02)
+// cream, cobalt expanded "SES" with an orange echo, a specimen of Archivo's widths as the system
+async function ses() {
+  const W = 2000;
+  const H = 1400;
+  const specimen = ["ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded"]
+    .map((w, i) => T(1500, 300 + i * 100, "sessizlik", { size: 68, weight: 700, width: w, fill: INK }))
+    .join("");
+  const cover = svg(W, H, `<defs>${grain()}</defs><rect width="${W}" height="${H}" fill="${CREAM}"/>${T(130, 790, "SES", { size: 560, weight: 900, width: "expanded", fill: ORANGE })}${T(120, 780, "SES", { size: 560, weight: 900, width: "expanded", fill: ELECTRIC })}${specimen}${meta(1500, 180, "Yedi genişlik · tek aile", INK, 24)}${meta(120, 1040, "Tipografik kimlik", INK, 28)}${T(120, 1130, "Bir sesin genişliği", { size: 64, serif: true, italic: true, fill: INK })}${T(120, 1200, "yazının genişliğidir.", { size: 64, serif: true, italic: true, fill: INK })}<rect x="120" y="1290" width="1760" height="4" fill="${INK}"/>${meta(120, 1360, `Örnek çalışma · ${YEAR}`, INK, 24)}${grainRect(W, H)}`);
+  await write("ornek-tipografi-ses", "cover.png", cover);
+  const rows = ["ultra-condensed", "condensed", "normal", "semi-expanded", "expanded", "expanded"].map((w, i) => T(96, 460 + i * 320, "SES", { size: 360, weight: 900, width: w, fill: i % 2 ? ELECTRIC : ORANGE })).join("");
+  const poster = svg(1600, 2400, `<defs>${grain("g2")}</defs><rect width="1600" height="2400" fill="${CREAM}"/>${rows}${meta(96, 2290, "Sesin genişlikleri · 70 × 100 cm", INK, 24)}${grainRect(1600, 2400, "g2")}`);
+  await write("ornek-tipografi-ses", "01.png", poster);
+  const sheet = svg(2000, 1400, `<defs>${grain("g3", 0.06)}</defs><rect width="2000" height="1400" fill="${ELECTRIC}"/>${T(120, 420, "AaĞğŞşİıÇçÖöÜü", { size: 220, weight: 900, width: "condensed", fill: CREAM })}${T(120, 700, "0123456789 &?!", { size: 220, weight: 500, width: "expanded", fill: ORANGE })}${T(120, 980, "SES SESSİZLİK SESLİ", { size: 150, weight: 300, width: "normal", fill: CREAM })}${meta(120, 1300, "Archivo · 62–125 genişlik · 100–900 ağırlık", CREAM, 26)}${grainRect(2000, 1400, "g3")}`);
+  await write("ornek-tipografi-ses", "02.png", sheet);
+  return {
+    title: { tr: "SES", en: "SES" },
+    category: "typography",
+    year: YEAR,
+    role: { tr: "Tipografik kimlik", en: "Typographic identity" },
+    tools: ["Glyphs", "Illustrator", "After Effects"],
+    text: {
+      tr: "Bir ses stüdyosu için tipografik kimlik: tek bir kelime, yedi genişlik. Logo sabit değil; kelime sesin yüksekliğine göre daralır ve genişler. Kimlik krom harflerle uzayda yaşıyor.",
+      en: "A typographic identity for a sound studio: one word, seven widths. The logo is not fixed; the word narrows and widens with the volume. The identity lives in space as chrome letters.",
+    },
+    presentation: "chrome-type",
+    stop: 2,
+    colors: [ELECTRIC, ORANGE, CREAM],
+    process: [
+      { title: { tr: "Sistem", en: "System" }, text: { tr: "Değişken bir yazı ailesinin genişlik ekseni logonun kendisi oldu.", en: "The width axis of a variable family became the logo itself." } },
+      { title: { tr: "Hareket", en: "Motion" }, text: { tr: "Kelime sese tepki verir: sessizlikte en dar, çığlıkta en geniş.", en: "The word responds to sound: narrowest in silence, widest in a scream." } },
+      { title: { tr: "Uzay", en: "Space" }, text: { tr: "Krom harfler ortamın rengini yansıtır; kimlik bulunduğu yere uyar.", en: "Chrome letters reflect the room; the identity adapts to where it stands." } },
+    ],
+    sample: true,
+    order: 2,
+    cover: "cover.png",
+    gallery: ["01.png", "02.png"],
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 03  KÜP — a brand identity system (glass cube, stop 03)
+// deep purple, a geometric cube mark, colour chips, a type lockup, a card and a pattern
+function cubeMark(x, y, s, a, b, c) {
+  const h = s * 0.5;
+  const top = `${x},${y - h} ${x + s * 0.866},${y - h * 0.5} ${x},${y} ${x - s * 0.866},${y - h * 0.5}`;
+  const left = `${x - s * 0.866},${y - h * 0.5} ${x},${y} ${x},${y + s} ${x - s * 0.866},${y + h}`;
+  const right = `${x},${y} ${x + s * 0.866},${y - h * 0.5} ${x + s * 0.866},${y + h} ${x},${y + s}`;
+  return `<polygon points="${top}" fill="${a}"/><polygon points="${left}" fill="${b}"/><polygon points="${right}" fill="${c}"/>`;
+}
+async function kup() {
+  const W = 2000;
+  const H = 2000;
+  const chips = [MAGENTA, CYAN, PINK, VIOLET, OFF].map((c, i) => `<rect x="${1180 + i * 150}" y="1180" width="130" height="190" fill="${c}"/>` + meta(1180 + i * 150, 1410, c.replace("#", ""), OFF, 20)).join("");
+  const pattern = Array.from({ length: 6 }, (_, r) => Array.from({ length: 6 }, (_, cI) => cubeMark(1240 + cI * 120 + (r % 2) * 60, 1560 + r * 70, 56, MAGENTA, CYAN, PINK)).join("")).join("");
+  const card = `<rect x="120" y="1180" width="860" height="520" rx="12" fill="${OFF}"/>${cubeMark(220, 1300, 70, MAGENTA, CYAN, PINK)}${T(320, 1330, "KÜP", { size: 86, weight: 900, width: "expanded", fill: PURPLE })}${meta(170, 1560, "Seramik atölyesi", PURPLE, 22)}${meta(170, 1600, "kup.studio · örnek", PURPLE, 22)}${meta(170, 1640, "Kimlik sistemi · kartvizit 85 × 55", PURPLE, 22)}`;
+  const cover = svg(W, H, `<defs>${grain("g", 0.06)}</defs><rect width="${W}" height="${H}" fill="${PURPLE}"/>${cubeMark(560, 480, 300, MAGENTA, CYAN, PINK)}${T(120, 1040, "KÜP", { size: 420, weight: 900, width: "expanded", fill: OFF })}${meta(120, 1110, "Marka kimliği sistemi", OFF, 28)}${meta(1180, 1130, "Renkler", OFF, 24)}${chips}${meta(1180, 1520, "Desen", OFF, 24)}<rect x="1180" y="1540" width="700" height="360" fill="${PURPLE}" stroke="${OFF}" stroke-opacity="0.35" stroke-width="2"/><clipPath id="pat"><rect x="1180" y="1540" width="700" height="360"/></clipPath><g clip-path="url(#pat)">${pattern}</g>${card}${meta(120, 1960, `Örnek çalışma · ${YEAR}`, OFF, 22)}${grainRect(W, H, "g")}`);
+  await write("ornek-kimlik-kup", "cover.png", cover);
+  const logos = svg(2000, 1400, `<defs>${grain("g2", 0.06)}</defs><rect width="2000" height="1400" fill="${OFF}"/>${cubeMark(400, 560, 260, PURPLE, MAGENTA, CYAN)}${cubeMark(1000, 560, 260, PURPLE, PURPLE, PURPLE)}${cubeMark(1600, 560, 260, MAGENTA, CYAN, PINK)}${T(220, 1060, "KÜP", { size: 200, weight: 900, width: "expanded", fill: PURPLE })}${T(820, 1060, "KÜP", { size: 200, weight: 900, width: "condensed", fill: PURPLE })}${T(1340, 1060, "küp", { size: 200, weight: 300, width: "normal", fill: PURPLE })}${meta(220, 1250, "Üç kullanım: renkli · tek renk · dar", PURPLE, 24)}${grainRect(2000, 1400, "g2")}`);
+  await write("ornek-kimlik-kup", "01.png", logos);
+  const pat2 = Array.from({ length: 14 }, (_, r) => Array.from({ length: 14 }, (_, cI) => cubeMark(cI * 160 + (r % 2) * 80, 60 + r * 108, 86, MAGENTA, CYAN, PINK)).join("")).join("");
+  const patternSheet = svg(2000, 1400, `<defs>${grain("g3", 0.06)}</defs><rect width="2000" height="1400" fill="${PURPLE}"/>${pat2}${grainRect(2000, 1400, "g3")}`);
+  await write("ornek-kimlik-kup", "02.png", patternSheet);
+  return {
+    title: { tr: "KÜP", en: "KÜP" },
+    category: "identity",
+    year: YEAR,
+    role: { tr: "Marka kimliği", en: "Brand identity" },
+    tools: ["Illustrator", "Figma", "InDesign"],
+    text: {
+      tr: "Bir seramik atölyesi için kimlik sistemi: üç eşkenar dörtgenden kurulu bir küp işareti, mor üstünde magenta-cyan-pembe üçlüsü, geniş bir kelime markası ve işaretin kendisinden türeyen bir desen. Sistem bir cam küpün içinde sergileniyor.",
+      en: "An identity system for a ceramics studio: a cube mark built from three rhombi, a magenta–cyan–pink trio on deep purple, an expanded wordmark and a pattern grown from the mark itself. The system is shown inside a glass cube.",
+    },
+    presentation: "glass-cube",
+    stop: 3,
+    colors: [PURPLE, MAGENTA, CYAN],
+    process: [
+      { title: { tr: "İşaret", en: "Mark" }, text: { tr: "Üç yüzlü küp: hem bir kil kalıbı hem bir harf kutusu.", en: "A three-faced cube: a clay mould and a letter box at once." } },
+      { title: { tr: "Renk", en: "Colour" }, text: { tr: "Mor zemin; magenta, cyan ve pembe üç yüzün ışığı.", en: "A purple ground; magenta, cyan and pink as the light on three faces." } },
+      { title: { tr: "Sistem", en: "System" }, text: { tr: "İşaret bir desene, kelime markası üç genişliğe açılır.", en: "The mark opens into a pattern, the wordmark into three widths." } },
+    ],
+    sample: true,
+    order: 3,
+    cover: "cover.png",
+    gallery: ["01.png", "02.png"],
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 04  RENK DALGASI — a generative digital piece (projection on a sculpture, stop 05)
+function waveBands(W, H, phase, colors) {
+  const bands = [];
+  const n = 34;
+  for (let i = 0; i < n; i++) {
+    const y0 = (i / n) * H;
+    const amp = 60 + 50 * Math.sin(i * 0.4 + phase);
+    const freq = 0.0028 + 0.0008 * Math.sin(i * 0.9 + phase * 0.7);
+    let d = `M 0 ${y0}`;
+    for (let x = 0; x <= W; x += 20) d += ` L ${x} ${(y0 + amp * Math.sin(x * freq + i * 0.35 + phase)).toFixed(1)}`;
+    d += ` L ${W} ${H} L 0 ${H} Z`;
+    bands.push(`<path d="${d}" fill="${colors[i % colors.length]}" opacity="${0.55 + 0.45 * ((i % 3) / 2)}"/>`);
+  }
+  return bands.join("");
+}
+async function renkDalgasi() {
+  const W = 2000;
+  const H = 2000;
+  const make = (phase, id) =>
+    svg(W, H, `<defs>${grain(id, 0.12)}</defs><rect width="${W}" height="${H}" fill="${OFF}"/>${waveBands(W, H, phase, [CYAN, PINK, VIOLET, OFF])}${T(96, 1900, "RENK DALGASI", { size: 90, weight: 900, width: "condensed", fill: OFF })}${meta(96, 1950, `üretken seri · ${String(Math.round(phase * 100)).padStart(3, "0")} · örnek`, OFF, 22)}${grainRect(W, H, id)}`);
+  await write("ornek-dijital-renk-dalgasi", "cover.png", make(0.6, "g1"));
+  await write("ornek-dijital-renk-dalgasi", "01.png", make(1.9, "g2"));
+  await write("ornek-dijital-renk-dalgasi", "02.png", make(3.4, "g3"));
+  return {
+    title: { tr: "Renk Dalgası", en: "Colour Wave" },
+    category: "digital",
+    year: YEAR,
+    role: { tr: "Üretken tasarım ve sanat yönetimi", en: "Generative design and art direction" },
+    tools: ["JavaScript", "Processing", "After Effects"],
+    text: {
+      tr: "Üretken bir dijital seri: otuz dört sinüs bandı, üç mürekkep ve bir faz değişkeni. Her kare aynı kuralın başka bir anı. Seri bir heykelin üzerine projeksiyonla gösteriliyor; yüzeyin kıvrımları dalgayı bozuyor.",
+      en: "A generative digital series: thirty-four sine bands, three inks and one phase variable. Every frame is another moment of the same rule. The series is projected onto a sculpture; the surface's folds distort the wave.",
+    },
+    presentation: "projection",
+    stop: 5,
+    colors: [CYAN, PINK, VIOLET],
+    process: [
+      { title: { tr: "Kural", en: "Rule" }, text: { tr: "Tek bir fonksiyon: genlik ve frekans bandın sırasına bağlı.", en: "One function: amplitude and frequency follow the band's index." } },
+      { title: { tr: "Faz", en: "Phase" }, text: { tr: "Faz değişkeni seriyi üretir; her kare bir çıktı.", en: "The phase variable generates the series; every frame is a print." } },
+      { title: { tr: "Yüzey", en: "Surface" }, text: { tr: "Projeksiyon düz değil: kıvrımlı bir heykel dalgayı yeniden çizer.", en: "The projection is not flat: a folded sculpture redraws the wave." } },
+    ],
+    sample: true,
+    order: 4,
+    cover: "cover.png",
+    gallery: ["01.png", "02.png"],
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 05  KÂĞIT — a magazine (spread, stop 05)
+const COLUMN_TR = [
+  "Kâğıt bir yüzey değil, bir karardır. Gramajı, dokusu ve rengi daha ilk harf basılmadan sayfanın tonunu belirler.",
+  "Tipografi bu kararın üstüne kurulur: satır uzunluğu, satır aralığı ve kenar boşluğu kâğıdın ölçüsünden türer.",
+  "Bu sayıda kâğıdı konu ediyoruz: üç baskı tekniği, iki yazı ailesi ve bir boşluk üzerine notlar.",
+  "Boşluk, baskıda mürekkebin dokunmadığı yer değil; okumanın nefes aldığı yerdir.",
+  "Dergi formatı 230 × 300 mm; metin 10/14 punto, dış kenar iç kenarın iki katı.",
+];
+const COLUMN_EN = [
+  "Paper is not a surface but a decision. Its weight, grain and colour set the tone of the page before the first letter is printed.",
+  "Typography is built on that decision: line length, leading and margin derive from the sheet's measure.",
+  "This issue is about paper: three print methods, two type families and notes on white space.",
+];
+function columns(x, y, w, lines, fill, size = 26, lead = 38) {
+  const out = [];
+  let yy = y;
+  const maxChars = Math.floor(w / (size * 0.52));
+  for (const para of lines) {
+    let line = "";
+    for (const wd of para.split(" ")) {
+      if ((line + " " + wd).trim().length > maxChars) {
+        out.push(T(x, yy, line.trim(), { size, weight: 400, fill }));
+        yy += lead;
+        line = wd;
+      } else line = (line + " " + wd).trim();
+    }
+    if (line) {
+      out.push(T(x, yy, line, { size, weight: 400, fill }));
+      yy += lead;
+    }
+    yy += lead * 0.6;
+  }
+  return out.join("");
+}
+async function kagit() {
+  const W = 2400;
+  const H = 1600;
+  const left = `<rect x="0" y="0" width="1200" height="${H}" fill="${INK}"/>${T(80, 980, "KÂĞIT", { size: 520, weight: 900, width: "condensed", fill: OFF })}${T(80, 1120, "01", { size: 160, weight: 200, width: "expanded", fill: YELLOW })}${meta(80, 1500, "Sayı 01 · Kâğıt üzerine", OFF, 24)}${meta(1120, 1500, "02", OFF, 24, "end")}`;
+  const right = `<rect x="1200" y="0" width="1200" height="${H}" fill="${OFF}"/>${columns(1280, 180, 330, COLUMN_TR.slice(0, 2), INK)}${columns(1660, 180, 330, COLUMN_TR.slice(2, 4), INK)}${columns(2040, 180, 300, COLUMN_TR.slice(4), INK)}${T(1280, 1140, "Boşluk, okumanın", { size: 84, serif: true, italic: true, fill: INK })}${T(1280, 1240, "nefes aldığı yerdir.", { size: 84, serif: true, italic: true, fill: INK })}<rect x="1280" y="1300" width="1040" height="4" fill="${YELLOW}"/>${meta(1280, 1500, "Örnek dergi · 230 × 300 mm", INK, 24)}${meta(2320, 1500, "03", INK, 24, "end")}`;
+  const spread = svg(W, H, `<defs>${grain("g", 0.07)}</defs>${left}${right}<rect x="1198" y="0" width="4" height="${H}" fill="${INK}" opacity="0.25"/>${grainRect(W, H, "g")}`);
+  await write("ornek-editoryal-kagit", "cover.png", spread);
+  const coverPage = svg(1600, 2400, `<defs>${grain("g2", 0.07)}</defs><rect width="1600" height="2400" fill="${YELLOW}"/>${T(96, 760, "KÂĞIT", { size: 540, weight: 900, width: "condensed", fill: INK })}${T(96, 1000, "Kâğıt, yazı ve boşluk üzerine", { size: 72, serif: true, italic: true, fill: INK })}${T(96, 1090, "bir dergi.", { size: 72, serif: true, italic: true, fill: INK })}<rect x="96" y="1900" width="1408" height="4" fill="${INK}"/>${T(96, 2290, "01", { size: 280, weight: 200, width: "expanded", fill: INK })}${meta(1504, 2290, `Örnek · ${YEAR}`, INK, 24, "end")}${grainRect(1600, 2400, "g2")}`);
+  await write("ornek-editoryal-kagit", "01.png", coverPage);
+  const spread2 = svg(W, H, `<defs>${grain("g3", 0.07)}</defs><rect width="1200" height="${H}" fill="${OFF}"/>${columns(80, 180, 500, COLUMN_EN, INK, 28, 42)}${meta(80, 1500, "04", INK, 24)}<rect x="1200" y="0" width="1200" height="${H}" fill="${INK}"/><clipPath id="c2"><rect x="1200" y="0" width="1200" height="${H}"/></clipPath><g clip-path="url(#c2)" transform="translate(1200 0)">${waveBands(1200, H, 2.2, [YELLOW, OFF, INK])}</g>${meta(2320, 1500, "05", OFF, 24, "end")}${grainRect(W, H, "g3")}`);
+  await write("ornek-editoryal-kagit", "02.png", spread2);
+  return {
+    title: { tr: "KÂĞIT", en: "KÂĞIT" },
+    category: "editorial",
+    year: YEAR,
+    role: { tr: "Editoryal tasarım ve sanat yönetimi", en: "Editorial design and art direction" },
+    tools: ["InDesign", "Illustrator"],
+    text: {
+      tr: "Kâğıt, yazı ve boşluk üzerine bir dergi: yoğun bir siyah sayfa ile üç kolonlu beyaz bir sayfa yan yana. Başlık kâğıdın kendisi kadar ağır, metin 10/14. Forma uzayda açılıyor: sol sayfa gelirken sağ sayfa katlanarak kalkıyor.",
+      en: "A magazine on paper, type and white space: a dense black page beside a three-column white one. The title as heavy as the stock, the text at 10/14. The spread opens in space: the left page arrives as the right page folds up.",
+    },
+    presentation: "spread",
+    stop: 5,
+    colors: [INK, YELLOW, OFF],
+    process: [
+      { title: { tr: "Format", en: "Format" }, text: { tr: "230 × 300 mm; dış kenar iç kenarın iki katı.", en: "230 × 300 mm; the outer margin twice the inner." } },
+      { title: { tr: "Yazı", en: "Type" }, text: { tr: "Başlıkta dar Archivo, metinde normal; alıntıda Instrument Serif italik.", en: "Condensed Archivo for titles, normal for text; Instrument Serif italic for quotes." } },
+      { title: { tr: "Sayfa", en: "Page" }, text: { tr: "Her forma bir karşıtlık: siyah/beyaz, dolu/boş, dar/geniş.", en: "Every spread is a contrast: black/white, full/empty, narrow/wide." } },
+    ],
+    sample: true,
+    order: 5,
+    cover: "cover.png",
+    gallery: ["01.png", "02.png"],
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 06  ÜÇ — a poster series (particles, stop 04)
+async function uc() {
+  const colors = [PINK, CYAN, YELLOW];
+  const words = ["BİR", "İKİ", "ÜÇ"];
+  const make = async (i, file) => {
+    const c = colors[i];
+    const n = String(i + 1);
+    const outlines = Array.from({ length: 5 }, (_, k) => `<text x="${840 + k * 36}" y="${1500 + k * 30}" font-family="${SANS}" font-size="1500" font-weight="900" font-stretch="condensed" fill="none" stroke="${c}" stroke-width="3" opacity="${0.55 - k * 0.1}" text-anchor="middle">${n}</text>`).join("");
+    const body = `<defs>${grain("g" + i, 0.1)}</defs><rect width="1600" height="2400" fill="${INK}"/>${outlines}<text x="800" y="1500" font-family="${SANS}" font-size="1500" font-weight="900" font-stretch="condensed" fill="${c}" text-anchor="middle">${n}</text>${T(96, 300, words[i], { size: 200, weight: 900, width: "expanded", fill: OFF })}${meta(96, 2210, "Üç afiş · bir sayı sistemi", OFF, 24)}${meta(96, 2260, `Seri ${n} / 3 · 70 × 100 cm`, OFF, 24)}${meta(1504, 2260, `Örnek · ${YEAR}`, OFF, 24, "end")}${grainRect(1600, 2400, "g" + i)}`;
+    await write("ornek-afis-serisi-uc", file, svg(1600, 2400, body));
+  };
+  await make(0, "cover.png");
+  await make(1, "01.png");
+  await make(2, "02.png");
+  return {
+    title: { tr: "Üç", en: "Three" },
+    category: "series",
+    year: YEAR,
+    role: { tr: "Afiş serisi", en: "Poster series" },
+    tools: ["Illustrator", "InDesign"],
+    text: {
+      tr: "Üç afişlik bir sayı sistemi: siyah yaprak, her afişte tek bir dev rakam ve rakamın gölgesi gibi kayan beş kontur. Pembe, cyan, sarı. Seri uzayda parçacıklara dağılıp yeniden toplanıyor: bir afiş biterken diğeri aynı parçalardan kuruluyor.",
+      en: "A numeral system across three posters: black sheets, one giant numeral per poster and five outlines sliding like its shadow. Pink, cyan, yellow. In space the series scatters into particles and gathers again: as one poster ends, the next is built from the same pieces.",
+    },
+    presentation: "particles",
+    stop: 4,
+    colors: [PINK, CYAN, YELLOW],
+    process: [
+      { title: { tr: "Sayı", en: "Numeral" }, text: { tr: "Rakam yaprağın tamamı: dar kesim, 1500 punto.", en: "The numeral is the whole sheet: condensed, 1500 pt." } },
+      { title: { tr: "Gölge", en: "Shadow" }, text: { tr: "Beş kontur kayar; afiş durur, sayı hareket eder.", en: "Five outlines slide; the sheet is still, the numeral moves." } },
+      { title: { tr: "Seri", en: "Series" }, text: { tr: "Aynı sistem, üç renk: yan yana bir ritim.", en: "The same system in three colours: a rhythm side by side." } },
+    ],
+    sample: true,
+    order: 6,
+    cover: "cover.png",
+    gallery: ["01.png", "02.png"],
+  };
+}
+
+const all = [
+  ["ornek-afis-sessiz-sehir", sessizSehir],
+  ["ornek-tipografi-ses", ses],
+  ["ornek-kimlik-kup", kup],
+  ["ornek-dijital-renk-dalgasi", renkDalgasi],
+  ["ornek-editoryal-kagit", kagit],
+  ["ornek-afis-serisi-uc", uc],
+];
+for (const [slug, fn] of all) {
+  const m = await fn();
+  writeFileSync(join(worksDir, slug, "meta.json"), JSON.stringify(m, null, 2) + "\n");
+  console.log("samples:", slug);
+}

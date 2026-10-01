@@ -25,6 +25,17 @@ async function launch(args = []) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/** scroll the journey to p (0..1 on the track), the way the probe does */
+const snap = (page, pp) =>
+  page.evaluate((pp) => {
+    const track = document.querySelector(".track");
+    if (!track) return window.scrollTo({ top: pp * (document.documentElement.scrollHeight - innerHeight), behavior: "auto" });
+    const max = track.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: track.offsetTop + pp * max, behavior: "auto" });
+  }, pp);
+/** the hold of each stop, as p */
+const HOLDS = [0, 0.186, 0.329, 0.471, 0.614, 0.757, 0.9];
+
 if (mode === "keyboard") {
   // Tab through the whole document; every focused element must be visible and inside the viewport,
   // and focusing an element inside a hidden section must bring its section on screen.
@@ -37,26 +48,28 @@ if (mode === "keyboard") {
   let hiddenFocus = 0;
   for (let i = 0; i < 70; i++) {
     await p.keyboard.press("Tab");
-    await sleep(120);
+    // focus inside a stop brings the camera to it; the layer follows on the next frames (slow here, software GL)
+    await sleep(900);
     const info = await p.evaluate(() => {
       const el = document.activeElement;
       if (!el || el === document.body) return null;
       const r = el.getBoundingClientRect();
-      const sec = el.closest("section.section");
+      const sec = el.closest("section.stop");
       const cs = getComputedStyle(el);
       const focusRing = cs.outlineStyle !== "none" && cs.outlineWidth !== "0px";
+      const layer = sec?.querySelector(".stop-layer");
       return {
         tag: el.tagName,
         text: (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 40),
         section: sec?.id ?? null,
-        sectionHidden: sec?.dataset.hidden ?? null,
+        sectionHidden: sec ? String(sec.dataset.active !== "true") : null,
         visible: r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight,
-        opacity: sec ? getComputedStyle(sec.querySelector(".panel")).opacity : "1",
+        opacity: layer ? getComputedStyle(layer).opacity : "1",
         focusRing,
       };
     });
     if (!info) continue;
-    if (info.section && info.sectionHidden === "true") hiddenFocus++;
+    if (info.section && info.sectionHidden === "true" && Number(info.opacity) < 0.5) hiddenFocus++;
     seen.push(info);
   }
   const invisible = seen.filter((s) => !s.visible);
@@ -76,28 +89,59 @@ if (mode === "keyboard") {
 }
 
 if (mode === "overflow") {
+  // no horizontal scroll at any width the brief names, in both modes, at every stop and on a project page
   const b = await launch();
   const out = [];
-  for (const q of ["?gl=1", "?nogl"]) {
-    const p = await b.newPage();
-    await p.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
-    await p.goto(`${url}/${q}`, { waitUntil: "domcontentloaded" });
-    await sleep(q ? 2000 : 9000);
-    const r = await p.evaluate(() => ({
-      scrollWidth: document.documentElement.scrollWidth,
-      clientWidth: document.documentElement.clientWidth,
-      bodyScrollWidth: document.body.scrollWidth,
-    }));
-    for (const pp of [0, 0.28, 0.51, 0.65, 0.78, 0.9, 1]) {
-      await p.evaluate((pp) => window.__snap?.(pp), pp);
-      await sleep(400);
-      const w = await p.evaluate(() => document.documentElement.scrollWidth);
-      if (w > 390) r[`overflowAt${pp}`] = w;
+  const widths = [320, 375, 390, 430, 768, 1024, 1440, 1920];
+  for (const q of ["?gl=1&tier=low", "?nogl"]) {
+    for (const w of widths) {
+      const p = await b.newPage();
+      const mobile = w < 768;
+      await p.setViewport({ width: w, height: mobile ? 844 : 900, isMobile: mobile, hasTouch: mobile });
+      await p.goto(`${url}/${q}`, { waitUntil: "domcontentloaded" });
+      await sleep(q.includes("nogl") ? 2500 : 9000);
+      const row = { mode: q.includes("nogl") ? "nogl" : "gl", width: w, overflowAt: [] };
+      for (const pp of HOLDS) {
+        await snap(p, pp);
+        await sleep(500);
+        const sw = await p.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth));
+        if (sw > w) row.overflowAt.push({ p: pp, scrollWidth: sw });
+      }
+      // the menu open, on phones
+      if (mobile) {
+        await p.evaluate(() => document.querySelector(".menu-btn")?.click());
+        await sleep(600);
+        const sw = await p.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth));
+        if (sw > w) row.overflowAt.push({ menu: true, scrollWidth: sw });
+      }
+      out.push(row);
+      await p.close();
     }
-    out.push({ mode: q || "gl", ...r });
-    await p.close();
   }
-  console.log(JSON.stringify({ check: "overflow", results: out }));
+  // a project page, both modes, phone and desktop
+  const workHref = await (async () => {
+    const p = await b.newPage();
+    await p.goto(`${url}/?nogl`, { waitUntil: "domcontentloaded" });
+    const h = await p.evaluate(() => document.querySelector('a[href^="/isler/"]')?.getAttribute("href"));
+    await p.close();
+    return h;
+  })();
+  if (workHref) {
+    for (const q of ["?gl=1&tier=low", "?nogl"]) {
+      for (const w of [320, 390, 1440]) {
+        const p = await b.newPage();
+        const mobile = w < 768;
+        await p.setViewport({ width: w, height: mobile ? 844 : 900, isMobile: mobile, hasTouch: mobile });
+        await p.goto(`${url}${workHref}${q}`, { waitUntil: "domcontentloaded" });
+        await sleep(q.includes("nogl") ? 2500 : 7000);
+        const sw = await p.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth));
+        out.push({ mode: q.includes("nogl") ? "nogl" : "gl", page: workHref, width: w, overflowAt: sw > w ? [{ scrollWidth: sw }] : [] });
+        await p.close();
+      }
+    }
+  }
+  const bad = out.filter((r) => r.overflowAt.length);
+  console.log(JSON.stringify({ check: "overflow", pages: out.length, failures: bad }));
   await b.close();
 }
 
@@ -108,17 +152,17 @@ if (mode === "memory") {
   await p.setViewport({ width: 1000, height: 600 });
   await p.goto(`${url}/?gl=1&tier=high`, { waitUntil: "domcontentloaded" });
   await sleep(12000);
-  const stops = [0, 0.08, 0.16, 0.28, 0.36, 0.44, 0.51, 0.58, 0.65, 0.72, 0.78, 0.84, 0.9, 0.97, 1.0];
+  const stops = [0, 0.1, 0.186, 0.26, 0.329, 0.4, 0.471, 0.55, 0.614, 0.69, 0.757, 0.83, 0.9, 0.97, 1.0];
   const snapshot = async () => p.evaluate(() => window.__stats?.());
   const before = await snapshot();
   const cycles = [];
   for (let c = 0; c < 5; c++) {
     for (const s of stops) {
-      await p.evaluate((s) => window.__snap?.(s), s);
+      await snap(p, s);
       await sleep(700);
     }
     for (const s of [...stops].reverse()) {
-      await p.evaluate((s) => window.__snap?.(s), s);
+      await snap(p, s);
       await sleep(400);
     }
     cycles.push(await snapshot());
@@ -143,21 +187,21 @@ if (mode === "reduced") {
   const p = await b.newPage();
   await p.setViewport({ width: 1000, height: 600 });
   await p.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
-  await p.goto(`${url}/?gl=1&tier=low`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${url}/?gl=1&tier=low&debug`, { waitUntil: "domcontentloaded" });
   await sleep(10000);
   const samples = [];
-  for (const target of [0.05, 0.3, 0.55, 0.7, 0.84, 0.94]) {
-    await p.evaluate((t) => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      window.scrollTo({ top: t * max, behavior: "auto" });
-    }, target);
+  for (const target of [0.05, 0.13, 0.3, 0.55, 0.7, 0.84, 0.94]) {
+    await snap(p, target);
     await sleep(2500);
     samples.push(await p.evaluate(() => {
       const s = window.__stats?.();
-      return { progress: +s.progress.toFixed(3), rigP: +s.rigP.toFixed(3), act: s.act };
+      const r = window.__r3f;
+      const active = document.querySelector('.stop[data-active="true"]');
+      return { p: +s.p.toFixed(3), stop: s.stop, activeLayer: active?.dataset.n ?? null, cam: r ? r.camera.position.toArray().map((x) => +x.toFixed(1)) : null, reducedClass: document.documentElement.classList.contains("reduced") };
     }));
   }
   const reduced = await p.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
+  // between two stops (p = 0.13 is 91% through segment 0) the camera must still sit on stop 1, not between
   console.log(JSON.stringify({ check: "reduced-motion", mediaMatches: reduced, samples }));
   await b.close();
 }
@@ -173,11 +217,11 @@ if (mode === "perf") {
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: throttle });
     await p.goto(`${url}/?gl=1&tier=high&debug`, { waitUntil: "domcontentloaded" });
     await sleep(12000);
-    for (const [act, pp] of [["I name", 0.0], ["I glass", 0.16], ["II portals", 0.28], ["III ribbon", 0.51], ["IV machine", 0.65], ["V portrait", 0.78], ["VI card", 0.9], ["ending", 0.995]]) {
-      await p.evaluate((pp) => window.__snap?.(pp), pp);
+    for (const [stop, pp] of [["01 renk", 0.0], ["01→02 travel", 0.12], ["02 tipografi", 0.186], ["03 marka", 0.329], ["04 afiş", 0.471], ["05 dijital", 0.614], ["06 elif", 0.757], ["07 iletişim", 0.9]]) {
+      await snap(p, pp);
       await sleep(6000);
       const s = await p.evaluate(() => window.__stats?.());
-      out.push({ viewport: `${w}x${h}`, cpuThrottle: throttle, act, fps: +s.fps.toFixed(1), ms: +s.ms.toFixed(1), calls: s.calls, triangles: s.triangles, tier: s.tier });
+      out.push({ viewport: `${w}x${h}`, cpuThrottle: throttle, stop, fps: +s.fps.toFixed(1), ms: +s.ms.toFixed(1), calls: s.calls, triangles: s.tris, tier: s.tier });
     }
     await p.close();
   }
@@ -224,11 +268,14 @@ if (mode === "lang") {
         path: location.pathname,
         htmlLang: document.documentElement.lang,
         expected: lang,
-        h2: document.querySelector("#isler-title")?.textContent,
-        toggle: document.querySelector('.nav-tools a[hreflang]')?.getAttribute("href"),
+        heroRole: document.querySelector(".hero-role")?.textContent?.trim(),
+        stopHead: document.querySelector('.stop[data-n="2"] .stop-head')?.textContent?.replace(/\s+/g, " ").trim(),
+        toggle: document.querySelector('.nav a[hreflang]')?.getAttribute("href"),
         alternates: [...document.querySelectorAll('link[rel="alternate"][hreflang]')].map((l) => `${l.getAttribute("hreflang")}→${l.getAttribute("href")}`),
         title: document.title,
-        firstWorkHref: document.querySelector(".works-grid a")?.getAttribute("href"),
+        description: document.querySelector('meta[name="description"]')?.getAttribute("content"),
+        firstWorkHref: document.querySelector('a[href^="/isler/"], a[href^="/en/work/"]')?.getAttribute("href"),
+        navLabels: [...document.querySelectorAll(".nav-links a")].map((a) => a.textContent.trim()),
       }), lang)
     );
     await p.close();

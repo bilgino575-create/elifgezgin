@@ -1,0 +1,67 @@
+{
+  "title": {
+    "tr": "SES",
+    "en": "SES"
+  },
+  "category": "typography",
+  "year": 2026,
+  "role": {
+    "tr": "Tipografik kimlik",
+    "en": "Typographic identity"
+  },
+  "tools": [
+    "Glyphs",
+    "Illustrator",
+    "After Effects"
+  ],
+  "text": {
+    "tr": "Bir ses stüdyosu için tipografik kimlik: tek bir kelime, yedi genişlik. Logo sabit değil; kelime sesin yüksekliğine göre daralır ve genişler. Kimlik krom harflerle uzayda yaşıyor.",
+    "en": "A typographic identity for a sound studio: one word, seven widths. The logo is not fixed; the word narrows and widens with the volume. The identity lives in space as chrome letters."
+  },
+  "presentation": "chrome-type",
+  "stop": 2,
+  "colors": [
+    "#1f3bff",
+    "#ff5a1f",
+    "#f3eee3"
+  ],
+  "process": [
+    {
+      "title": {
+        "tr": "Sistem",
+        "en": "System"
+      },
+      "text": {
+        "tr": "Değişken bir yazı ailesinin genişlik ekseni logonun kendisi oldu.",
+        "en": "The width axis of a variable family became the logo itself."
+      }
+    },
+    {
+      "title": {
+        "tr": "Hareket",
+        "en": "Motion"
+      },
+      "text": {
+        "tr": "Kelime sese tepki verir: sessizlikte en dar, çığlıkta en geniş.",
+        "en": "The word responds to sound: narrowest in silence, widest in a scream."
+      }
+    },
+    {
+      "title": {
+        "tr": "Uzay",
+        "en": "Space"
+      },
+      "text": {
+        "tr": "Krom harfler ortamın rengini yansıtır; kimlik bulunduğu yere uyar.",
+        "en": "Chrome letters reflect the room; the identity adapts to where it stands."
+      }
+    }
+  ],
+  "sample": true,
+  "order": 2,
+  "cover": "cover.png",
+  "gallery": [
+    "01.png",
+    "02.png"
+  ]
+}
