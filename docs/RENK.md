@@ -151,6 +151,17 @@ ink on the stage. If loading stalls the drop hangs; nothing counts up.
   glass close up (`MeshTransmissionMaterial`, dispersion on HIGH/ULTRA).
 - "Grafik Tasarımcı" under the name in HTML, variable axes driven by the
   hand (weight by distance, width by speed).
+- **The statue.** A stylised AI-made figure of Elif (Meshy image-to-3D from
+  the hero image, simplified by Osman: 118 k triangles / 2048² WebP on
+  desktop, 64 k / 1024² on phones and LOW, meshopt + quantization,
+  1.5 / 0.8 MB) rises out of a glossy black plinth right of the name on
+  desktop and below it on phones, once the file has arrived (prefetched
+  after first paint, never on the LCP path; the particle portrait stands in
+  until then). It turns toward the hand (yaw ±25°, pitch ±6°, damped
+  springs), three rim lights in the inks orbit it, and 6 000 surface points
+  shimmer on its silhouette (a facing-ratio term in the vertex shader). A
+  finger drags it round on phones. Reduced motion: static pose, no lights
+  moving.
 
 ### Act II — the portals
 Each work is a frame 2.2 × (2.2 / aspect) with a `--spot` rim. Stencil
@@ -184,10 +195,12 @@ mixing. Then the halftone sphere image forms for the rotation into Act V.
 as the ribbon.)
 
 ### Act V — the portrait
-The desk image forms, then the portrait itself, free of the name mask now,
-at full height next to the bio; the hand scatters it (velocity-sensitive
-repulsion), a click blows it apart, the springs return it. Reduced motion
-shows the image crossfading on a plane.
+The statue returns beside the bio, swaying slowly (±38°, never showing its
+back, which is a flat wall of panels), and the hand or a finger spins it
+within ±66°. Behind it the desk image and then the portrait image form at
+60–70 % as a backdrop; the hand scatters them, a click blows them apart,
+the springs return them. Reduced motion: the images crossfade on a plane
+and the statue stands still.
 
 ### Act VI — the holographic card
 Card 3.5 × 2 with `MeshPhysicalMaterial` iridescence (thin-film) plus a
@@ -331,6 +344,17 @@ normal and WebM writer are written here.
   Position and velocity are two float MRT targets in a ping-pong; the step
   is fixed 1/60 substeps; nothing allocates per frame. Reduced motion shows
   the images themselves crossfading on planes.
+- **The statue's material.** The Meshy texture is kept as the base colour
+  (it holds up at close range: eyes, lips, the hand on the pen, the coat's
+  edges are all whole) under `MeshPhysicalMaterial` with clearcoat 0.65, a
+  thin-film iridescence of 0.35 and a view-angle rim in the spot colour
+  added in `onBeforeCompile`. The suit shows its facets up close (the
+  simplification), which the clearcoat reads as a lacquered sculpture
+  rather than cloth. The plinth is a clipping plane as much as a box: the
+  figure's material clips below the plinth's top face, so it rises out of
+  the plinth instead of through it, driven by the closed-form step response
+  of a ζ = 0.7 spring in time (frame-rate independent, no per-frame
+  integration).
 - **Video loops without ffmpeg.** `scripts/capture.mjs` drives the real scene
   frame by frame (`?capture=1`, `window.__advance`), encodes each frame with
   WebCodecs' VP9 encoder inside headless Chromium and muxes the chunks with
@@ -442,6 +466,12 @@ themes), `type-*` (the specimen at 1440 and 390), `hover-*`, `open-*`,
   flick crosses a transition in a few frames and the cloud has no time to
   bloom; Lenis's easing softens this on desktop, native scrolling on phones
   does not.
+- **The statue is an AI-generated figure**, not a scan or a photograph; the
+  copy says so (sr-only text in the hero and the bio). Its back is a wall of
+  panels (the hero image's background became geometry), so it never turns
+  past ±66°. Its 1.5 MB (0.8 MB on phones) is fetched after first paint and
+  is not in any JS bundle; whether a mid-range Android holds 40 fps with it
+  is unmeasured.
 - **Device-orientation tilt** on phones is not built; the hand is the finger.
 - **Sound** is two synthesized cues behind a toggle that defaults to off.
 

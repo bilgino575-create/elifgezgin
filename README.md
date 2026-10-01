@@ -16,6 +16,12 @@ English at `/en`. The plan, measurements and honest limits are in
   (a world-space mask of the traced letterforms drives both); scrolling
   shatters them into a Varini-style anamorphosis of ~900 shards and
   re-forms them as glass close up.
+- **The statue** a stylised AI-made 3D figure of Elif (`public/models/`,
+  meshopt-compressed GLB, two sizes) rises on a black plinth beside the
+  name, turns toward the hand under orbiting ink-coloured rim lights with a
+  shimmer of particles on its silhouette, and returns beside the bio where
+  a finger or the cursor spins it. Loaded after first paint, never on the
+  LCP path.
 - **Act II** every work is a stencil portal into a room in its own colours;
   hover separates the cover's layers in depth; click flies through.
 - **Act III–V** one GPU particle system (120 k / 60 k / 25 k) morphs through
@@ -27,7 +33,8 @@ English at `/en`. The plan, measurements and honest limits are in
 - **Act VI** a holographic-foil business card; all the ink pours into it and
   the last line is written by the fluid.
 
-Everything is procedural: no downloaded models or textures. Fonts are
+Everything but the statue is procedural: no downloaded textures, and the
+one model is Elif's own. Fonts are
 Bricolage Grotesque and Instrument Sans, self-hosted through `next/font`.
 The complete site is server-rendered HTML that stands on its own without
 WebGL, with video loops captured from the real scene.

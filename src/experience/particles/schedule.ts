@@ -34,10 +34,11 @@ export const MORPH_KEYS: MorphKey[] = [
   { p: 0.72, img: "elif-06-renk-makinesi", z: -3, height: 5.6, dim: 1 },
   { p: 0.745, img: "elif-07-halftone-kure", z: -3, height: 5, dim: 1 },
   { p: 0.755, img: "elif-07-halftone-kure", z: -3, height: 5, dim: 1 },
-  { p: 0.78, img: "elif-09-atolye-masasi", z: -2.5, height: 4.6, dim: 0.85 },
-  { p: 0.81, img: "elif-09-atolye-masasi", z: -2.5, height: 4.6, dim: 0.85 },
-  { p: 0.835, img: "elif-00-hero", z: -1.5, height: 3.8, dim: 1 },
-  { p: 0.85, img: "elif-00-hero", z: -1.5, height: 3.8, dim: 1 },
+  // Act V: the formations become the backdrop behind the statue
+  { p: 0.78, img: "elif-09-atolye-masasi", z: -3.2, height: 5.2, dim: 0.6 },
+  { p: 0.81, img: "elif-09-atolye-masasi", z: -3.2, height: 5.2, dim: 0.6 },
+  { p: 0.835, img: "elif-00-hero", z: -3.0, height: 4.6, dim: 0.7 },
+  { p: 0.85, img: "elif-00-hero", z: -3.0, height: 4.6, dim: 0.7 },
   { p: 0.9, img: "elif-08-holografik-kartvizit", z: -5, height: 6.5, dim: 0.45, dy: 0.9 },
   { p: 1.0, img: "elif-08-holografik-kartvizit", z: -5, height: 6.5, dim: 0.45, dy: 0.9 },
 ];

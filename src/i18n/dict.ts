@@ -18,6 +18,7 @@ const tr = {
     about: "Hakkımda",
     contact: "İletişim",
   },
+  statue: "Elif Gezgin'i temsil eden stilize 3B heykel (yapay zekâ ile üretilmiş bir figür, fotoğraf değil); imleç veya parmakla döndürülebilir.",
   hero: {
     scroll: "Kaydırarak keşfet",
     lampHint: "İmleç senin elin: mürekkebi karıştır, harfleri kır.",
@@ -140,6 +141,7 @@ const en: Dict = {
     about: "About",
     contact: "Contact",
   },
+  statue: "Stylised 3D statue representing Elif Gezgin (an AI-generated figure, not a photograph); turn it with the cursor or a finger.",
   hero: {
     scroll: "Scroll to explore",
     lampHint: "The cursor is your hand: stir the ink, break the letters.",

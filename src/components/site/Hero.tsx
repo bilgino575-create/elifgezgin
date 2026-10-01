@@ -44,6 +44,7 @@ export default function Hero({ lang }: { lang: Lang }) {
       <p className="meta mt-8 gl-only">
         {d.hero.scroll} · {d.hero.lampHint}
       </p>
+      <p className="sr-only gl-only">{d.statue}</p>
       <Atmo id="elif-01-murekkep-damlasi" lang={lang} className="hero-atmo" />
       <Loop name="hero" label={d.hero.loop} className="hero-loop" />
       <HandType />

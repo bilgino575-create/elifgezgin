@@ -30,6 +30,7 @@ export default function About({ lang }: { lang: Lang }) {
           ))}
         </div>
       </div>
+      <p className="sr-only gl-only">{d.statue}</p>
       <Atmo id="elif-09-atolye-masasi" lang={lang} className="mt-10" />
     </Section>
   );

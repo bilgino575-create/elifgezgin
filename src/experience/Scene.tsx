@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useGLTF } from "@react-three/drei";
 import { Environment, Lightformer } from "@react-three/drei";
 import CameraRig from "./rig/CameraRig";
 import Tiering from "./Tiering";
@@ -11,12 +12,24 @@ import Name from "./acts/name/Name";
 import Portals from "./acts/portals/Portals";
 import Card from "./acts/card/Card";
 import Morph from "./particles/Morph";
+import Statue, { statueUrl } from "./acts/statue/Statue";
 import Post from "./Post";
-import { useStore } from "@/lib/store";
+import { store, useStore } from "@/lib/store";
 import { site } from "@/lib/content";
 
 export default function Scene() {
   const tier = useStore((s) => s.tier);
+  // the statue loads after first paint (this chunk already does), the file chosen by tier and input; the particle portrait stands in until it arrives
+  useEffect(() => {
+    const url = statueUrl(tier, store.get().touch);
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = "fetch";
+    link.href = url;
+    document.head.appendChild(link);
+    useGLTF.preload(url, false, true);
+    return () => link.remove();
+  }, [tier]);
   return (
     <>
       <CameraRig />
@@ -39,6 +52,9 @@ export default function Scene() {
         <Portals />
         <Card />
         <Morph />
+        <Suspense fallback={null}>
+          <Statue />
+        </Suspense>
       </Suspense>
       <Post />
     </>
