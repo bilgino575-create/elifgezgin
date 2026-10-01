@@ -1,8 +1,9 @@
 "use client";
 
 import { MeshTransmissionMaterial } from "@react-three/drei";
-import { useEffect, useMemo } from "react";
-import { CanvasTexture, Color, ExtrudeGeometry, MeshMatcapMaterial, SRGBColorSpace, type Group } from "three";
+import { useFrame } from "@react-three/fiber";
+import { useEffect, useMemo, useRef } from "react";
+import { CanvasTexture, Color, ExtrudeGeometry, type Material, MeshMatcapMaterial, SRGBColorSpace, type Group } from "three";
 import type { Glyphs } from "./glyphs";
 import { useStore, type Tier } from "@/lib/store";
 import { useDispose } from "../../utils/useDispose";
@@ -82,6 +83,13 @@ export default function Glass({
   const lowMat = useDispose(useMemo(() => (matcap ? new MeshMatcapMaterial({ matcap, color: new Color("#e8ecff") }) : null), [matcap]));
   const samples = tier === "ultra" ? 6 : tier === "high" ? 4 : 2;
   const light = useStore((s) => s.theme) === "light";
+  // the transmission material renders the whole scene into its buffer every frame while *it* is visible, whether or
+  // not its mesh is: once the name is off stage, those two extra scene renders per frame go with it
+  const mats = useRef<(Material | null)[]>([]);
+  useFrame(() => {
+    const v = groupRef.current?.visible ?? false;
+    for (const m of mats.current) if (m && m.visible !== v) m.visible = v;
+  });
   return (
     <group ref={groupRef} visible={false}>
       {geometries.map((geo, i) => (
@@ -90,6 +98,7 @@ export default function Glass({
             <primitive object={lowMat} attach="material" />
           ) : (
             <MeshTransmissionMaterial
+              ref={(m) => void (mats.current[i] = m as Material | null)}
               samples={samples}
               resolution={tier === "ultra" ? 1024 : 512}
               transmission={1}

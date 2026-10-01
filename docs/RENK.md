@@ -378,9 +378,10 @@ run reports a clean console.
 
 | bundle | size |
 |---|---|
-| initial JS before the 3D chunk (10 scripts) | **202.2 KB** (budget 180 KB; the site's own initial code ≈ 15 KB, the rest is the Next.js 16 + React 19 runtime) |
-| 3D chunk (three, fiber, drei, postprocessing, fluid, particles, all acts), fetched from an idle callback after first paint | 325 KB |
-| other lazy chunks | 12.7 KB |
+| initial JS before the 3D chunk (10 scripts) | **202.5 KB** (budget 180 KB; the site's own initial code ≈ 15 KB, the rest is the Next.js 16 + React 19 runtime; unchanged by the statue, +0.3 KB of copy) |
+| 3D chunk (three, fiber, drei, postprocessing, fluid, particles, all acts, GLTF loader + meshopt decoder + surface sampler), fetched from an idle callback after first paint | 345 KB (was 325 before the statue) |
+| other lazy chunks | 12.6 KB |
+| the statue (`public/models/`, fetched after first paint, not JS) | 1.49 MB desktop / 0.80 MB phones and LOW |
 
 An earlier build had the drop preloader importing the fluid module and
 pulled three.js into the initial bundle (439 KB); the ink queue now lives in
@@ -390,34 +391,38 @@ pulled three.js into the initial bundle (439 KB); the ink queue now lives in
 
 | form | URL | Perf | A11y | BP | SEO | LCP | CLS | TBT |
 |---|---|---|---|---|---|---|---|---|
-| mobile | `/` (HTML page on the software renderer) | 54 | **100** | **100** | **100** | 5.05 s | 0.001 | 1 109 ms |
-| desktop | `/` | 57 | **100** | **100** | **100** | 1.83 s | 0.009 | 1 576 ms |
-| mobile | `/?gl=1` (WebGL forced, rendered on the CPU) | 46 | **100** | **100** | **100** | 4.51 s | 0 | 6 489 ms |
-| desktop | `/?gl=1` | 60 | **100** | **100** | **100** | 0.97 s | 0.001 | 4 281 ms |
+| mobile | `/` (HTML page on the software renderer) | 53 | **100** | **100** | **100** | 5.7 s | 0 | 1 449 ms |
+| desktop | `/` | 68 | **100** | **100** | **100** | 0.93 s | 0.011 | 1 924 ms |
+| mobile / desktop | `/?gl=1` | not measured this round: with the statue, a software-rendered frame exceeds Lighthouse's screenshot timeout (`Page.captureScreenshot`); the previous build measured 46 / 60 with CLS ≤ 0.001 | | | | | | |
 
 The mobile LCP and TBT targets (2.5 s, 300 ms) are **not met on this
-machine**; CLS is under 0.01 everywhere because the WebGL probe now runs
-inline before the sections parse, so the document never changes shape on
-hydration. Real-device numbers were not measured.
+machine**; CLS is ≤ 0.011 everywhere because the WebGL probe runs inline
+before the sections parse, so the document never changes shape on
+hydration. Real-device numbers were not measured. The statue's 1.5 MB is
+not on the LCP path: the LCP is HTML text, the file is prefetched from the
+3D chunk after first paint.
 
 ### Frame time per act (`node scripts/verify.mjs perf`, HIGH tier forced)
 
 | act | 1440×900 fps / frame / calls / tris | 390×844 4× CPU fps / frame / calls / tris |
 |---|---|---|
-| I name (shards) | 0.4 / 963 ms / 65 / 59 675 | 2.1 / 776 ms / 58 / 31 552 |
-| I glass | 0.4 / 1 126 ms / 65 / 59 675 | 0.6 / 855 ms / 65 / 31 559 |
-| II portals | 3.0 / 281 ms / 111 / 7 911 | 0.6 / 1 519 ms / 98 / 7 667 |
-| III ribbon | 0.3 / 853 ms / 89 / 7 658 | 0.5 / 1 581 ms / 194 / 216 479 |
-| IV machine | 0.2 / 1 371 ms / 240 / 226 851 | 0.4 / 1 769 ms / 101 / 10 721 |
-| V portrait | 0.4 / 1 792 ms / 62 / 59 | 1.2 / 1 325 ms / 62 / 59 |
-| VI card | 0.2 / 2 181 ms / 68 / 2 981 | 0.7 / 1 329 ms / 68 / 2 981 |
-| ending | 0.3 / 2 110 ms / 68 / 2 981 | 0.6 / 1 364 ms / 190 / 3 103 |
+| I name (statue beside it) | 0.7 / 1 627 ms / 69 / 501 057 | 0.9 / 1 226 ms / 80 / 310 490 |
+| II portals | 0.3 / 1 857 ms / 80 / — | 2.5 / 1 337 ms / 71 / 3 867 |
+| III ribbon (formation) | 0.5 / 552 ms / 59 / 58 | 1.6 / 921 ms / 59 / 58 |
+| IV machine (formation) | 0.5 / 871 ms / 59 / 58 | 1.7 / 770 ms / 59 / 58 |
+| V portrait (statue) | 0.1 / 1 572 ms / 83 / 118 700 | 0.9 / 852 ms / 62 / 64 294 |
+| VI card | 0.7 / 1 974 ms / 183 / 1 154 | 1.5 / 890 ms / 61 / 1 032 |
 
-The draw-call counts include the fluid's passes (≈ 28 per frame) and the
-particle system's substeps, which scale with the frame time on this
-software renderer (up to 10 per frame here, one on a 60 fps machine); the
-raw scene is 30–60 calls per act. The triangle spikes are the ribbon's
-extruded words and the machine's glass.
+At 0.3–2 fps the sampler's stats lag the stop by a frame or two, so the
+triangle column is the honest signal, not the fps: in the hero the statue
+is drawn three times per frame (once for the view, once into each glass
+line's transmission buffer: 118 k × 3 + the shards ≈ 500 k); beside the bio
+it is drawn once (118 700 desktop, 64 294 phones) since this build, because
+the transmission materials now stop rendering their buffers while the name
+is off stage — before that fix every act after the hero paid two extra
+scene renders per frame (355 k triangles at Act V). The formations are
+point sprites (58 triangles: the backdrop, the plinth). Draw calls include
+the fluid's passes (≈ 28) and the particle substeps.
 
 ### Tests (`node scripts/verify.mjs …`)
 
@@ -425,23 +430,24 @@ extruded words and the machine's glass.
 |---|---|
 | keyboard only (Tab × 70, `?gl=1&tier=low`) | 68 focus stops, every one inside the viewport with a focus ring, 0 inside a still-hidden section; sections without focusable content are reached from the nav |
 | 390 px, no horizontal scroll | scrollWidth 390 = clientWidth in 3D and HTML mode at every act anchor |
-| reduced motion | media matched; the rig sits exactly on stop keys 0, 0.28, 0.51, 0.65, 0.78, 0.9 for scroll targets 0.05, 0.3, 0.55, 0.7, 0.84, 0.94; the fluid freezes after the drop, the particle system shows the images themselves crossfading |
+| reduced motion | media matched; the rig sits exactly on the stop keys; the fluid freezes after the drop, the particle system shows the images themselves crossfading, the statue stands still with its lights still |
 | TR/EN | `/` → lang tr, "Portallar", toggle → `/en`; `/en` → lang en, "The portals", toggle → `/`; hreflang tr/en/x-default; work links `/isler/…` vs `/en/work/…` |
-| memory after 5 full scroll cycles (HIGH) | geometries 72 / textures 70 → 74 / programs 39 across the five cycles (the four extra textures are the last lazily loaded particle targets; cycles 4 and 5 are identical); JS heap 37 MB |
-| AA contrast (`node scripts/contrast.mjs`, rendered pixels behind every glyph run, hover and focus states) | 1 132 glyph runs at 1440 and 390, Gece and Galeri, hover and focus states: **0 failures** |
-| AA contrast in 3D mode (`--gl`, at the seven scroll stops, Gece + Galeri, 1440 + 390) | 420 glyph runs over the live scene at the seven stops: **0 failures** (legends on 82 % / 90 % scrims, small type in the secondary colour, the hero copy on its own scrim) |
-| interaction (`node scripts/hover.mjs`) | pointer over the first portal: index row "Izgara Üzerine" active, cursor in hover mode; click: fly-through then navigation to `/isler/ornek-afis-izgara`; ribbon hover through the index: "Editoryal tasarım"; card click: act "card", spin; typing "elif": confetti canvas visible; console clean |
-| README_ELIF.md | tested in v1 with a `content/works/deneme-isi/` folder; the pipeline and the guide are unchanged except the new optional `layers/` folder and `content/atmosphere/`, both exercised by the sample generator and the twelve shipped images |
+| memory after 5 full scroll cycles (HIGH, statue loaded) | geometries 54 / textures 72 / programs 43 after cycle 2 and identical through cycle 5 (26 / 44 / 26 before the first); JS heap 35 MB |
+| AA contrast (`node scripts/contrast.mjs`, rendered pixels behind every glyph run, hover and focus states) | 1 162 glyph runs at 1440 and 390, Gece and Galeri, hover and focus states: **0 failures** |
+| AA contrast in 3D mode (`--gl`, at the seven scroll stops, Gece + Galeri, 1440 + 390) | 406 glyph runs over the live scene: **0 failures** |
+| interaction (`node scripts/hover.mjs`) | pointer over the first portal: index row "Izgara Üzerine" active, cursor in hover mode; click: fly-through then navigation to `/isler/ornek-afis-izgara`; skills index hover: "Editoryal tasarım"; card click: act "card", spin; typing "elif": confetti canvas visible; console clean |
+| the statue's mesh at close range (`three.js` inspection page, both files, face / hands / coat edges / feet, textured and normal-coloured) | no holes or broken silhouettes found; the suit shows its facets up close, the hair is ribbons; the back of the composition is a flat wall of panels, so the figure never turns past ±66° |
+| README_ELIF.md | tested in v1 with a `content/works/deneme-isi/` folder; the pipeline and the guide are unchanged except the optional `layers/` folder, `content/atmosphere/` and the two statue files, all exercised by the shipped content |
 
 ### Screenshots
 
 `docs/screenshots/v2/`: `final-{desktop,mobile}-{dark,light}-p*.png` at
-1440×900 and 390×844 for p = 0, 0.16, 0.28, 0.51, 0.65, 0.78, 0.9, 0.99;
-`seq-{a,b,c}-*` frame sequences of three transitions (hero → portals,
-machine → sphere → desk, desk → portrait → card) on both viewports;
-`chaos-*`, `low-*`, `reduced-*`, `html-*` (no WebGL, full page, both
-themes), `type-*` (the specimen at 1440 and 390), `hover-*`, `open-*`,
-`card-spin-*`, `confetti-*`.
+1440×900 and 390×844 for p = 0, 0.16, 0.28, 0.51, 0.65, 0.78, 0.9, 0.99
+(the statue at p = 0 and 0.78 on every one); `statue-*` (Galeri on a phone
+at 0.78, reduced motion at 0 and 0.78); `seq-{a,b,c}-*` frame sequences of
+three transitions on both viewports; `chaos-*`, `low-*`, `reduced-*`,
+`html-*` (no WebGL, full page, both themes), `type-*` (the specimen at
+1440 and 390), `hover-*`, `open-*`, `card-spin-*`, `confetti-*`.
 
 
 ## 12. Known limitations (honest)
@@ -451,17 +457,19 @@ themes), `type-*` (the specimen at 1440 and 390), `hover-*`, `open-*`,
   Android targets are engineered for (tiers, dpr caps, 30–45 fps touch cap,
   one draw call for 120 k particles, stencil portals without extra passes)
   and not verified on a device.
-- **Initial JS is 202 KB gzip against 180 KB.** ≈ 187 KB of it is the
+- **Initial JS is 202.5 KB gzip against 180 KB.** ≈ 187 KB of it is the
   framework runtime; the site's own initial code is ≈ 15 KB.
-- **Lighthouse mobile LCP (5.1 s) and TBT (1.1 s) miss the targets on this
-  throttled CPU.** Not measured on a device.
+- **Lighthouse mobile LCP (5.7 s) and TBT (1.4 s) miss the targets on this
+  throttled CPU.** Not measured on a device; the 3D-mode run could not
+  complete with the statue on the software renderer.
 - **The twelve atmosphere images are AI-generated art direction**, never
   presented as works; the six sample works are fictional and tagged
   "Örnek"; `email` and `social` are empty until Elif fills them.
-- **Draw calls on the ribbon and the machine exceed the §6 budget when
-  counted with the fluid and particle passes**; the raw scene stays within
-  it. The words' extrusions are the first thing to instance if a device
-  shows the ribbon below 40 fps.
+- **The statue is drawn three times per frame in the hero** (the view and
+  the two glass lines' transmission buffers, ≈ 355 k triangles); if a mid
+  laptop drops under 60 fps there, the fix is to hide it from the
+  transmission passes (it is never behind the glass), which drei's
+  `MeshTransmissionMaterial` does not expose a hook for yet.
 - **The particle transitions are scroll-linked, not time-linked**: a fast
   flick crosses a transition in a few frames and the cloud has no time to
   bloom; Lenis's easing softens this on desktop, native scrolling on phones
