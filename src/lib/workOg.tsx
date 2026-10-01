@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { L, works, type Lang } from "@/lib/content";
+import { L, upper, works, type Lang } from "@/lib/content";
 import { t } from "@/lib/i18n";
 
 export const ogSize = { width: 1200, height: 630 };
@@ -22,8 +22,8 @@ export async function workOg(lang: Lang, slug: string) {
     (
       <div style={{ width: "100%", height: "100%", display: "flex", background: w.colors[0], color: fg, fontFamily: "Archivo Condensed", padding: 64, position: "relative" }}>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: 620 }}>
-          <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, opacity: 0.8 }}>{`${d.work.project.toUpperCase()} · ${d.categories[w.category].toUpperCase()} · ${w.year}`}</div>
-          <div style={{ display: "flex", fontSize: 150, lineHeight: 0.86, letterSpacing: -2 }}>{L(w.title, lang).toLocaleUpperCase(lang === "tr" ? "tr-TR" : "en-US")}</div>
+          <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, opacity: 0.8 }}>{`${upper(d.work.project, lang)} · ${upper(d.categories[w.category], lang)} · ${w.year}`}</div>
+          <div style={{ display: "flex", fontSize: 150, lineHeight: 0.86, letterSpacing: -2 }}>{upper(L(w.title, lang), lang)}</div>
           <div style={{ display: "flex", fontSize: 30, letterSpacing: 4 }}>ELİF GEZGİN</div>
         </div>
         <div style={{ position: "absolute", right: 64, top: 64, bottom: 64, width: 420, display: "flex", overflow: "hidden", borderRadius: 8 }}>
