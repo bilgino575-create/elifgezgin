@@ -37,7 +37,7 @@ export function probeWebGL(): { ok: boolean; reason: string; renderer: string } 
  * parse (Home.tsx), so the document takes its 3D shape before first paint
  * and nothing shifts when the driver hydrates. Values mirror TRACK_VH.
  */
-export const glProbeScript = `(function(){try{var q=new URLSearchParams(location.search);if(q.has("nogl"))return;var f=q.get("gl")==="1";var c=document.createElement("canvas");var g=c.getContext("webgl2",{failIfMajorPerformanceCaveat:!f});if(!g)return;var d=g.getExtension("WEBGL_debug_renderer_info");var r=String(d?g.getParameter(d.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER));var e=g.getExtension("WEBGL_lose_context");if(e)e.loseContext();if(!f&&${SOFTWARE.toString()}.test(r))return;var h=document.documentElement;h.classList.add("gl");var t=matchMedia("(pointer: coarse)").matches||("ontouchstart" in window)||innerWidth<768;h.style.setProperty("--track-vh",t?"560":"760");}catch(e){}})();`;
+export const glProbeScript = `(function(){try{var q=new URLSearchParams(location.search);if(q.has("nogl"))return;var f=q.get("gl")==="1";var c=document.createElement("canvas");var g=c.getContext("webgl2",{failIfMajorPerformanceCaveat:!f});if(!g)return;var d=g.getExtension("WEBGL_debug_renderer_info");var r=String(d?g.getParameter(d.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER));var e=g.getExtension("WEBGL_lose_context");if(e)e.loseContext();if(!f&&${SOFTWARE.toString()}.test(r))return;var h=document.documentElement;h.classList.add("gl");var t=matchMedia("(pointer: coarse)").matches||("ontouchstart" in window)||innerWidth<768;h.style.setProperty("--track-vh",t?"820":"1100");}catch(e){}})();`;
 
 /** Hand the document back to the HTML layout. Safe to call more than once. */
 export function disableGl(reason: string) {

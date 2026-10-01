@@ -216,6 +216,38 @@ function inside(pts: number[], x: number, y: number) {
  * inside an odd number of other contours; it is assigned to its smallest
  * containing contour.
  */
+/**
+ * Walk a contour into a Shape, dropping zero-length segments. A repeated
+ * point (or a last point equal to the first) extrudes into a degenerate
+ * triangle with a zero normal; one such pixel is NaN in the physical
+ * shader, and bloom's mip chain spreads one NaN over the whole frame.
+ */
+function trace(s: Shape, p: number[], toUnit: (x: number, y: number) => [number, number]) {
+  const EPS = 1e-6;
+  let n = 0;
+  let x0 = 0;
+  let y0 = 0;
+  let px = 0;
+  let py = 0;
+  for (let k = 0; k < p.length; k += 2) {
+    const [x, y] = toUnit(p[k], p[k + 1]);
+    if (n > 0 && Math.abs(x - px) < EPS && Math.abs(y - py) < EPS) continue;
+    if (n === 0) {
+      s.moveTo(x, y);
+      x0 = x;
+      y0 = y;
+    } else if (k + 2 >= p.length && Math.abs(x - x0) < EPS && Math.abs(y - y0) < EPS) {
+      break;
+    } else {
+      s.lineTo(x, y);
+    }
+    px = x;
+    py = y;
+    n++;
+  }
+  s.closePath();
+}
+
 export function toShapes(contours: number[][], toUnit: (x: number, y: number) => [number, number]): Shape[] {
   const items = contours.map((pts) => ({ pts, area: Math.abs(area(pts)), depth: 0, parent: -1 }));
   for (let i = 0; i < items.length; i++) {
@@ -239,13 +271,7 @@ export function toShapes(contours: number[][], toUnit: (x: number, y: number) =>
   items.forEach((it, i) => {
     if (it.depth % 2 === 0) {
       const s = new Shape();
-      const p = it.pts;
-      for (let k = 0; k < p.length; k += 2) {
-        const [x, y] = toUnit(p[k], p[k + 1]);
-        if (k === 0) s.moveTo(x, y);
-        else s.lineTo(x, y);
-      }
-      s.closePath();
+      trace(s, it.pts, toUnit);
       shapes.push(s);
       shapeOf.set(i, s);
     }
@@ -255,13 +281,7 @@ export function toShapes(contours: number[][], toUnit: (x: number, y: number) =>
       const s = shapeOf.get(it.parent);
       if (!s) return;
       const hole = new Shape();
-      const p = it.pts;
-      for (let k = 0; k < p.length; k += 2) {
-        const [x, y] = toUnit(p[k], p[k + 1]);
-        if (k === 0) hole.moveTo(x, y);
-        else hole.lineTo(x, y);
-      }
-      hole.closePath();
+      trace(hole, it.pts, toUnit);
       s.holes.push(hole);
     }
   });

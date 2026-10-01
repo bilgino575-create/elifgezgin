@@ -13,7 +13,7 @@ import { useDispose } from "../../utils/useDispose";
  * dispersion on HIGH/ULTRA. LOW uses a procedural matcap instead of
  * transmission (no scene buffer, one pass).
  */
-export const GLASS = { depth: 0.22, bevel: 0.028 };
+export const GLASS = { depth: 0.09, bevel: 0.022 };
 
 function buildGeometry(g: Glyphs) {
   const geo = new ExtrudeGeometry(g.shapes, {
@@ -26,6 +26,18 @@ function buildGeometry(g: Glyphs) {
   });
   geo.translate(0, 0, -GLASS.depth / 2);
   geo.computeVertexNormals();
+  // a vertex owned only by degenerate triangles keeps a zero normal; normalize(0) is NaN on the GPU
+  const n = geo.getAttribute("normal");
+  const a = n.array as Float32Array;
+  for (let i = 0; i < a.length; i += 3) {
+    const l = a[i] * a[i] + a[i + 1] * a[i + 1] + a[i + 2] * a[i + 2];
+    if (!(l > 1e-12)) {
+      a[i] = 0;
+      a[i + 1] = 0;
+      a[i + 2] = 1;
+    }
+  }
+  n.needsUpdate = true;
   return geo;
 }
 
@@ -81,8 +93,8 @@ export default function Glass({
               samples={samples}
               resolution={tier === "ultra" ? 1024 : 512}
               transmission={1}
-              thickness={0.9}
-              roughness={0.12}
+              thickness={0.5}
+              roughness={0.06}
               ior={1.5}
               chromaticAberration={tier === "mid" ? 0 : 0.14}
               anisotropicBlur={0.12}
@@ -90,13 +102,13 @@ export default function Glass({
               distortionScale={0.6}
               temporalDistortion={0.08}
               color="#ffffff"
-              attenuationColor={spot}
-              envMapIntensity={3.0}
+              attenuationColor="#dde2ff"
+              envMapIntensity={2.4}
               clearcoat={1}
               clearcoatRoughness={0.1}
               emissive={spot}
-              emissiveIntensity={light ? 0 : 0.14}
-              attenuationDistance={light ? 4.5 : 2.2}
+              emissiveIntensity={0}
+              attenuationDistance={light ? 2.5 : 3}
             />
           )}
         </mesh>

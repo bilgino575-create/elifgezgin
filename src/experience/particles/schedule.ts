@@ -20,21 +20,18 @@ export interface MorphKey {
 }
 
 export const MORPH_KEYS: MorphKey[] = [
-  // deep and faint behind the anamorphic moment: the shards must read alone
-  { p: 0.0, img: "elif-02-cam-parcalari", anchor: "name", z: -13, height: 13, dim: 0.16 },
-  { p: 0.05, img: "elif-02-cam-parcalari", anchor: "name", z: -13, height: 13, dim: 0.16 },
-  { p: 0.08, img: "elif-01-murekkep-damlasi", anchor: "name", z: -8, height: 9, dim: 0.4 },
-  { p: 0.09, img: "elif-01-murekkep-damlasi", anchor: "name", z: -8, height: 9, dim: 0.4 },
-  { p: 0.115, img: "elif-00-hero", anchor: "name", z: -1.8, height: 1.75, dim: 0.62 },
-  { p: 0.16, img: "elif-00-hero", anchor: "name", z: -1.8, height: 1.75, dim: 0.62 },
+  // the portrait stands behind the glass name from the first frame; the shatter (0.02–0.075) plays over it
+  // the portrait forms inside the letterforms (the name mask clips it), just behind the glass so the clip stays true in perspective
+  { p: 0.0, img: "elif-00-hero", anchor: "name", z: -0.4, height: 1.08, dim: 1 },
+  { p: 0.16, img: "elif-00-hero", anchor: "name", z: -0.4, height: 1.08, dim: 1 },
   { p: 0.24, img: "elif-03-portal-cerceveler", z: -5, height: 6.5, dim: 0.5, dx: 1.5 },
   { p: 0.44, img: "elif-03-portal-cerceveler", z: -5, height: 6.5, dim: 0.5, dx: 1.5 },
-  { p: 0.48, img: "elif-04-renk-kartelasi", z: -6, height: 7, dim: 0.55 },
-  { p: 0.53, img: "elif-04-renk-kartelasi", z: -6, height: 7, dim: 0.55 },
-  { p: 0.56, img: "elif-05-kinetik-kurdele", z: -6, height: 7, dim: 0.55 },
-  { p: 0.59, img: "elif-05-kinetik-kurdele", z: -6, height: 7, dim: 0.55 },
-  { p: 0.63, img: "elif-06-renk-makinesi", z: -8, height: 8, dim: 0.4, dy: 1.6 },
-  { p: 0.72, img: "elif-06-renk-makinesi", z: -8, height: 8, dim: 0.4, dy: 1.6 },
+  { p: 0.48, img: "elif-05-kinetik-kurdele", z: -2.5, height: 5.2, dim: 1 },
+  { p: 0.535, img: "elif-05-kinetik-kurdele", z: -2.5, height: 5.2, dim: 1 },
+  { p: 0.56, img: "elif-04-renk-kartelasi", z: -2.5, height: 5.2, dim: 1 },
+  { p: 0.59, img: "elif-04-renk-kartelasi", z: -2.5, height: 5.2, dim: 1 },
+  { p: 0.63, img: "elif-06-renk-makinesi", z: -3, height: 5.6, dim: 1 },
+  { p: 0.72, img: "elif-06-renk-makinesi", z: -3, height: 5.6, dim: 1 },
   { p: 0.745, img: "elif-07-halftone-kure", z: -3, height: 5, dim: 1 },
   { p: 0.755, img: "elif-07-halftone-kure", z: -3, height: 5, dim: 1 },
   { p: 0.78, img: "elif-09-atolye-masasi", z: -2.5, height: 4.6, dim: 0.85 },

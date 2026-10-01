@@ -1,6 +1,7 @@
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
 import { useEffect, useRef } from "react";
 import { store } from "@/lib/store";
 import { rig } from "./rig/CameraRig";
@@ -9,12 +10,23 @@ import { frameClock } from "@/lib/gl";
 declare global {
   interface Window {
     __stats?: () => unknown;
+    __r3f?: unknown;
   }
 }
 
 /** Real renderer numbers, four times a second. Negative priorities only: a positive one would stop R3F rendering. */
 export default function StatsWriter() {
   const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
+  // `?debug`: the renderer, scene and camera for scripts/gltrace.mjs (NaN hunting, draw-call tracing)
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has("debug")) return;
+    window.__r3f = { gl, scene, camera, THREE };
+    return () => {
+      delete window.__r3f;
+    };
+  }, [gl, scene, camera]);
   const acc = useRef({ frames: 0, time: 0, ms: 0, calls: 0, triangles: 0 });
 
   useEffect(() => {

@@ -31,8 +31,8 @@ export const rig = {
   keys: DESKTOP_KEYS,
   /** true while there is a real pointer to follow */
   pointer: false,
-  /** 0 → 1 glide from chaos to the anamorphic point after the drop */
-  intro: 0,
+  /** 0 → 1 glide from chaos to the anamorphic point (the name now opens resolved, so this starts complete) */
+  intro: 1,
   /** the visitor's ink for this stroke, 0..3 */
   ink: 0,
   /** centre of the fitted name on the z = 0 plane (Act I writes it) */
@@ -166,7 +166,7 @@ export default function CameraRig() {
       const rx = v3c.z;
       const rz = -v3c.x;
       const len = Math.hypot(rx, rz) || 1;
-      const amt = act === "name" ? 0.18 : 0.24;
+      const amt = act === "name" ? 0.1 : 0.24;
       v3a.x += (rx / len) * s.pointerX * amt;
       v3a.z += (rz / len) * s.pointerX * amt;
       v3a.y += s.pointerY * amt * 0.6;

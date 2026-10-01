@@ -11,6 +11,7 @@ import { rig } from "../../rig/CameraRig";
 import { buildGlyphs, type Glyphs } from "./glyphs";
 import Shards, { makeShardMaterial } from "./Shards";
 import Glass from "./Glass";
+import { buildNameMask, disposeNameMask, nameMask } from "./mask";
 import { useDispose } from "../../utils/useDispose";
 import { fluid, inkAbsorbance } from "../../fluid/Fluid";
 
@@ -133,18 +134,29 @@ export default function Name() {
     rig.nameCenter.set(fit.center[0], fit.center[1]);
     rig.nameHeight = fit.height;
     rig.nameWidth = fit.width;
+    // the same letterforms as a world-space mask: the backdrop inks them, the portrait forms inside them
+    buildNameMask(glyphs.lines, fit.lines);
     store.set({ deboss: true });
   }, [fit, glyphs, view, material]);
 
-  useEffect(() => () => void store.set({ deboss: false }), []);
+  useEffect(
+    () => () => {
+      store.set({ deboss: false });
+      disposeNameMask();
+    },
+    []
+  );
 
   useFrame((state) => {
     if (!glyphs || !fit) return;
     const s = store.get();
     const u = material.uniforms;
     const p = rig.p;
-    const converge = range(p, 0.1, 0.16);
+    // solid from the first frame; scroll 0.02–0.075 shatters the name into the anamorphic shards, 0.1–0.16 re-forms it as glass close up
+    const converge = p < 0.09 ? 1 - range(p, 0.02, 0.075) : range(p, 0.1, 0.16);
     u.uConverge.value = converge;
+    // the ink fills the letters while they are whole, and leaves them as the portals begin
+    nameMask.k = Math.min(converge, 1 - range(p, 0.165, 0.19));
     u.uTime.value = s.reducedMotion ? 0 : state.clock.elapsedTime;
     u.uHand.value.copy(rig.hand);
     u.uHandK.value = rig.pointer && !s.reducedMotion ? 1 : 0;
@@ -155,6 +167,7 @@ export default function Name() {
     if (g) {
       const k = range(converge, 0.3, 0.75);
       g.visible = k > 0 && p < 0.2;
+      g.scale.x = g.scale.y = 1;
       // the letters solidify: the extrusion grows out of the plane
       g.scale.z = Math.max(0.02, k);
     }

@@ -22,7 +22,7 @@
   --ink-y: #ffd400;
   --ink-c: #00c8ff;
   --ink-g: #19e68c;
-  --scrim: rgba(10, 10, 18, 0.82);
+  --scrim: rgba(10, 10, 18, 0.78);
   --shadow: rgba(0, 0, 0, 0.6);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --nav-h: 72px;
@@ -342,7 +342,7 @@ body {
   }
   @media (max-width: 767px) {
     .h1 {
-      font-size: clamp(4.5rem, 22vw, 18rem);
+      font-size: clamp(4.5rem, 25vw, 18rem);
     }
   }
   .h1 .block {

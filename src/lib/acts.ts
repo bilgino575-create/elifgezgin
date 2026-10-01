@@ -34,14 +34,14 @@ export interface Section {
 export const SECTIONS: Section[] = [
   { id: "giris", act: "name", anchor: 0.0, from: 0, to: 0.1 },
   { id: "isler", act: "portals", anchor: 0.28, from: 0.2, to: 0.42 },
-  { id: "beceriler", act: "ribbon", anchor: 0.51, from: 0.46, to: 0.565 },
-  { id: "surec", act: "machine", anchor: 0.65, from: 0.6, to: 0.705 },
+  { id: "beceriler", act: "ribbon", anchor: 0.51, from: 0.46, to: 0.575 },
+  { id: "surec", act: "machine", anchor: 0.66, from: 0.62, to: 0.705 },
   { id: "hakkimda", act: "portrait", anchor: 0.78, from: 0.735, to: 0.825 },
   { id: "iletisim", act: "card", anchor: 0.9, from: 0.865, to: 0.955 },
   { id: "son", act: "card", anchor: 1.0, from: 0.97, to: 1.0 },
 ];
 
-export const TRACK_VH = { desktop: 760, mobile: 560 };
+export const TRACK_VH = { desktop: 1100, mobile: 820 };
 
 /** The anamorphic viewpoint of Act I: the camera distance and lens the name is fitted for. */
 export const NAME_VIEW = { desktop: { d: 9, fov: 40 }, mobile: { d: 11, fov: 44 } };

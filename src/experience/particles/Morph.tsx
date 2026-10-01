@@ -2,10 +2,11 @@
 
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { AdditiveBlending, BufferGeometry, DataTexture, Float32BufferAttribute, GLSL3, LinearFilter, Mesh, MeshBasicMaterial, NormalBlending, PerspectiveCamera, PlaneGeometry, Points, RGBAFormat, ShaderMaterial, SRGBColorSpace, Texture, TextureLoader, UnsignedByteType, Vector3 } from "three";
+import { BufferGeometry, DataTexture, Float32BufferAttribute, GLSL3, LinearFilter, Mesh, MeshBasicMaterial, NormalBlending, PerspectiveCamera, PlaneGeometry, Points, RGBAFormat, ShaderMaterial, SRGBColorSpace, Texture, TextureLoader, UnsignedByteType, Vector3, Vector4 } from "three";
 import { store, type Tier } from "@/lib/store";
 import { atmo, atmosphere } from "@/content/atmosphere.generated";
 import { rig, targetOf } from "../rig/CameraRig";
+import { nameMask } from "../acts/name/mask";
 import { Sim2 } from "../gpgpu/Sim2";
 import { fluid } from "../fluid/Fluid";
 import { rng } from "../utils/scratch";
@@ -121,6 +122,9 @@ uniform float uDimB;
 uniform vec2 uGrid;
 uniform float uPx;
 uniform float uHeight;
+uniform sampler2D uMask;
+uniform vec4 uMaskRect;
+uniform float uMaskK;
 out vec3 vColor;
 out float vAlpha;
 float lum(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
@@ -145,8 +149,14 @@ void main() {
   gl_PointSize = size * uPx * uHeight / max(0.1, -mv.z);
   vColor = c;
   float dim = mix(uDimA, uDimB, bl);
-  vAlpha = dim * (0.55 + 0.45 * l) * (1.0 - uCloud * 0.35);
+  vAlpha = dim * (0.78 + 0.22 * l) * (1.0 - uCloud * 0.3);
   if (l < 0.03) vAlpha = 0.0;
+  // inside the name: the formation is clipped to the letterforms until the hand or the scroll frees it
+  if (uMaskK > 0.001) {
+    vec2 m = (p.xy - uMaskRect.xy) / uMaskRect.zw;
+    float inside = (m.x < 0.0 || m.x > 1.0 || m.y < 0.0 || m.y > 1.0) ? 0.0 : texture(uMask, m).r;
+    vAlpha *= mix(1.0, inside, uMaskK * (1.0 - uCloud));
+  }
 }
 `;
 const FRAG = /* glsl */ `
@@ -213,9 +223,10 @@ function centreOf(k: MorphKey, out: Vector3, mobile: boolean) {
   out.z += k.z;
   return out;
 }
-function heightOf(k: MorphKey, mobile: boolean) {
-  const h = k.anchor === "name" && k.height < 3 ? rig.nameHeight * k.height : k.height;
-  return mobile ? h * 0.72 : h;
+function heightOf(k: MorphKey, mobile: boolean, aspect = 1) {
+  // anchored to the name: cover the whole name block (the mask clips the rest), `height` scales that
+  if (k.anchor === "name") return Math.max(rig.nameHeight, rig.nameWidth / Math.max(0.2, aspect)) * k.height;
+  return mobile ? k.height * 0.72 : k.height;
 }
 
 export default function Morph() {
@@ -273,8 +284,8 @@ export default function Morph() {
       glslVersion: GLSL3,
       transparent: true,
       depthWrite: false,
-      blending: AdditiveBlending,
-      uniforms: { uPos: { value: sim.position }, uRest: { value: sim.rest }, uTA: { value: black }, uTB: { value: black }, uBlend: { value: 0 }, uCloud: { value: 0 }, uDimA: { value: 1 }, uDimB: { value: 1 }, uGrid: { value: [n, n] }, uPx: { value: 1 }, uHeight: { value: 1 } },
+      blending: NormalBlending,
+      uniforms: { uPos: { value: sim.position }, uRest: { value: sim.rest }, uTA: { value: black }, uTB: { value: black }, uBlend: { value: 0 }, uCloud: { value: 0 }, uDimA: { value: 1 }, uDimB: { value: 1 }, uGrid: { value: [n, n] }, uPx: { value: 1 }, uHeight: { value: 1 }, uMask: { value: black }, uMaskRect: { value: new Vector4(0, 0, 1, 1) }, uMaskK: { value: 0 } },
     });
     const planeGeo = new PlaneGeometry(1, 1);
     const pmA = new MeshBasicMaterial({ transparent: true, opacity: 0, toneMapped: false });
@@ -329,10 +340,10 @@ export default function Morph() {
     centreOf(a, cA, mobile);
     centreOf(b, cB, mobile);
     if (same) cA.lerp(cB, t); // glide with the camera during a hold
-    const hA = heightOf(a, mobile);
-    const hB = heightOf(b, mobile);
     const aspA = atmo(a.img)?.aspect ?? 1;
     const aspB = atmo(b.img)?.aspect ?? 1;
+    const hA = heightOf(a, mobile, aspA);
+    const hB = heightOf(b, mobile, aspB);
     // lazy targets: A, B and one key ahead
     const tA = targets.get(a.img);
     const tB = targets.get(b.img);
@@ -372,7 +383,7 @@ export default function Morph() {
     (u.uSizeB.value as number[])[1] = hB;
     u.uBlend.value = blend;
     u.uCloud.value = cloud;
-    u.uRelief.value = 0.07 * (same ? hA : Math.max(hA, hB));
+    u.uRelief.value = 0.03 * (same ? hA : Math.max(hA, hB));
     (u.uHand.value as Vector3).set(rig.hand.x, rig.hand.y, same ? cA.z : (cA.z + cB.z) / 2);
     u.uHandK.value = rig.pointer ? 1 : 0;
     u.uHandSpeed.value = Math.min(1.5, rig.speed / 900);
@@ -392,9 +403,14 @@ export default function Morph() {
     m.uDimA.value = a.dim;
     m.uDimB.value = b.dim;
     const fov = (camera.fov * Math.PI) / 180;
-    m.uPx.value = (1.25 * state.size.height) / (n * 2 * Math.tan(fov / 2));
+    m.uPx.value = (1.9 * state.size.height) / (n * 2 * Math.tan(fov / 2));
     m.uHeight.value = same ? hA : hA + (hB - hA) * t;
-    res.mat.blending = s.theme === "light" ? NormalBlending : AdditiveBlending;
+    // the name keys: clip to the letterforms (both keys anchored → full, one → by the blend)
+    const mk = (a.anchor === "name" ? 1 - t : 0) + (b.anchor === "name" ? t : 0);
+    m.uMask.value = nameMask.texture ?? black;
+    m.uMaskK.value = nameMask.texture ? mk * nameMask.k : 0;
+    (m.uMaskRect.value as Vector4).copy(nameMask.rect);
+    res.mat.blending = NormalBlending;
     // the cloud feeds the living ink with the images' colours (a few splats per frame, no allocation)
     if (fluid.live && cloud > 0.2) {
       const bx = cB.x + (Math.random() - 0.5) * hB * aspB * 0.6;

@@ -152,7 +152,8 @@ export function makeShardMaterial() {
   });
 }
 
-const PALETTE = [INKS[0], INKS[1], INKS[2], INKS[3], INKS[0], INKS[3], "#f6f6fa", "#f6f6fa", "#14142a"];
+// the name's material family: the spot colour, two of its tints, glass white. No confetti.
+const PALETTE = [INKS[0], INKS[0], "#5b6bff", "#9aa6ff", "#f6f6fa", INKS[3]];
 
 export function buildShardGeometry(lines: Glyphs[]) {
   const box = new BoxGeometry(1, 1, 1);
@@ -185,7 +186,7 @@ export function buildShardGeometry(lines: Glyphs[]) {
       color[i * 3 + 1] = c.g;
       color[i * 3 + 2] = c.b;
       const kk = r();
-      kind[i] = kk < 0.45 ? 0 : kk < 0.75 ? 1 : 2;
+      kind[i] = kk < 0.3 ? 0 : kk < 0.55 ? 1 : 2;
       seed[i] = r();
       // nearly aligned tiles read as letters from the viewpoint; the chaos comes from depth, not rotation
       rot[i] = (r() - 0.5) * 0.5;

@@ -132,18 +132,23 @@ the splash rings; 500 ms later the overlay fades and the fluid receives one
 injection at the same point and colour, so the drop is literally the first
 ink on the stage. If loading stalls the drop hangs; nothing counts up.
 
-### Act I — the anamorphic name
-- ~900 shards (instanced, one draw call per material family: paint, foil,
-  glass) sampled from the rasterised glyphs of "ELİF GEZGİN" at 96 px per
-  em, each pushed along its own ray from the anamorphic point to a random
-  depth (3–14 units). From the point they tile the letters exactly; from
-  anywhere else they scatter.
-- Camera glide → snap. The pointer orbits the camera ±0.18 units, enough
-  to fracture the letters and let them re-form.
-- p 0.10–0.16: each shard flies to its place on the extruded letter and the
-  glass letters fade in: `MeshTransmissionMaterial` with `chromaticAberration`,
-  the fluid backdrop refracted through them; the HTML `<h1>` is transparent
-  but keeps its box (no CLS).
+### Act I — the name written in ink
+- The name opens **whole**: from the first frame the extruded glass letters
+  stand on the stage, fitted exactly to the `<h1>`'s line boxes (the HTML
+  text is transparent but keeps its box, so no CLS).
+- **The ink writes the letters.** The traced letterforms are also rasterised
+  into a world-space mask on the z = 0 plane (`acts/name/mask.ts`); the
+  backdrop shader unprojects every pixel onto that plane and, inside the
+  letters, multiplies the ink's absorbance ×3.2 while thinning the wash
+  around them ×0.55 and lighting the edge with a halo from the blurred
+  mask. The portrait's particle formation is clipped to the same mask, so
+  the letters are filled with her portrait's colour grains and the living
+  ink, under clear glass.
+- Scroll 0.02–0.075 shatters the name into ~900 anamorphic shards (one
+  instanced draw call; paint, foil and glass chips) pushed along their rays
+  from the viewpoint; the pointer breathes the camera ±0.1 units, enough to
+  fracture the letters and let them re-form. 0.10–0.16 re-forms them as
+  glass close up (`MeshTransmissionMaterial`, dispersion on HIGH/ULTRA).
 - "Grafik Tasarımcı" under the name in HTML, variable axes driven by the
   hand (weight by distance, width by speed).
 
@@ -162,25 +167,27 @@ carries the same three colours. The filter reshuffles with spring physics
 (maath damp on positions).
 
 ### Act III — kinetic type
-Skill names extruded from the same glyph outlines, bent along a torus knot
-(p = 2, q = 3) in the vertex shader (arc-length LUT in a data texture),
-each word its own two-colour gradient. The ribbon turns slowly; hovering
-or focusing a word in the HTML index damps the rotation and pulls the word
-forward; its description shows in the index. Tools orbit as rounded glossy
-tokens with two-letter marks (Ai, Ps, Id, Fg, Ae, Pr), not logos.
+The ribbon is an **image formation**: the particle system assembles the
+"kinetik kurdele" atmosphere image (a knotted ribbon of light) beside the
+skills index, then the colour chart image as the tools come up; the ink
+beneath carries the same colours. (v2.0 built this act from extruded words
+bent along a torus knot; it read as primitive 3D next to the ink and was
+cut — the art direction is the images and the ink, not geometry.)
 
 ### Act IV — the colour machine
-Three glass tubes drop C, M and Y into a vessel, the mix runs through a
-halftone drum and comes out as a printed sheet in `--spot`. Particles:
-100 k on HIGH, 20 k on LOW, positions computed in a ping-pong FBO from a
-route field (tube → vessel → drum → sheet) with curl noise; the pointer
-adds a repulsion force. Six stages light up in sequence, labelled in
-section-title type.
+Also a formation: the "renk makinesi" image forms beside the process index,
+and the six process stages are written into the ink itself — each stage,
+as it lights up, drips its colour (cyan, magenta, yellow, the spot, white)
+into the fluid at its own x, so the process is literally a run of inks
+mixing. Then the halftone sphere image forms for the rotation into Act V.
+(The v2.0 glass tubes, vessel, drum and sheet were cut for the same reason
+as the ribbon.)
 
 ### Act V — the portrait
-50 k instanced discs on a grid, colour from the portrait (or the monogram)
-quantised to C, M, Y, K; spring-back sim in a ping-pong FBO; the hand
-scatters, the springs return. Bio next to it in lead type.
+The desk image forms, then the portrait itself, free of the name mask now,
+at full height next to the bio; the hand scatters it (velocity-sensitive
+repulsion), a click blows it apart, the springs return it. Reduced motion
+shows the image crossfading on a plane.
 
 ### Act VI — the holographic card
 Card 3.5 × 2 with `MeshPhysicalMaterial` iridescence (thin-film) plus a
@@ -290,20 +297,25 @@ normal and WebM writer are written here.
   colour writes off; the room, layers and object behind it test for that
   id. No render-to-texture per portal, real depth and parallax, and the
   post-processing composer keeps a stencil buffer so bloom still applies.
-- **Bent type.** Arc-length Frenet frames of the torus knot are packed into
-  a 512 × 4 float texture; `onBeforeCompile` replaces `begin_vertex` and
-  `beginnormal_vertex` so each word's x becomes an arc fraction and its
-  y/z ride the normal and binormal. Words are extruded twice, the rear copy
-  mirrored, so they read from both sides of the ribbon.
+- **The name mask.** The same `three.Shape`s the glass is extruded from
+  are drawn into a 1024-wide canvas with the letters' world transform
+  (R = letterforms, G = a blurred halo). Both the backdrop and the particle
+  shader sample it in **world space** (the backdrop unprojects each pixel
+  with the inverse view-projection onto z = 0), so it stays exact when the
+  camera dollies in and on every viewport, and costs one texture read.
+- **One NaN, one black frame.** On HIGH tier at p = 0 the whole canvas
+  rendered black. Bisecting with `scripts/gltrace.mjs` (wraps the draw calls,
+  reads the composer's buffers back mid-frame): the scene buffer held exactly
+  one NaN pixel from a degenerate bevel triangle of the extruded name (a
+  repeated contour point → zero-area face → zero normal → `normalize(0)`),
+  and bloom's mip chain averaged it into all 324 000 pixels. Fixed at the
+  source (the tracer drops zero-length segments, zero normals are replaced)
+  and guarded: a one-read fullscreen pass before bloom replaces non-finite
+  values and clamps the HDR range.
 - **Foil.** Thin-film iridescence (`iridescence`, thickness 120–520 nm) over
   a dark metallic base, a procedural diffraction-grating normal map, and a
   view-angle rainbow term added to the indirect specular in the shader.
   At the ending the dye texture is mixed into the print by `uPour`.
-- **Particles.** The machine's 100 k particles are stateless: the vertex
-  shader derives each particle's route position from time and a seed, so
-  there is no simulation pass; the portrait's 50 k dots are stateful (a
-  4-channel float ping-pong of position and velocity) because they need
-  springs and memory of where the hand pushed them.
 - **One particle system for the whole site.** A single 346² (HIGH) / 245²
   (MID) / 158² (LOW, phones) grid of GPU particles lives from the hero to
   the card. Twelve art-direction images (never works) are reduced at build

@@ -6,6 +6,7 @@ import { store, loading } from "@/lib/store";
 import { currentProgress, scrollToHash, setLenis } from "@/lib/scroll";
 import { probeWebGL } from "@/lib/gl";
 import { readTheme } from "@/lib/theme";
+import { fluid, inkAbsorbance } from "@/lib/ink";
 
 /**
  * Owns the scroll and the environment flags. Decides early whether the 3D
@@ -81,6 +82,17 @@ export default function ScrollDriver() {
       if (best !== lastSection) {
         lastSection = best;
         store.set({ section: best });
+      }
+      // the process act: six stages across its range; the legend highlights them, the scene drops their inks
+      const k = Math.min(1, Math.max(0, (p - 0.62) / 0.085));
+      const stage = Math.min(5, Math.floor(k * 6));
+      if (p > 0.6 && p < 0.74 && store.get().stage !== stage) {
+        store.set({ stage });
+        const inks = ["#00c8ff", "#ff2e88", "#ffd400", "#2b3cff", "#2b3cff", "#f6f6fa"];
+        const a: [number, number, number] = [0, 0, 0];
+        inkAbsorbance(inks[stage], a, 0.6);
+        const u = 0.3 + stage * 0.07;
+        fluid.splat(u, 0.72, 0, -600, a[0], a[1], a[2], 5);
       }
       const fv = sectionVisibility(SECTIONS[SECTIONS.length - 1], p);
       html.style.setProperty("--footer-vis", fv.toFixed(3));

@@ -11,16 +11,19 @@ English at `/en`. The plan, measurements and honest limits are in
   Nearby objects are pushed; the headline's variable axes follow the pointer.
 - **Act 0** one drop of the spot colour falls as fonts, chunk and letterforms
   really load; its splash is the first ink on the stage.
-- **Act I** hundreds of shards read "ELİF GEZGİN" from one exact viewpoint
-  (a Varini-style anamorphosis); moving the mouse fractures them; scroll
-  snaps them into solid refractive glass with the ink swirling behind.
+- **Act I** the name written in ink: the glass letters stand whole from the
+  first frame, filled with dense living ink and the grains of the portrait
+  (a world-space mask of the traced letterforms drives both); scrolling
+  shatters them into a Varini-style anamorphosis of ~900 shards and
+  re-forms them as glass close up.
 - **Act II** every work is a stencil portal into a room in its own colours;
   hover separates the cover's layers in depth; click flies through.
-- **Act III** the skills as kinetic type bent around a torus knot; tools
-  orbit as lettered tokens.
-- **Act IV** a colour machine: C, M, Y particle streams mix and come out as
-  a printed sheet, one stage per process step.
-- **Act V** the portrait (or monogram) as 50 k halftone dots the hand scatters.
+- **Act III–V** one GPU particle system (120 k / 60 k / 25 k) morphs through
+  twelve atmosphere images along the scroll — the ribbon of light beside
+  the skills, the colour machine beside the process (each stage drips its
+  ink into the fluid), the halftone sphere, the desk, the portrait the hand
+  scatters. Between images it explodes into a curl-noise cloud that streams
+  to the next place and re-assembles; reversible.
 - **Act VI** a holographic-foil business card; all the ink pours into it and
   the last line is written by the fluid.
 
@@ -56,13 +59,16 @@ images next to it. `README_ELIF.md` explains it in plain Turkish for Elif.
 refuses those) · `?tier=ultra|high|mid|low` pin a quality tier · `?debug`
 the HUD (also the `D` key) · `?chaos=1` hold the shards before the snap ·
 `?nopanels=1` hide the legends · `?capture=1` external frame clock (used by
-`scripts/capture.mjs`). Typing `elif` anywhere releases paper confetti.
+`scripts/capture.mjs`) · `?nopost` bypass the bloom/vignette composer ·
+`?debug` also exposes `window.__r3f` for `scripts/gltrace.mjs`. Typing
+`elif` anywhere releases paper confetti.
 
 ## Screenshots and checks
 
 ```bash
 node scripts/shoot.mjs --p 0,0.28,0.51 --tier high [--light] [--w 390 --h 844] [--nogl --full]
-node scripts/hover.mjs                     # portal hover/open, ribbon hover, card spin, confetti
+node scripts/hover.mjs                     # portal hover/open, skills index hover, card spin, confetti
+node scripts/gltrace.mjs [query] [p]       # one frame's draw calls, framebuffers, GL errors, NaN/Inf counts (needs `next start`)
 node scripts/verify.mjs keyboard|overflow|reduced|lang|bundle|memory|perf
 node scripts/contrast.mjs [--gl]           # AA contrast against the rendered pixels
 node scripts/capture.mjs --all             # video loops for the no-WebGL page (WebCodecs VP9 + WebM writer)
