@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
-import { loading, store, type Tier } from "@/lib/store";
+import { loading, store, useStore, type Tier } from "@/lib/store";
 import { scrollToStop, startScroll, stopScroll } from "@/lib/scroll";
 import { COUNT, HOLD, STOPS, segmentAt, travelAt } from "@/lib/stops";
 
@@ -30,6 +30,7 @@ function luminance(hex: string) {
 export default function Journey({ children }: { children: React.ReactNode }) {
   const track = useRef<HTMLDivElement>(null);
   const [Stage, setStage] = useState<ComponentType | null>(null);
+  const gl = useStore((s) => s.gl);
 
   useEffect(() => {
     const h = document.documentElement;
@@ -38,7 +39,9 @@ export default function Journey({ children }: { children: React.ReactNode }) {
     const reduced = h.classList.contains("reduced");
     const tier = window.__tier ?? "high";
     store.set({ gl, touch, reduced, tier, loadTotal: gl ? 4 : 1 });
-    document.fonts.ready.then(() => loading.done());
+    // the HTML journey has nothing to wait for; the stage waits for its fonts, chunk, first frame and textures
+    if (!gl) store.set({ loaded: true, loadDone: 1 });
+    else document.fonts.ready.then(() => loading.done());
     const el = track.current!;
     const stop = startScroll(el);
     if (!store.get().loaded) stopScroll(true);
@@ -137,7 +140,7 @@ export default function Journey({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {Stage ? (
+      {Stage && gl ? (
         <div id="stage" aria-hidden="true">
           <Stage />
         </div>

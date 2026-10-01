@@ -26,7 +26,7 @@ export default function Experience() {
   const cam = touch ? STOPS[0].camMobile : STOPS[0].cam;
   return (
     <Canvas
-      dpr={Math.min(b.dpr, typeof window !== "undefined" ? window.devicePixelRatio : 1)}
+      dpr={Math.min(b.dpr, touch ? 1.5 : 2, typeof window !== "undefined" ? window.devicePixelRatio : 1)}
       frameloop={visible ? "always" : "never"}
       gl={{
         antialias: b.antialias,

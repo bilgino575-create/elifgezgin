@@ -202,11 +202,11 @@ export default function ColorScene({ lang }: { lang: Lang }) {
 
   return (
     <group ref={group} position={W as [number, number, number]}>
-      <group ref={first} position={[touch ? 0 : 1.0, 1.9, 0]}>
-        <ExtrudedText text={upper(site.firstName)} size={touch ? 2.2 : 2.7} depth={0.5} bevel={0.05} weight={900} stretch="condensed" material={chromeMat} />
+      <group ref={first} name="hero-first" position={[touch ? 0 : 1.0, 1.9, 0]}>
+        <ExtrudedText text={upper(site.firstName)} size={touch ? 1.7 : 2.7} depth={0.5} bevel={0.05} weight={900} stretch="condensed" material={chromeMat} />
       </group>
-      <group ref={last} position={[touch ? 0.4 : 3.4, -0.6, -2.6]}>
-        <ExtrudedText text={upper(site.lastName)} size={touch ? 1.6 : 2.0} depth={0.3} bevel={0.03} weight={900} stretch="condensed" material={holoMat} />
+      <group ref={last} name="hero-last" position={[touch ? 0 : 3.4, -0.6, -2.6]}>
+        <ExtrudedText text={upper(site.lastName)} size={touch ? 1.25 : 2.0} depth={0.3} bevel={0.03} weight={900} stretch="condensed" material={holoMat} />
       </group>
       <Liquid position={[touch ? -2.6 : -4.6, 1.3, -3.5]} radius={touch ? 1.1 : 1.7} color="#1f3bff" seed={0.1} amp={0.22} />
       <Liquid position={[touch ? 2.8 : 5.9, 3.3, -1.2]} radius={0.9} color="#ff2e88" seed={0.55} amp={0.18} />

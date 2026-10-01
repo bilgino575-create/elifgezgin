@@ -49,6 +49,11 @@ npm run lint
 npm run typecheck
 ```
 
+Fonts are subset with fonttools (`pyftsubset`); `public/fonts/archivo-tr.woff2`
+is the Turkish letters and editorial punctuation of the variable Archivo,
+cut from `assets/fonts/Archivo[wdth,wght].ttf`, so the first paint waits
+for 11 KB of latin-ext instead of 86.
+
 `prebuild`/`predev` run `scripts/samples.mjs` (renders the six sample works
 only while `content/works` has no folders; `npm run samples` forces them) and
 `scripts/prepare-content.mjs` (WebP derivatives at 2048/1600/800 px, blur
@@ -96,7 +101,7 @@ src/styles              tokens, fonts, base, type, ui, stops, work
 
 ## URL switches
 
-`?nogl` HTML only · `?gl=1` force WebGL on a software renderer ·
+`?nogl` HTML only · `?gl=1` force the stage where the probe refused it (software renderers such as SwiftShader or llvmpipe, remote desktops, GPU tier 0 all get the HTML journey by default) ·
 `?tier=ultra|high|mid|low` pin a quality tier · `?debug` exposes
 `window.__r3f` (renderer, scene, camera) and `window.__stats()` for the
 scripts.

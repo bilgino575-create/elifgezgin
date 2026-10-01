@@ -147,9 +147,17 @@ Duraklar dünyada dağınık yerleşir (x, y ve z'de), yol kıvrımlıdır: 01
 
 ### 2.2 İlk yük
 
-HTML tek başına durur (LCP metin). İlk JS: Next çalışma zamanı + loader +
-imleç + nav. 3B parçası (three, fiber, drei, postprocessing, sahneler) ilk
-boyamadan sonra `requestIdleCallback` ile iner. Loader gerçek yükleme
+HTML tek başına durur (LCP metin: 2B gezide dev "GEZGİN", sahnede
+"GRAFİK TASARIMCI"). İlk JS: Next çalışma zamanı + loader + imleç + nav;
+gsap (imleç) ve lenis (kaydırma) ilk boyamadan sonra dinamik iner. 3B
+parçası (three, fiber, drei, postprocessing, sahneler) ilk boyamadan sonra
+`requestIdleCallback` ile iner; shader programları ilk kareden önce
+`compileAsync` ile (KHR_parallel_shader_compile varsa iş parçacığı dışında)
+derlenir; yedi enstalasyon tek karede değil, kamera yaklaştıkça kurulur
+(`Lazy`: giriş ve komşusu hemen, diğerleri yolda). Fontlar: latin alt
+kümesi + yalnızca Türkçe harfler ve editoryal noktalamayı taşıyan 11 KB'lık
+`archivo-tr.woff2` ilk boyama yolunda, `fetchpriority=high` ile; latin-ext'in
+kalanı yalnızca gerekirse. 2B gezide loader hiç çizilmez. Loader gerçek yükleme
 birimlerini sayar: fontlar, 3B parçası, sahnenin ilk karesi, giriş
 durağının dokuları (dört birim; WebGL yoksa yalnızca fontlar). 9 saniyede
 bitmezse "Gir" düğmesi çıkar; heykel sayılmaz, 06'ya yaklaşınca iner.
@@ -180,9 +188,17 @@ Elif'in gerçek işleri geldiğinde örnek klasörleri silinir; kod değişmez.
 
 ## 3. Mobil, kademeler, yedekler
 
+- Zayıf cihaz koruması, boyamadan önce (`lib/probe.ts`): WebGL2 bağlamı
+  `failIfMajorPerformanceCaveat` ile açılır; `WEBGL_debug_renderer_info`
+  ile yazılım çizicileri (SwiftShader, llvmpipe, lavapipe, VMware,
+  VirtualBox, Microsoft Basic Render, WARP, uzak masaüstü) tanınır ve
+  sahne hiç kurulmaz, 2B gezi gösterilir. Sahne kurulduktan sonra
+  detect-gpu kademesi 0 çıkarsa sahne kendini söker ve belge 2B geziye
+  döner (`loading.fallback()`). `?gl=1` elle açar, `?nogl` elle kapatır.
 - Kademeler: `ultra | high | mid | low` (GPU sınıfı + dokunmatik +
-  `deviceMemory` + histerezisli fps izleme). DPR 1–1.75. Parçacık sayısı,
-  doku boyu, post, yansıma çözünürlüğü kademeye bağlı.
+  `deviceMemory` + histerezisli fps izleme). DPR 1–1.75, telefonda en çok
+  1.5. Parçacık sayısı, doku boyu, post, yansıma çözünürlüğü kademeye
+  bağlı. MID/LOW'da kare composer olmadan doğrudan çizilir.
 - Mobil ayrı yönetim: kamera daha yakın ve sakin, nesneler küçük, yazı daha
   güçlü, dokunarak sürükleme (nesneyi döndürür), çift kolonlu durak
   katmanları tek kolon, özel imleç yok, menü tam ekran.
@@ -225,8 +241,8 @@ Bir GPU üzerindeki fps **ölçülmedi**.
 | çizim çağrısı / üçgen (HIGH, 1440) | 01: 75 / 430k · 02: 80 / 92k · 03: 34 / 16k · 04: 40 / 16k · 05: 41 / 65k · 06: 52 / 16k (+heykel) · 07: 73 / 546k (heykel komşu durakta görünür) |
 | bellek (5 tam tur, HIGH) | dokular 43 → 43 (sabit; env tek küp hedefi), geometri 79 → 92 ve program 50 → 61 (görünür ışık kombinasyonları derlendikçe artar, sonra sabitlenir), JS yığını 39 MB |
 | klavye | 68 odak durağı, hepsi halkalı; odak bir durağın katmanına girince kamera o durağa gelir (gizli katmanda kalan odak: 0) |
-| kontrast (AA, render edilen piksellere karşı) | WebGL'siz ana sayfa 635 metin kutusu / 0 hata (hover + odak + telefon menüsü dahil); proje sayfası 64 / 0; WebGL (LOW kademe, yedi durak × 2 genişlik) 210 / 1: 07'de telefonda krom düğümün üstündeki ince italik serif satırı "bir şey" 2.4:1 (dekoratif satır; kalın satırlar ve metinler geçer). Fark harmanlı (difference) WebGL'siz nav ve bağlantıların kendi alt çizgisi ölçüm dışı: piksel testi onları yargılayamaz |
-| Lighthouse | erişilebilirlik 100, en iyi uygulamalar 100, SEO 100 (telefon + masaüstü); performans telefon 38 / masaüstü 60 (LCP 7.7 s / 2.0 s, TBT 6.6 s / 2.4 s; CLS 0): bu konteynerin yazılım WebGL'si ana iş parçacığını yer, gerçek cihaz ölçümü yok |
+| kontrast (AA, render edilen piksellere karşı) | WebGL'siz ana sayfa 635 metin kutusu / 0 hata (hover + odak + telefon menüsü dahil); proje sayfası 64 / 0; WebGL (LOW kademe, yedi durak × 2 genişlik) 210 / 0. Fark harmanlı (difference) WebGL'siz nav ve bağlantıların kendi alt çizgisi ölçüm dışı: piksel testi onları yargılayamaz |
+| Lighthouse | 2B gezi (yazılım çiziciler ve tarayıcı botlarının gördüğü yol): telefon performans 91 / masaüstü 99 (LCP 3.4 s / 0.8 s, TBT 110 ms / 0, CLS 0; LCP öğesi dev "GEZGİN" yazısı); erişilebilirlik, en iyi uygulamalar, SEO 100/100/100 her iki yolda. Sahne yolu `?gl=1` bu konteynerde (SwiftShader) telefon 39 / masaüstü 61: yazılım WebGL ana iş parçacığını yer, gerçek GPU ölçümü yok |
 
 Ekran görüntüleri `docs/screenshots/v3/` (WebP): `gezi-desktop-p*` ve
 `gezi-mobile-p*` yedi durak (1440 × 900 ve 390 × 844, HIGH), `reduced-*`
@@ -237,10 +253,14 @@ Bilinen sınırlar:
 
 - SwiftShader'da krom düz gri okunur; gerçek GPU'da env yansımaları ile
   krom. Ekran görüntüleri bu yüzden kromu olduğundan mat gösterir.
-- Mobil Lighthouse performansı 3B parçasının ana iş parçacığını meşgul
-  etmesinden düşer (TBT); parça ilk boyamadan sonra `requestIdleCallback`
-  ile iner, LCP metindir. Düşük cihazlar `low` kademesine iner (post yok,
-  DPR 1, 900 parçacık, yansıma yok).
+- Sahne yolunun Lighthouse puanı yalnızca yazılım WebGL'de ölçülebildi;
+  gerçek bir GPU'da 3B parçası ilk boyamadan sonra boşta iner, shader'lar
+  asenkron derlenir, enstalasyonlar yolda kurulur, ama bunun sayısı bu
+  makinede alınamaz. Düşük cihazlar `low` kademesine iner (post yok, DPR
+  1, 900 parçacık, yansıma yok); yazılım çiziciler ve kademe 0 sahneyi hiç
+  almaz.
+- `low-mobile-*` ekran görüntüleri `?gl=1&tier=low` ile alındı; koruma
+  olmasa bu konteyner zaten 2B geziyi alır.
 - Örnek işler kurgudur ve sitede "örnek proje" diye yazar; gerçek müşteri,
   ödül ya da başarı yazılmadı. E-posta ve sosyal hesaplar boş: site "yakında"
   der, uydurmaz.

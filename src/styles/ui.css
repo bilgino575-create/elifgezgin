@@ -364,7 +364,9 @@ html.menu-open body {
   right: var(--gutter);
   bottom: var(--gutter);
 }
-html:not(.js) .loader {
+/* no script, or the HTML journey: nothing to wait for, the page is the page */
+html:not(.js) .loader,
+html.nogl .loader {
   display: none;
 }
 

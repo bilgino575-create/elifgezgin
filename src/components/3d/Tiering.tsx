@@ -4,7 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import { getGPUTier } from "detect-gpu";
 import { Vector3 } from "three";
-import { store } from "@/lib/store";
+import { loading, store } from "@/lib/store";
 import { budgetOf, higher, lower } from "@/lib/tiers";
 
 declare global {
@@ -29,7 +29,14 @@ export default function Tiering() {
     let cancelled = false;
     getGPUTier({ benchmarksURL: "/benchmarks" })
       .then((g) => {
-        if (cancelled || new URLSearchParams(location.search).has("tier")) return;
+        if (cancelled) return;
+        const q = new URLSearchParams(location.search);
+        // a GPU the benchmark tables rank at 0 (blocked, software, or far too slow) gets the HTML journey
+        if (g.tier <= 0 && !q.has("gl")) {
+          loading.fallback();
+          return;
+        }
+        if (q.has("tier")) return;
         const touch = store.get().touch;
         // detect-gpu tiers: 0 (no/blocked GPU) … 3 (fast); fps is the benchmark's median
         let tier = store.get().tier;

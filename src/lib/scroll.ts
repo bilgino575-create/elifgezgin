@@ -1,6 +1,6 @@
 "use client";
 
-import Lenis from "lenis";
+import type Lenis from "lenis";
 import { store } from "@/lib/store";
 import { COUNT, segmentAt } from "@/lib/stops";
 
@@ -12,6 +12,7 @@ import { COUNT, segmentAt } from "@/lib/stops";
 let lenis: Lenis | null = null;
 let raf = 0;
 let track: HTMLElement | null = null;
+let stopped = false;
 
 function read() {
   if (!track) return;
@@ -29,8 +30,17 @@ function read() {
 export function startScroll(el: HTMLElement) {
   track = el;
   const fine = document.documentElement.classList.contains("fine") && !store.get().reduced;
+  let alive = true;
   if (fine) {
-    lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9, smoothWheel: true });
+    // the smooth-scroll library arrives after first paint; native scrolling serves until then
+    import("lenis").then(({ default: L }) => {
+      if (!alive || !track) return;
+      lenis = new L({ lerp: 0.085, wheelMultiplier: 0.9, smoothWheel: true });
+      if (stopped) {
+        document.documentElement.style.overflow = "";
+        lenis.stop();
+      }
+    });
   }
   const loop = (t: number) => {
     lenis?.raf(t);
@@ -40,6 +50,7 @@ export function startScroll(el: HTMLElement) {
   raf = requestAnimationFrame(loop);
   read();
   return () => {
+    alive = false;
     cancelAnimationFrame(raf);
     lenis?.destroy();
     lenis = null;
@@ -58,6 +69,7 @@ export function scrollToStop(i: number, immediate = false) {
 }
 
 export function stopScroll(stop: boolean) {
+  stopped = stop;
   if (!lenis) {
     document.documentElement.style.overflow = stop ? "hidden" : "";
     return;

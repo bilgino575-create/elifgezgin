@@ -1,7 +1,7 @@
 "use client";
 
-import { Component, Suspense, useRef, type ReactNode } from "react";
-import { useFrame } from "@react-three/fiber";
+import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import { loading, store } from "@/lib/store";
 import CameraRig from "./CameraRig";
 import Backdrop from "./Backdrop";
@@ -19,16 +19,52 @@ import DigitalArtScene from "./scenes/DigitalArtScene";
 import AboutScene from "./scenes/AboutScene";
 import ContactScene from "./scenes/ContactScene";
 import { useLang } from "./scenes/common";
+import { near } from "./rig";
 
-/** the stage owes the loader one frame: the first one rendered */
+/**
+ * The stage owes the loader one frame. Before it, every program the first
+ * frame needs is compiled off the main thread where the driver allows
+ * (KHR_parallel_shader_compile), so the first frame is a draw, not a stall.
+ */
 function FirstFrame() {
   const paid = useRef(false);
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
+  useEffect(() => {
+    let alive = true;
+    gl.compileAsync(scene, camera)
+      .catch(() => undefined)
+      .then(() => {
+        if (!alive || paid.current) return;
+        paid.current = true;
+        loading.done();
+      });
+    return () => {
+      alive = false;
+    };
+  }, [gl, scene, camera]);
+  // and if the driver cannot say when it is done, the first drawn frame pays
   useFrame(() => {
     if (paid.current) return;
     paid.current = true;
     loading.done();
-  });
+  }, 2000);
   return null;
+}
+
+/**
+ * An installation mounts when the camera first comes within one stop of
+ * it (the entrance and its neighbour at once, the rest as the route is
+ * walked), so the letterforms, geometry and textures of seven stops are
+ * never built in one frame. Once mounted it stays.
+ */
+function Lazy({ j, children }: { j: number; children: ReactNode }) {
+  const [on, setOn] = useState(j <= 1);
+  useFrame(() => {
+    if (!on && near(j)) setOn(true);
+  });
+  return on ? <>{children}</> : null;
 }
 
 /** one installation failing (a texture, a font) must not take the rest of the route with it */
@@ -61,25 +97,39 @@ export default function World() {
       <ParticleField />
       <Floor />
       <Island name="renk">
-        <ColorScene lang={lang} />
+        <Lazy j={0}>
+          <ColorScene lang={lang} />
+        </Lazy>
       </Island>
       <Island name="tipografi">
-        <TypographyScene lang={lang} />
+        <Lazy j={1}>
+          <TypographyScene lang={lang} />
+        </Lazy>
       </Island>
       <Island name="marka">
-        <BrandingScene lang={lang} />
+        <Lazy j={2}>
+          <BrandingScene lang={lang} />
+        </Lazy>
       </Island>
       <Island name="afis">
-        <PosterScene lang={lang} />
+        <Lazy j={3}>
+          <PosterScene lang={lang} />
+        </Lazy>
       </Island>
       <Island name="dijital">
-        <DigitalArtScene lang={lang} />
+        <Lazy j={4}>
+          <DigitalArtScene lang={lang} />
+        </Lazy>
       </Island>
       <Island name="elif">
-        <AboutScene lang={lang} />
+        <Lazy j={5}>
+          <AboutScene lang={lang} />
+        </Lazy>
       </Island>
       <Island name="iletisim">
-        <ContactScene />
+        <Lazy j={6}>
+          <ContactScene />
+        </Lazy>
       </Island>
       <Post />
       <Tiering />

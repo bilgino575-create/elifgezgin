@@ -84,6 +84,14 @@ export function useStore<T>(selector: (s: State) => T): T {
 
 /** one loading unit done (fonts, the 3D chunk, the scene, the first textures) */
 export const loading = {
+  /** the stage steps aside: the document becomes the 2D journey, the loader is paid, the canvas unmounts */
+  fallback() {
+    const h = document.documentElement;
+    h.classList.remove("gl");
+    h.classList.add("nogl");
+    const s = store.get();
+    store.set({ gl: false, loadDone: s.loadTotal, loaded: true });
+  },
   done() {
     const s = store.get();
     store.set({ loadDone: Math.min(s.loadTotal, s.loadDone + 1) });

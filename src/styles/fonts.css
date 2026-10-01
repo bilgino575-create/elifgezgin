@@ -1,4 +1,14 @@
 /* Archivo — variable: width 62–125, weight 100–900 — and Instrument Serif. Self-hosted, subset by script. */
+/* the Turkish letters and the editorial punctuation in a small file of their own: it is on the first paint's path, the rest of latin-ext is not */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url("/fonts/archivo-tr.woff2") format("woff2");
+  unicode-range: U+0130, U+0131, U+011E, U+011F, U+015E, U+015F, U+0152-0153, U+2013-2014, U+2018-201A, U+201C-201E, U+2026, U+20BA, U+2122;
+}
 @font-face {
   font-family: "Archivo";
   font-style: normal;
@@ -6,7 +16,7 @@
   font-stretch: 62% 125%;
   font-display: swap;
   src: url("/fonts/archivo-latin-ext.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  unicode-range: U+0100-011D, U+0120-012F, U+0132-0151, U+0154-015D, U+0160-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
   font-family: "Archivo";

@@ -42,10 +42,10 @@ export default function ContactScene() {
   });
   return (
     <group ref={group}>
-      <mesh ref={knot} name="knot" position={[w[0], w[1] + (touch ? 3.4 : 0.4), w[2] - (touch ? 7 : 3.5)]} material={mat}>
+      <mesh ref={knot} name="knot" position={[w[0], w[1] + (touch ? 3.2 : 0.4), w[2] - (touch ? 13 : 3.5)]} material={mat}>
         <torusKnotGeometry args={[touch ? 1.15 : 2.3, touch ? 0.32 : 0.58, 220, 32, 2, 3]} />
       </mesh>
-      <group ref={beads} position={[w[0], w[1] + (touch ? 3.4 : 0.4), w[2] - (touch ? 7 : 3.5)]}>
+      <group ref={beads} position={[w[0], w[1] + (touch ? 3.2 : 0.4), w[2] - (touch ? 13 : 3.5)]}>
         {beadMats.map((m, i) => {
           const a = (i / 3) * Math.PI * 2;
           return (
